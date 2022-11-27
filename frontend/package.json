@@ -1,0 +1,35 @@
+{
+  "name": "binpastes-frontend",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/querwurzel/BinPastes"
+  },
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "engine-strict": true,
+  "engines": {
+    "node": "18"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "pnpm": "^8.6.2",
+    "typescript": "^5.1.3",
+    "vite": "^4.3.9",
+    "vite-plugin-solid": "^2.7.0"
+  },
+  "dependencies": {
+    "@solidjs/router": "^0.8.2",
+    "crypto-js": "^4.1.1",
+    "linkify-element": "^4.1.1",
+    "linkifyjs": "^4.1.1",
+    "mvp.css": "^1.12.0",
+    "solid-js": "^1.7.6"
+  }
+}

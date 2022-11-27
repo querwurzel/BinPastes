@@ -1,0 +1,50 @@
+.recentPastes {
+    margin-top: 0;
+    padding-top: 0;
+    border-left: 1px dotted #a5a5a5;
+}
+
+.recentPastes h3 {
+    margin-left: 1rem;
+    margin-top: 0;
+    padding-top: 0;
+}
+
+.recentPastes ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+}
+
+.recentPastes li {
+    list-style: none;
+    padding-left: 1rem;
+    border-top: 1px dotted #a5a5a5;
+}
+
+.refresh {
+    cursor: pointer;
+    color: var(--color-link);
+}
+
+.refresh:active {
+    filter: brightness(var(--hover-brightness));
+}
+
+.item {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
+}
+
+.item img {
+    width: 15px;
+}
+
+@media screen and (max-width:750px) {
+    .recentPastes {
+        border-left: none;
+        border-bottom: 1px dotted #a5a5a5;
+    }
+}
