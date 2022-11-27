@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>BinPastes</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon shortcut" type="image/png" href="https://www.wilke-it.com/favicon.png" />
+    <style>
+        button,
+        select,
+        input[type=submit],
+        input[type=radio]{
+            cursor: pointer;
+        }
+
+        textarea {
+            font-family: monospace;
+            box-sizing: border-box;
+            width: 100%;
+            height: 20em;
+        }
+    </style>
+</head>
+<body>
+
+<h1>BinPastes</h1>
+
+<form method="get" action="/api/v1/paste/search">
+
+    <fieldset>
+        <div>
+            <label for="text">Search</label>
+            <input type="text" id="text" name="text" required="required" minlength="3" />
+            <input type="submit" value="Find" />
+            <a href="/api/v1/paste">
+                <button type="button">Overview</button>
+            </a>
+        </div>
+    </fieldset>
+
+</form>
+
+<br/>
+<br/>
+<br/>
+
+<form method="post" action="/api/v1/paste">
+
+    <fieldset>
+        <div>
+            <label for="title">Title (optional)</label>
+            <input type="text" id="title" name="title" />
+        </div>
+        <hr/>
+        <div>
+            <label for="expiry">Expires in</label>
+            <select id="expiry" name="expiry">
+                <option value="ONE_HOUR">One Hour</option>
+                <option value="ONE_DAY" selected="selected">One Day</option>
+                <option value="ONE_WEEK">One Week</option>
+                <option value="ONE_MONTH">One Month</option>
+                <option value="ONE_YEAR">One Year</option>
+                <option value="NEVER">Never</option>
+            </select>
+        </div>
+        <hr/>
+        <div>
+            <span>Visible</span>
+            <input type="radio" id="public" name="exposure" value="PUBLIC" checked="checked">
+            <label for="public">Public</label>
+            <input type="radio" id="unlisted" name="exposure" value="UNLISTED">
+            <label for="unlisted">Unlisted</label>
+            <input type="radio" id="once" name="exposure" value="ONCE">
+            <label for="once">Once (One-Time)</label>
+        </div>
+        <hr/>
+        <div>
+            <label for="content">Content</label>
+            <textarea id="content" name="content" minlength="5" maxlength="4096" required="required" autofocus="autofocus" rows="20" cols="75"></textarea>
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <input type="submit" value="Paste" />
+    </fieldset>
+
+</form>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.0.0</version>
+    <relativePath/><!-- lookup parent from repository -->
+  </parent>
+
+  <groupId>it.wylke.binpaste</groupId>
+  <artifactId>binpaste</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>BinPastes</name>
+
+  <licenses>
+    <license>
+      <name>Apache-2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+    </license>
+  </licenses>
+
+  <modules>
+    <!--<module>frontend</module>-->
+    <module>backend</module>
+  </modules>
+
+  <properties>
+    <!-- maven property definition -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- java version properties -->
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.release>17</maven.compiler.release>
+
+    <!-- maven plugin versions -->
+    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+
+    <!-- 3rd-party library versions -->
+    <spring-boot-bom.version>3.0.0</spring-boot-bom.version>
+    <junixsocket.version>2.6.1</junixsocket.version>
+    <flyway.version>9.10.1</flyway.version>
+    <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
+  </properties>
+
+  <build>
+    <directory>build</directory>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot-bom.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <release>${maven.compiler.release}</release>
+          <!-- source and target are not necessary for maven but for IntelliJ :( -->
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>show-profiles</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>active-profiles</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencyManagement>
+    <dependencies>
+      <!-- Spring & Spring Boot-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
+      <!-- Project dependencies -->
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-mysql</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>dev.miku</groupId>
+        <artifactId>r2dbc-mysql</artifactId>
+        <version>${r2dbc-mysql.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.kohlschutter.junixsocket</groupId>
+        <artifactId>junixsocket-mysql</artifactId>
+        <version>${junixsocket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kohlschutter.junixsocket</groupId>
+        <artifactId>junixsocket-native-common</artifactId>
+        <version>${junixsocket.version}</version>
+      </dependency>
+
+      <!-- OS dependencies -->
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-resolver-dns-native-macos</artifactId>
+        <version>${netty.version}</version>
+        <classifier>osx-aarch_64</classifier>
+      </dependency>
+
+    </dependencies>
+  </dependencyManagement>
+
+  <scm>
+    <connection>scm:git:https://github.com/querwurzel/binpastes.git</connection>
+    <developerConnection>scm:git:https://github.com/querwurzel/binpastes.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+</project>
