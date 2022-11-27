@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+</head>
+<body>
+
+<h1>BinPastes</h1>
+
+<form method="post" action="/api/v1/paste">
+
+    <fieldset>
+        <label for="title">Title (optional)</label>
+        <input type="text" id="title" name="title" value="Untitled"/>
+
+        <label for="content">Content</label>
+        <textarea id="content" name="content" minlength="3" maxlength="4096" required="required" autofocus="autofocus" rows="4" cols="50"></textarea>
+    </fieldset>
+
+    <fieldset>
+        <input type="submit" value="Submit" />
+    </fieldset>
+
+</form>
+
+</body>
+</html>
