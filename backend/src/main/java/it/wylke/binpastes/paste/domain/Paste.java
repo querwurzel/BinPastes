@@ -17,31 +17,18 @@ public class Paste implements Persistable<String> {
     static final String TABLE_NAME = "pastes";
 
     @Id
-    protected String id;
+    private String id;
+    private String title;
+    private String content;
+
+    private String remoteIp;
     @CreatedDate
-    protected LocalDateTime dateCreated;
+    private LocalDateTime dateCreated;
+    private LocalDateTime dateOfExpiry;
+    private LocalDateTime dateDeleted;
 
-    protected String content;
-    protected String title;
-    protected LocalDateTime expiry;
-
-    protected String remoteIp;
-    protected Boolean isDeleted;
-
-    public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime expiry) {
-        var paste = new NewPaste();
-        paste.id = UUID.randomUUID().toString();
-        paste.isDeleted = Boolean.FALSE;
-        paste.content = content;
-        paste.title = title;
-        paste.remoteIp = remoteIp;
-        paste.expiry = expiry;
-        return paste;
-    }
-
-    @Override
-    public String getId() {
-        return id;
+    public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime dateOfExpiry) {
+        return NewPaste.newInstance(content, title, remoteIp, dateOfExpiry);
     }
 
     @Override
@@ -49,6 +36,11 @@ public class Paste implements Persistable<String> {
     @Transient
     public boolean isNew() {
         return false;
+    }
+
+    @Override
+    public String getId() {
+        return id;
     }
 
     public LocalDateTime getDateCreated() {
@@ -63,12 +55,12 @@ public class Paste implements Persistable<String> {
         return content;
     }
 
-    public LocalDateTime getExpiry() {
-        return expiry;
+    public LocalDateTime getDateOfExpiry() {
+        return dateOfExpiry;
     }
 
     public Paste markAsDeleted() {
-        this.isDeleted = true;
+        this.dateDeleted = LocalDateTime.now();
         return this;
     }
 
@@ -79,8 +71,44 @@ public class Paste implements Persistable<String> {
         return remoteIp;
     }
     // TODO remove
-    public boolean isDeleted() {
-        return this.isDeleted;
+    public LocalDateTime getDateDeleted() {
+        return dateDeleted;
+    }
+
+
+    protected Paste setId(final String id) {
+        this.id = id;
+        return this;
+    }
+
+    protected Paste setTitle(final String title) {
+        this.title = title;
+        return this;
+    }
+
+    protected Paste setContent(final String content) {
+        this.content = content;
+        return this;
+    }
+
+    protected Paste setRemoteIp(final String remoteIp) {
+        this.remoteIp = remoteIp;
+        return this;
+    }
+
+    protected Paste setDateCreated(final LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    protected Paste setDateOfExpiry(final LocalDateTime dateOfExpiry) {
+        this.dateOfExpiry = dateOfExpiry;
+        return this;
+    }
+
+    protected Paste setDateDeleted(final LocalDateTime dateDeleted) {
+        this.dateDeleted = dateDeleted;
+        return this;
     }
 
     @Override
@@ -96,35 +124,20 @@ public class Paste implements Persistable<String> {
         return Objects.hash(id);
     }
 
-
-
-    static Paste fullTextExample(String text) {
-        return FullTextTemplate.from(text);
-    }
-
-    private static final class FullTextTemplate extends Paste {
-
-        public static Paste from(String text) {
-            var paste = new FullTextTemplate();
-            paste.content = text;
-            paste.title = text;
-            paste.isDeleted = false;
-            return paste;
-        }
-
-    }
-
     private static final class NewPaste extends Paste implements Persistable<String> {
 
-        @Override
-        public String getId() {
-            return super.getId();
+        public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime dateOfExpiry) {
+            return new NewPaste()
+                    .setId(UUID.randomUUID().toString())
+                    .setTitle(title)
+                    .setContent(Objects.requireNonNull(content))
+                    .setRemoteIp(remoteIp)
+                    .setDateOfExpiry(dateOfExpiry);
         }
 
         @Override
         public boolean isNew() {
             return true;
         }
-
     }
 }

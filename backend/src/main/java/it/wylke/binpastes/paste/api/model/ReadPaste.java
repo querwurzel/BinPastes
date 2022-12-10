@@ -17,7 +17,7 @@ public record ReadPaste(
                 reference.getTitle(),
                 reference.getContent(),
                 reference.getDateCreated(),
-                reference.getExpiry()
+                reference.getDateOfExpiry()
         );
     }
 }

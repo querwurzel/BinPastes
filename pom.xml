@@ -13,7 +13,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>3.0.0</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <relativePath/><!-- lookup parent from repository -->
   </parent>
 
   <modules>
@@ -42,7 +42,7 @@
 
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.0.0</spring-boot-bom.version>
-
+    <junixsocket.version>2.6.1</junixsocket.version>
 
     <netty-resolver-dns.version>4.1.85.Final</netty-resolver-dns.version>
 
@@ -114,12 +114,35 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-help-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>show-profiles</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>active-profiles</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
   <dependencyManagement>
     <dependencies>
       <!-- Project dependencies -->
+      <dependency>
+        <groupId>com.kohlschutter.junixsocket</groupId>
+        <artifactId>junixsocket-mysql</artifactId>
+        <version>${junixsocket.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.kohlschutter.junixsocket</groupId>
+        <artifactId>junixsocket-native-common</artifactId>
+        <version>${junixsocket.version}</version>
+      </dependency>
 
       <!-- Spring & Spring Boot-->
       <dependency>

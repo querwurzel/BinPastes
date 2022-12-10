@@ -1,10 +1,9 @@
 package it.wylke.binpastes.paste.domain;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.repository.Modifying;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.r2dbc.repository.R2dbcRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,19 +12,42 @@ import java.time.LocalDateTime;
 
 public interface PasteRepository extends R2dbcRepository<Paste, String>, ReactiveQueryByExampleExecutor<Paste> {
 
-    Flux<Paste> findByIsDeletedFalseAndExpiryAfter(LocalDateTime expiryAfter);
+    default Mono<Paste> find(String id) {
+        return this.findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfterAndId(LocalDateTime.now(), id);
+    }
 
-    Mono<Paste> findByIsDeletedFalseAndExpiryAfterAndId(LocalDateTime expiryAfter, String id);
+    /**
+     * @deprecated {@link #find(String)}
+     */
+    @Deprecated
+    Mono<Paste> findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfterAndId(LocalDateTime expiryAfter, String id);
 
+    default Flux<Paste> find() {
+        return this.findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfter(LocalDateTime.now());
+    }
+
+    /**
+     * @deprecated {@link #find()}
+     */
+    @Deprecated
+    Flux<Paste> findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfter(LocalDateTime expiryAfter);
+
+    @Query("SELECT * FROM " + Paste.TABLE_NAME + " WHERE date_deleted IS NULL AND (date_of_expiry IS NULL OR date_of_expiry > current_timestamp()) AND (content LIKE '%'||:text||'%' OR title LIKE '%'||:text||'%')")
+    Flux<Paste> findByFullText(@Param("text") String text);
+
+    /**
+     * expireAll
+     * @param expiryBefore LocalDateTime.now()
+     */
     @Modifying
-    @Query("UPDATE pastes SET is_deleted = true WHERE is_deleted = false AND expiry < :date")
-    Mono<Long> markExpiredPastesForDeletion(LocalDateTime expiryBefore);
+    @Query("UPDATE " + Paste.TABLE_NAME + " SET date_deleted = current_timestamp() WHERE date_deleted IS NULL AND date_of_expiry < :expiryBefore")
+    Mono<Long> markExpiredPastesForDeletion(@Param("expiryBefore") LocalDateTime expiryBefore);
 
+    /**
+     * deleteAll permanently
+     * @param timestamp time window of tolerance
+     */
     @Modifying
-    Mono<Long> deleteByIsDeletedTrue();
-
-
-    // TODO fix OR relation to circumvent expiry and deletion flag
-    Flux<Paste> findByIsDeletedFalseAndExpiryAfterAndContentContainsIgnoreCaseOrTitleContainsIgnoreCase(LocalDateTime expiryAfter, String content, String title);
+    Mono<Long> deleteByDateDeletedBefore(LocalDateTime timestamp);
 
 }
