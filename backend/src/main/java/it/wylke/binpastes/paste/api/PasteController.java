@@ -1,16 +1,18 @@
 package it.wylke.binpastes.paste.api;
 
-import it.wylke.binpastes.paste.api.model.CreatePaste;
-import it.wylke.binpastes.paste.api.model.CreatePaste.ExpirationRanges;
-import it.wylke.binpastes.paste.api.model.ListPastes;
-import it.wylke.binpastes.paste.api.model.ReadPaste;
+import it.wylke.binpastes.paste.api.model.CreateCmd;
+import it.wylke.binpastes.paste.api.model.ListView;
+import it.wylke.binpastes.paste.api.model.SingleView;
 import it.wylke.binpastes.paste.domain.PasteService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +26,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.util.Set;
+
 @CrossOrigin
 @Controller
 @RequestMapping("/api/v1/paste")
@@ -33,80 +37,75 @@ class PasteController {
 
     private final PasteService pasteService;
 
-    @Autowired
-    PasteController(final PasteService pasteService) {
-        this.pasteService = pasteService;
-    }
+    private final Validator validator;
 
-    /*
-    @GetMapping(value = "/{pasteId}")
-    public Mono<RedirectView> redirect(@PathVariable("pasteId") String pasteId) {
-        log.trace("redirect {}", pasteId);
-        return Mono.just(new RedirectView("/"));
+    @Autowired
+    PasteController(final PasteService pasteService, final Validator validator) {
+        this.pasteService = pasteService;
+        this.validator = validator;
     }
-    */
 
     @GetMapping(value = "/{pasteId}")
     @ResponseBody
-    public Mono<ReadPaste> findPaste(@PathVariable("pasteId") String pasteId) {
-        log.trace("findPaste {}", pasteId);
+    public Mono<SingleView> findPaste(@PathVariable("pasteId") String pasteId) {
         return pasteService
                 .find(pasteId)
-                .map(ReadPaste::from)
+                .map(SingleView::from)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @DeleteMapping("/{pasteId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePaste(@PathVariable("pasteId") String pasteId) {
-        log.trace("deletePaste {}", pasteId);
         pasteService.delete(pasteId);
     }
 
     @GetMapping("/search/{text}")
     @ResponseBody
-    public Mono<ListPastes> findPastesByFullText(@PathVariable("text") String text) {
-        log.trace("findPastesByFullText {}", text);
+    public Mono<ListView> findPastesByFullText(@PathVariable("text") String text) {
+        if (!StringUtils.hasText(text) || text.strip().length() < 3) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         return pasteService
                 .findByFullText(text)
-                .map(ReadPaste::from)
+                .map(SingleView::from)
                 .collectList()
-                .map(ListPastes::from);
+                .map(ListView::from);
     }
 
     @GetMapping
     @ResponseBody
-    public Mono<ListPastes> findPastes() {
-        log.trace("findPastes");
+    public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
-                .map(ReadPaste::from)
+                .map(SingleView::from)
                 .collectList()
-                .map(ListPastes::from);
+                .map(ListView::from);
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public Mono<RedirectView> createPaste(ServerWebExchange ctx) {
-        log.trace("createPaste");
-
         return ctx
                 .getFormData()
                 .flatMap(formData -> {
-
-                    var expiry = ExpirationRanges.valueOf(formData.getFirst("expiry"));
-                    log.warn("expiry parsed: {}", expiry);
-
-                    var createCmd = new CreatePaste(
+                    var createCmd = new CreateCmd(
                         formData.getFirst("title"),
                         formData.getFirst("content"),
-                        expiry
+                        formData.getFirst("expiry")
                     );
+
+                    // TODO evaluate validation ;)
+                    Set<ConstraintViolation<CreateCmd>> validate = validator.validate(createCmd);
+                    if (!validate.isEmpty()) {
+                        log.warn(validate.toString());
+                    }
 
                     return pasteService.create(
                             createCmd.content(),
                             createCmd.title(),
                             ctx.getRequest().getRemoteAddress().getAddress().getHostAddress(),
-                            expiry == null ? null : expiry.toTimestamp()
+                            createCmd.dateOfExpiry()
                     );
                 })
                 .map(paste -> new RedirectView("/api/v1/paste/" + paste.getId()));

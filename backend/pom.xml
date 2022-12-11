@@ -31,27 +31,13 @@
             <artifactId>spring-boot-starter-data-r2dbc</artifactId>
         </dependency>
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.flywaydb</groupId>
             <artifactId>flyway-core</artifactId>
-            <version>9.8.3</version>
         </dependency>
-
-
-
-
-        <!--<dependency>
-            <groupId>com.github.jasync-sql</groupId>
-            <artifactId>jasync-r2dbc-mysql</artifactId>
-            <version>2.1.7</version>
-        </dependency>-->
-
-
-<!--
-        <dependency>
-            <groupId>io.r2dbc</groupId>
-            <artifactId>r2dbc-pool</artifactId>
-            <version>1.0.0.RELEASE</version>
-        </dependency>-->
 
         <!-- testing -->
         <dependency>
@@ -77,22 +63,37 @@
 
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>mysql</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
                 <property>
-                    <name>!env</name>
+                    <name>env</name>
+                    <value>mysql</value>
                 </property>
             </activation>
             <dependencies>
-                <!-- H2 -->
+                <!-- MySQL -->
                 <dependency>
-                    <groupId>io.r2dbc</groupId>
-                    <artifactId>r2dbc-h2</artifactId>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-mysql</artifactId>
                 </dependency>
                 <dependency>
-                    <groupId>com.h2database</groupId>
-                    <artifactId>h2</artifactId>
+                    <groupId>com.mysql</groupId>
+                    <artifactId>mysql-connector-j</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>dev.miku</groupId>
+                    <artifactId>r2dbc-mysql</artifactId>
+                    <version>0.8.2.RELEASE</version>
+                </dependency>
+
+                <!-- junixsocket -->
+                <dependency>
+                    <groupId>com.kohlschutter.junixsocket</groupId>
+                    <artifactId>junixsocket-mysql</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.kohlschutter.junixsocket</groupId>
+                    <artifactId>junixsocket-native-common</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -109,12 +110,6 @@
                 <dependency>
                     <groupId>org.flywaydb</groupId>
                     <artifactId>flyway-mysql</artifactId>
-                    <version>9.8.3</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.mariadb</groupId>
-                    <artifactId>r2dbc-mariadb</artifactId>
-                    <version>1.1.2</version>
                 </dependency>
                 <dependency>
                     <groupId>org.mariadb.jdbc</groupId>
@@ -122,16 +117,40 @@
                     <version>3.1.0</version>
                     <scope>runtime</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.mariadb</groupId>
+                    <artifactId>r2dbc-mariadb</artifactId>
+                    <version>1.1.2</version>
+                </dependency>
+
                 <!-- junixsocket -->
                 <dependency>
                     <groupId>com.kohlschutter.junixsocket</groupId>
                     <artifactId>junixsocket-mysql</artifactId>
-                    <version>${junixsocket.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.kohlschutter.junixsocket</groupId>
                     <artifactId>junixsocket-native-common</artifactId>
-                    <version>${junixsocket.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>!env</name>
+                </property>
+            </activation>
+            <dependencies>
+                <!-- H2 -->
+                <dependency>
+                    <groupId>io.r2dbc</groupId>
+                    <artifactId>r2dbc-h2</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
                 </dependency>
             </dependencies>
         </profile>

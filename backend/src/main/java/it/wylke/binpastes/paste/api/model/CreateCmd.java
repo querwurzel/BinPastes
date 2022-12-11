@@ -1,14 +1,40 @@
 package it.wylke.binpastes.paste.api.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import org.springframework.util.StringUtils;
+
 import java.time.LocalDateTime;
 
-public record CreatePaste( // TODO add validation
+public record CreateCmd (
                            String title,
+                           @NotNull
+                           @NotBlank
+                           @Size(min = 5)
                            String content,
-                           ExpirationRanges expiry
+                           String expiry
 ) {
 
-    public enum ExpirationRanges {
+    @Override
+    public String title() {
+        return StringUtils.hasText(title) ? title.strip() : null;
+    }
+
+    @Override
+    public String content() {
+        return StringUtils.hasText(content) ? content.strip() : null;
+    }
+
+    public LocalDateTime dateOfExpiry() {
+        try {
+            return ExpirationRanges.valueOf(expiry).toTimestamp();
+        } catch (RuntimeException e) {
+            return ExpirationRanges.NEVER.toTimestamp();
+        }
+    }
+
+    private enum ExpirationRanges {
         ONE_HOUR {
             @Override
             public LocalDateTime toTimestamp() {

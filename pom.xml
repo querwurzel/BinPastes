@@ -43,12 +43,7 @@
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.0.0</spring-boot-bom.version>
     <junixsocket.version>2.6.1</junixsocket.version>
-
-    <netty-resolver-dns.version>4.1.85.Final</netty-resolver-dns.version>
-
-
-
-
+    <flyway.version>9.10.0</flyway.version>
   </properties>
 
   <build>
@@ -132,7 +127,27 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Spring & Spring Boot-->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot-bom.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+
       <!-- Project dependencies -->
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-core</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.flywaydb</groupId>
+        <artifactId>flyway-mysql</artifactId>
+        <version>${flyway.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>com.kohlschutter.junixsocket</groupId>
         <artifactId>junixsocket-mysql</artifactId>
@@ -144,25 +159,11 @@
         <version>${junixsocket.version}</version>
       </dependency>
 
-      <!-- Spring & Spring Boot-->
-      <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-dependencies</artifactId>
-        <version>${spring-boot-bom.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework.retry</groupId>
-        <artifactId>spring-retry</artifactId>
-        <version>${spring-retry.version}</version>
-      </dependency>
-
       <!-- OS dependencies -->
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-resolver-dns-native-macos</artifactId>
-        <version>${netty-resolver-dns.version}</version>
+        <version>${netty.version}</version>
         <classifier>osx-aarch_64</classifier>
       </dependency>
 

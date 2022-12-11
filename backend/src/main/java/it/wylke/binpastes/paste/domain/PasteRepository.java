@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 public interface PasteRepository extends R2dbcRepository<Paste, String>, ReactiveQueryByExampleExecutor<Paste> {
 
     default Mono<Paste> find(String id) {
-        return this.findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfterAndId(LocalDateTime.now(), id);
+        return this.findByIdAndDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfter(id, LocalDateTime.now());
     }
 
     /**
      * @deprecated {@link #find(String)}
      */
     @Deprecated
-    Mono<Paste> findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfterAndId(LocalDateTime expiryAfter, String id);
+    Mono<Paste> findByIdAndDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfter(String id, LocalDateTime expiryAfter);
 
     default Flux<Paste> find() {
         return this.findByDateDeletedNullAndDateOfExpiryNullOrDateOfExpiryAfter(LocalDateTime.now());

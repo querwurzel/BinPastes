@@ -1,6 +1,7 @@
 package it.wylke.binpastes.paste.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import it.wylke.binpastes.util.IdGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -9,7 +10,6 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.UUID;
 
 @Table(Paste.TABLE_NAME)
 public class Paste implements Persistable<String> {
@@ -21,11 +21,13 @@ public class Paste implements Persistable<String> {
     private String title;
     private String content;
 
-    private String remoteIp;
     @CreatedDate
     private LocalDateTime dateCreated;
     private LocalDateTime dateOfExpiry;
+    @SuppressWarnings("unused")
     private LocalDateTime dateDeleted;
+    @SuppressWarnings("unused")
+    private String remoteIp;
 
     public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime dateOfExpiry) {
         return NewPaste.newInstance(content, title, remoteIp, dateOfExpiry);
@@ -63,18 +65,6 @@ public class Paste implements Persistable<String> {
         this.dateDeleted = LocalDateTime.now();
         return this;
     }
-
-
-
-    // TODO remove
-    public String getRemoteIp() {
-        return remoteIp;
-    }
-    // TODO remove
-    public LocalDateTime getDateDeleted() {
-        return dateDeleted;
-    }
-
 
     protected Paste setId(final String id) {
         this.id = id;
@@ -128,7 +118,7 @@ public class Paste implements Persistable<String> {
 
         public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime dateOfExpiry) {
             return new NewPaste()
-                    .setId(UUID.randomUUID().toString())
+                    .setId(IdGenerator.newStringId())
                     .setTitle(title)
                     .setContent(Objects.requireNonNull(content))
                     .setRemoteIp(remoteIp)
