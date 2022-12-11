@@ -31,11 +31,11 @@ public class PasteService {
     }
 
     public Mono<Paste> find(String id) {
-        return pasteRepository.find(id);
+        return pasteRepository.findOneLegitById(id);
     }
 
     public Flux<Paste> findAll() {
-        return pasteRepository.find();
+        return pasteRepository.findAllLegit();
     }
 
     public Flux<Paste> findByFullText(String text) {
@@ -44,6 +44,8 @@ public class PasteService {
         }
 
         var results = pasteRepository.findByFullText(text);
+
+pasteRepository.searchByFullText(text).subscribe();
 
         try {
             return results;
@@ -57,7 +59,7 @@ public class PasteService {
 
     public void delete(String id) {
         pasteRepository
-                .find(id)
+                .findOneLegitById(id)
                 .map(Paste::markAsDeleted)
                 .flatMap(pasteRepository::save)
                 .subscribe();

@@ -1,3 +1,4 @@
+
 create table pastes (
     id varchar(255) not null,
     date_created timestamp not null,

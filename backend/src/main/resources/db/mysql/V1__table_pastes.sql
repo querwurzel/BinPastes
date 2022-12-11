@@ -7,4 +7,7 @@ CREATE TABLE `pastes` (
      `title` varchar(512) DEFAULT NULL,
      `content` varchar(4048) NOT NULL,
      PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `pastes`
+     ADD FULLTEXT(`title`, `content`);

@@ -14,7 +14,7 @@ import java.util.Objects;
 @Table(Paste.TABLE_NAME)
 public class Paste implements Persistable<String> {
 
-    static final String TABLE_NAME = "pastes";
+    static final String TABLE_NAME = "PASTES";
 
     @Id
     private String id;
