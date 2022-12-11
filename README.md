@@ -11,9 +11,9 @@ My turn on creating a simple pastebin.
 * easy setup, single binary
     * zero knowledge required about the build tools, frameworks or programming language I chose
 
-### License
+## License
 
-Apache License 2.0
+Apache License 2.0 ([Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0))
 
 ## Requirements
 
