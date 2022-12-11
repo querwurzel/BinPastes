@@ -11,21 +11,27 @@
 <form method="post" action="/api/v1/paste">
 
     <fieldset>
-        <label for="title">Title (optional)</label>
-        <input type="text" id="title" name="title" />
-
-        <label for="expiry">Expiry Date</label>
-        <select id="expiry" name="expiry">
-            <option value="ONE_HOUR" selected="selected">One Hour</option>
-            <option value="ONE_DAY">One Day</option>
-            <option value="ONE_WEEK">One Week</option>
-            <option value="ONE_MONTH">One Month</option>
-            <option value="ONE_YEAR">One Year</option>
-            <option value="NEVER">Never</option>
-        </select>
-
-        <label for="content">Content</label>
-        <textarea id="content" name="content" minlength="5" maxlength="4096" required="required" autofocus="autofocus" rows="4" cols="50"></textarea>
+        <div>
+            <label for="title">Title (optional)</label>
+            <input type="text" id="title" name="title" />
+        </div>
+        <hr/>
+        <div>
+            <label for="expiry">Expiry Date</label>
+            <select id="expiry" name="expiry">
+                <option value="ONE_HOUR" selected="selected">One Hour</option>
+                <option value="ONE_DAY">One Day</option>
+                <option value="ONE_WEEK">One Week</option>
+                <option value="ONE_MONTH">One Month</option>
+                <option value="ONE_YEAR">One Year</option>
+                <option value="NEVER">Never</option>
+            </select>
+        </div>
+        <hr/>
+        <div>
+            <label for="content">Content</label>
+            <textarea id="content" name="content" minlength="5" maxlength="4096" required="required" autofocus="autofocus" rows="4" cols="50"></textarea>
+        </div>
     </fieldset>
 
     <fieldset>

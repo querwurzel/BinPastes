@@ -1,3 +1,4 @@
+[![Java CI](https://github.com/querwurzel/BinPastes/actions/workflows/main.yml/badge.svg)](https://github.com/querwurzel/BinPastes/actions/workflows/main.yml)
 # BinPastes
 
 My turn on creating a simple pastebin.
