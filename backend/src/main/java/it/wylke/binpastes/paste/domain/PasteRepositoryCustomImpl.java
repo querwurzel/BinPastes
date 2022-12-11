@@ -23,10 +23,12 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, @Autowired(required = false) FullTextSearchSupport fullTextSearchSupport) {
         this.entityTemplate = entityManager;
-        this.fullTextSearchSupport = fullTextSearchSupport;
 
         if (fullTextSearchSupport == null) {
             log.warn("No full-text search support for current storage engine!");
+            this.fullTextSearchSupport = new FullTextSearchSupport() {};
+        } else {
+            this.fullTextSearchSupport = fullTextSearchSupport;
         }
     }
 
@@ -71,12 +73,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     @Override
     public Flux<Paste> searchByFullText(String text) {
         log.error("searchByFullText: {}", text);
-
-        if (fullTextSearchSupport == null) {
-            return Flux.empty();
-        }
-
-        return PasteRepositoryCustom.super.searchByFullText(text);
+        return fullTextSearchSupport.searchByFullText(text);
     }
 
 }

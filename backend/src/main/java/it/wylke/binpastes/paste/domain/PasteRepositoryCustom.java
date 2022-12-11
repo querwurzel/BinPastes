@@ -7,24 +7,18 @@ import java.time.LocalDateTime;
 
 interface PasteRepositoryCustom {
 
-    default Mono<Paste> findOneLegitById(String id) {
-        return Mono.empty();
-    }
+    Mono<Paste> findOneLegitById(String id);
 
-    default Flux<Paste> findAllLegit() {
-        return Flux.empty();
-    }
+    Flux<Paste> findAllLegit();
 
-    default Flux<Paste> searchByFullText(String text) {
-        return Flux.empty();
-    }
+    Flux<Paste> searchByFullText(String text);
 
-    default Mono<Long> markExpiredPastesForDeletion(LocalDateTime expiryBefore) {
-        return Mono.empty();
-    }
+    Mono<Long> markExpiredPastesForDeletion(LocalDateTime expiryBefore);
 
     interface FullTextSearchSupport {
-        Flux<Paste> searchByFullText(String text);
+        default Flux<Paste> searchByFullText(String text) {
+            return Flux.empty();
+        }
     }
 
 }
