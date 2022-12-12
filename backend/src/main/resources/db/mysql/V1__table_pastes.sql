@@ -11,3 +11,5 @@ CREATE TABLE `pastes` (
 
 ALTER TABLE `pastes`
      ADD FULLTEXT(`title`, `content`);
+
+CREATE INDEX `legit_pastes` ON `pastes` (date_deleted, date_of_expiry);

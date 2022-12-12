@@ -18,7 +18,7 @@ Apache License 2.0 ([Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0))
 ## Requirements
 
 * JDK 17+
-* MySQL 8+ or MariaDB 10+
+* MySQL 8+
 
 Just put the [JDK](https://adoptium.net/temurin/releases/) somewhere on your file system.
 The `bin` folder contains the `java` binary.
@@ -33,18 +33,12 @@ TODO
 ### How to build
 
 For productive use with __MySQL__ run:
-`./mvnw -P mysql package`
-
-For productive use with __MariaDB__ run:
-`./mvnw -P mariadb package`
+`./mvnw clean package -Dmysql`
 
 ### How to run
 
 For productive use with __MySQL__ run:
 `java -Dspring.profiles.active=mysql -jar binpastes.jar`
-
-For productive use with __MariaDB__ run:
-`java -Dspring.profiles.active=mariadb -jar binpastes.jar`
 
 ## Credits
 
