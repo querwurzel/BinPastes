@@ -1,8 +1,5 @@
 package it.wylke.binpastes.paste.domain;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Update;
@@ -15,21 +12,13 @@ import static org.springframework.data.relational.core.query.Query.query;
 
 class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
-    private static final Logger log = LoggerFactory.getLogger(PasteRepository.class);
-
     private final R2dbcEntityTemplate entityTemplate;
 
     private final FullTextSearchSupport fullTextSearchSupport;
 
-    public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, @Autowired(required = false) FullTextSearchSupport fullTextSearchSupport) {
+    public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, FullTextSearchSupport fullTextSearchSupport) {
         this.entityTemplate = entityManager;
-
-        if (fullTextSearchSupport == null) {
-            log.warn("No full-text search support for current storage engine!");
-            this.fullTextSearchSupport = new FullTextSearchSupport() {};
-        } else {
-            this.fullTextSearchSupport = fullTextSearchSupport;
-        }
+        this.fullTextSearchSupport = fullTextSearchSupport;
     }
 
     public Mono<Paste> findOneLegitById(String id) {
@@ -72,7 +61,6 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     @Override
     public Flux<Paste> searchAllLegitByFullText(String text) {
-        log.error("searchByFullText: {}", text);
         return fullTextSearchSupport.searchByFullText(text);
     }
 

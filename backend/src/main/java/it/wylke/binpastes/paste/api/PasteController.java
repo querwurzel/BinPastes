@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.reactive.result.view.RedirectView;
@@ -60,9 +61,9 @@ class PasteController {
         pasteService.delete(pasteId);
     }
 
-    @GetMapping("/search/{text}")
+    @GetMapping("/search")
     @ResponseBody
-    public Mono<ListView> findPastesByFullText(@PathVariable("text") String text) {
+    public Mono<ListView> findPastesByFullText(@RequestParam("text") String text) {
         if (!StringUtils.hasText(text) || text.strip().length() < 3) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }

@@ -15,10 +15,4 @@ interface PasteRepositoryCustom {
 
     Mono<Long> markExpiredPastesForDeletion(LocalDateTime expiryBefore);
 
-    interface FullTextSearchSupport {
-        default Flux<Paste> searchByFullText(String text) {
-            return Flux.empty();
-        }
-    }
-
 }
