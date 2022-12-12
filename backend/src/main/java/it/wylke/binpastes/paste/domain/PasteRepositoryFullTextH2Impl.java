@@ -31,7 +31,8 @@ class PasteRepositoryFullTextH2Impl implements FullTextSearchSupport {
                 .getDatabaseClient()
                 .sql("SELECT * FROM FTL_SEARCH('" + text + "*', 0, 0)");
 
-        sql.fetch().all()
+        sql.fetch()
+                .all()
                 .doOnNext(stringObjectMap -> log.error(stringObjectMap.toString()))
                 .subscribe();
 

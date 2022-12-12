@@ -71,7 +71,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     }
 
     @Override
-    public Flux<Paste> searchByFullText(String text) {
+    public Flux<Paste> searchAllLegitByFullText(String text) {
         log.error("searchByFullText: {}", text);
         return fullTextSearchSupport.searchByFullText(text);
     }

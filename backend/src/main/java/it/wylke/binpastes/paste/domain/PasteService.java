@@ -43,9 +43,7 @@ public class PasteService {
             throw new IllegalArgumentException("Input must have at least 3 characters!");
         }
 
-        var results = pasteRepository.findByFullText(text);
-
-pasteRepository.searchByFullText(text).subscribe();
+        var results = pasteRepository.searchAllLegitByFullText(text);
 
         try {
             return results;
