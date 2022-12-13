@@ -8,6 +8,7 @@ import reactor.core.publisher.Flux;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
 import static org.springframework.data.relational.core.query.Query.query;
 
 @Component
@@ -23,14 +24,14 @@ class SimpleFullTextSupportImpl implements FullTextSearchSupport {
     @Override
     public Flux<Paste> searchByFullText(final String text) {
         var criteria = Criteria
-                .where("date_deleted").isNull()
+                .where(PasteSchema.DATE_DELETED).isNull()
                 .and(Criteria
-                        .where("date_of_expiry").isNull()
-                        .or("date_of_expiry").greaterThan(LocalDateTime.now())
+                        .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                        .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 )
                 .and(Criteria
-                        .where("title").like(text + '%')
-                        .or("content").like(text + '%')
+                        .where(PasteSchema.TITLE).like(text + '%')
+                        .or(PasteSchema.CONTENT).like(text + '%')
                 );
 
         return entityTemplate

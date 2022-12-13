@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
 import static org.springframework.data.relational.core.query.Query.query;
 
 class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
@@ -23,12 +24,12 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     public Mono<Paste> findOneLegitById(String id) {
         var criteria = Criteria
-                .where("id").is(id)
-                .and("date_deleted").isNull()
+                .where(PasteSchema.ID).is(id)
+                .and(PasteSchema.DATE_DELETED).isNull()
                 .and(
                         Criteria
-                                .where("date_of_expiry").isNull()
-                                .or("date_of_expiry").greaterThan(LocalDateTime.now())
+                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 );
 
         return entityTemplate
@@ -37,11 +38,11 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     public Flux<Paste> findAllLegit() {
         var criteria = Criteria
-                .where("date_deleted").isNull()
+                .where(PasteSchema.DATE_DELETED).isNull()
                 .and(
                         Criteria
-                                .where("date_of_expiry").isNull()
-                                .or("date_of_expiry").greaterThan(LocalDateTime.now())
+                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 );
 
         return entityTemplate
@@ -51,10 +52,10 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     @Override
     public Mono<Long> markExpiredPastesForDeletion(final LocalDateTime expiryBefore) {
         var criteria = Criteria
-                .where("date_deleted").isNull()
-                .and("date_of_expiry").lessThan(expiryBefore);
+                .where(PasteSchema.DATE_DELETED).isNull()
+                .and(PasteSchema.DATE_OF_EXPIRY).lessThan(expiryBefore);
 
-        var update = Update.update("date_deleted", LocalDateTime.now());
+        var update = Update.update(PasteSchema.DATE_DELETED, LocalDateTime.now());
 
         return entityTemplate.update(query(criteria), update, Paste.class);
     }

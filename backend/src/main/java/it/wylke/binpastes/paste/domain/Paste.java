@@ -6,28 +6,38 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Table(Paste.TABLE_NAME)
+import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
+
+@Table(PasteSchema.TABLE_NAME)
 public class Paste implements Persistable<String> {
 
-    static final String TABLE_NAME = "pastes";
-
     @Id
+    @Column(PasteSchema.ID)
     private String id;
+    @Column(PasteSchema.TITLE)
     private String title;
+    @Column(PasteSchema.CONTENT)
     private String content;
+    @Column(PasteSchema.IS_ENCRYPTED)
+    private boolean isEncrypted;
 
     @CreatedDate
+    @Column(PasteSchema.DATE_CREATED)
     private LocalDateTime dateCreated;
+    @Column(PasteSchema.DATE_OF_EXPIRY)
     private LocalDateTime dateOfExpiry;
     @SuppressWarnings("unused")
+    @Column(PasteSchema.DATE_DELETED)
     private LocalDateTime dateDeleted;
     @SuppressWarnings("unused")
-    private String remoteIp;
+    @Column(PasteSchema.REMOTE_ADDRESS)
+    private String remoteAddress;
 
     public static Paste newInstance(String content, String title, String remoteIp, LocalDateTime dateOfExpiry) {
         return NewPaste.newInstance(content, title, remoteIp, dateOfExpiry);
@@ -57,6 +67,10 @@ public class Paste implements Persistable<String> {
         return content;
     }
 
+    public boolean isEncrypted() {
+        return this.isEncrypted;
+    }
+
     public LocalDateTime getDateOfExpiry() {
         return dateOfExpiry;
     }
@@ -81,8 +95,13 @@ public class Paste implements Persistable<String> {
         return this;
     }
 
-    protected Paste setRemoteIp(final String remoteIp) {
-        this.remoteIp = remoteIp;
+    protected Paste setIsEncrypted(final boolean isEncrypted) {
+        this.isEncrypted = isEncrypted;
+        return this;
+    }
+
+    protected Paste setRemoteAddress(final String remoteAddress) {
+        this.remoteAddress = remoteAddress;
         return this;
     }
 
@@ -121,7 +140,8 @@ public class Paste implements Persistable<String> {
                     .setId(IdGenerator.newStringId())
                     .setTitle(title)
                     .setContent(Objects.requireNonNull(content))
-                    .setRemoteIp(remoteIp)
+                    .setIsEncrypted(false)
+                    .setRemoteAddress(remoteIp)
                     .setDateOfExpiry(dateOfExpiry);
         }
 
@@ -129,5 +149,20 @@ public class Paste implements Persistable<String> {
         public boolean isNew() {
             return true;
         }
+    }
+
+    static final class PasteSchema {
+
+        public static final String TABLE_NAME = "pastes";
+
+        public static final String ID = "id";
+        public static final String TITLE = "title";
+        public static final String CONTENT = "content";
+        public static final String IS_ENCRYPTED = "is_encrypted";
+        public static final String DATE_CREATED = "date_created";
+        public static final String DATE_OF_EXPIRY = "date_of_expiry";
+        public static final String DATE_DELETED = "date_deleted";
+        public static final String REMOTE_ADDRESS = "remote_address";
+
     }
 }

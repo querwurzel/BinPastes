@@ -10,6 +10,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
+
 @Primary
 @Profile("mysql")
 @Component
@@ -37,33 +39,47 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
 
+        var query = String.format("""
+                    SELECT * FROM %s
+                    WHERE %s IS NULL
+                    AND (%s IS NULL OR %s > ?expiryAfter)
+                    AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE)""".strip(),
+                PasteSchema.TABLE_NAME,
+                PasteSchema.DATE_DELETED,
+                PasteSchema.DATE_OF_EXPIRY,
+                PasteSchema.DATE_OF_EXPIRY,
+                PasteSchema.TITLE,
+                PasteSchema.CONTENT
+        );
+
         return Mono.from(connectionFactory.create())
             .flatMap(mySqlConnection -> Mono.from(mySqlConnection
-                        .createStatement("SELECT * FROM pastes WHERE date_deleted IS NULL AND (date_of_expiry IS NULL OR date_of_expiry > ?expiryAfter) AND MATCH(title, content) AGAINST(?text IN BOOLEAN MODE)")
+                        .createStatement(query)
                         .bind("expiryAfter", LocalDateTime.now())
                         .bind("text", text + '*')
                         .execute()
             ))
             .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
                 var paste = new Paste();
-                paste.setId(row.get("id").toString());
+                paste.setId(row.get(PasteSchema.ID).toString());
 
-                paste.setTitle(row.get("title") == null
+                paste.setTitle(row.get(PasteSchema.TITLE) == null
                         ? null
-                        : row.get("title").toString());
-                paste.setContent(row.get("content").toString());
+                        : row.get(PasteSchema.TITLE).toString());
+                paste.setContent(row.get(PasteSchema.CONTENT).toString());
+                paste.setIsEncrypted(Boolean.parseBoolean(row.get(PasteSchema.IS_ENCRYPTED).toString()));
 
-                paste.setDateCreated(LocalDateTime.parse(row.get("date_created").toString()));
-                paste.setDateOfExpiry(row.get("date_of_expiry") == null
+                paste.setDateCreated(LocalDateTime.parse(row.get(PasteSchema.DATE_CREATED).toString()));
+                paste.setDateOfExpiry(row.get(PasteSchema.DATE_OF_EXPIRY) == null
                         ? null
-                        : LocalDateTime.parse(row.get("date_of_expiry").toString()));
-                paste.setDateDeleted(row.get("date_deleted") == null
+                        : LocalDateTime.parse(row.get(PasteSchema.DATE_OF_EXPIRY).toString()));
+                paste.setDateDeleted(row.get(PasteSchema.DATE_DELETED) == null
                         ? null
-                        : LocalDateTime.parse(row.get("date_deleted").toString()));
+                        : LocalDateTime.parse(row.get(PasteSchema.DATE_DELETED).toString()));
 
-                paste.setRemoteIp(row.get("title") == null
+                paste.setRemoteAddress(row.get(PasteSchema.TITLE) == null
                         ? null
-                        : row.get("title").toString());
+                        : row.get(PasteSchema.TITLE).toString());
                 return paste;
             })));
     }

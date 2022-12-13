@@ -3,6 +3,9 @@ package it.wylke.binpastes.paste.api.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -13,8 +16,11 @@ public record CreateCmd (
                            @NotBlank
                            @Size(min = 5)
                            String content,
+                           Boolean isEncrypted,
                            String expiry
 ) {
+
+    private static final Logger log = LoggerFactory.getLogger(CreateCmd.class);
 
     @Override
     public String title() {
@@ -26,11 +32,17 @@ public record CreateCmd (
         return StringUtils.hasText(content) ? content.strip() : null;
     }
 
+    @Override
+    public Boolean isEncrypted() {
+        return this.isEncrypted != null && this.isEncrypted;
+    }
+
     public LocalDateTime dateOfExpiry() {
         try {
             return ExpirationRanges.valueOf(expiry).toTimestamp();
         } catch (RuntimeException e) {
-            return ExpirationRanges.NEVER.toTimestamp();
+            log.warn("Could not parse ExpirationRanges of {}: {}", expiry, e.getMessage());
+            return ExpirationRanges.ONE_HOUR.toTimestamp();
         }
     }
 

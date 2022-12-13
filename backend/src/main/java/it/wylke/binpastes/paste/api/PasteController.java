@@ -93,6 +93,7 @@ class PasteController {
                     var createCmd = new CreateCmd(
                         formData.getFirst("title"),
                         formData.getFirst("content"),
+                        Boolean.parseBoolean(formData.getFirst("isEncrypted")),
                         formData.getFirst("expiry")
                     );
 
