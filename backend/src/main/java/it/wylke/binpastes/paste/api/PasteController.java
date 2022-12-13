@@ -79,7 +79,7 @@ class PasteController {
                         cmd.content(),
                         cmd.title(),
                         cmd.isEncrypted(),
-                        request.getRemoteAddress().getAddress().getHostAddress(),
+                        remoteAddress(request),
                         cmd.dateOfExpiry()
                 ))
                 .map(SingleView::from);
@@ -108,11 +108,23 @@ class PasteController {
                             createCmd.content(),
                             createCmd.title(),
                             createCmd.isEncrypted(),
-                            ctx.getRequest().getRemoteAddress().getAddress().getHostAddress(),
+                            remoteAddress(ctx.getRequest()),
                             createCmd.dateOfExpiry()
                     );
                 })
                 .map(paste -> new RedirectView("/api/v1/paste/" + paste.getId()));
+    }
+
+    private static String remoteAddress(ServerHttpRequest request) {
+        if (request.getHeaders().containsKey("X-Forwarded-For")) {
+            return request.getHeaders().getFirst("X-Forwarded-For");
+        }
+
+        if (request.getRemoteAddress().getAddress() == null) {
+            return null;
+        }
+
+        return request.getRemoteAddress().getAddress().getHostAddress();
     }
 
 }
