@@ -10,7 +10,7 @@ public record SingleView(
         String content,
         boolean isEncrypted,
         LocalDateTime dateCreated,
-        LocalDateTime expiry
+        LocalDateTime dateOfExpiry
 ) {
     public static SingleView from(Paste reference) {
         return new SingleView(
