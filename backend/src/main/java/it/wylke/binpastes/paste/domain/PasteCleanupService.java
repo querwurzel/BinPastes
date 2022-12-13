@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
 
 @Component
 class PasteCleanupService {
@@ -21,7 +20,6 @@ class PasteCleanupService {
         this.pasteRepository = pasteRepository;
     }
 
-    @Scheduled(initialDelay = 10, fixedDelay = 30, timeUnit = TimeUnit.SECONDS)
     @Scheduled(cron = "0 3 3 * * *" /* 3:03 each day */)
     private void cleanUpExpiredPastes() {
         pasteRepository
