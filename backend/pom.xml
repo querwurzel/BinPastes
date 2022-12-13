@@ -93,7 +93,6 @@
                 <dependency>
                     <groupId>dev.miku</groupId>
                     <artifactId>r2dbc-mysql</artifactId>
-                    <version>0.8.2.RELEASE</version>
                 </dependency>
 
                 <!-- junixsocket -->
