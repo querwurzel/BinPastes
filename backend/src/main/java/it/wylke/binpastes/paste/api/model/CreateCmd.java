@@ -14,12 +14,12 @@ public record CreateCmd (
                            @Size(min = 5)
                            String content,
                            Boolean isEncrypted,
-                           ExpirationRanges expiry
+                           ExpirationRange expiry
 ) {
 
     @Deprecated
     public CreateCmd(String title, String content, String isEncrypted, String expiry) {
-        this(title, content, Boolean.parseBoolean(isEncrypted), ExpirationRanges.valueOf(expiry));
+        this(title, content, Boolean.parseBoolean(isEncrypted), ExpirationRange.valueOf(expiry));
     }
 
     @Override
@@ -39,7 +39,7 @@ public record CreateCmd (
 
     @Override
     @Deprecated
-    public ExpirationRanges expiry() {
+    public ExpirationRange expiry() {
         return expiry;
     }
 
@@ -47,7 +47,7 @@ public record CreateCmd (
         return expiry == null ? null : expiry.toTimestamp();
     }
 
-    private enum ExpirationRanges {
+    private enum ExpirationRange {
         ONE_HOUR {
             @Override
             public LocalDateTime toTimestamp() {
