@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-@CrossOrigin("paste.wilke-it.com")
+@CrossOrigin("https://paste.wilke-it.com")
 @Controller
 @RequestMapping("/api/v1/paste")
 class PasteController {
