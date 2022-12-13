@@ -60,6 +60,7 @@ public class PasteService {
                 .findOneLegitById(id)
                 .map(Paste::markAsDeleted)
                 .flatMap(pasteRepository::save)
+                .doOnSuccess(paste -> log.info("Deleted paste {}", id))
                 .subscribe();
     }
 
