@@ -23,7 +23,7 @@ class PasteCleanupService {
     @Scheduled(cron = "0 3 3 * * *" /* 3:03 each day */)
     private void cleanUpExpiredPastes() {
         pasteRepository
-                .markExpiredPastesForDeletion(LocalDateTime.now())
+                .markExpiredPastesForDeletion()
                 .doFirst(() -> log.info("Expiry: marking expired pastes for deletion .."))
                 .doOnSuccess(count -> {
                     if (count > 0) {

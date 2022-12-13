@@ -50,12 +50,13 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     }
 
     @Override
-    public Mono<Long> markExpiredPastesForDeletion(final LocalDateTime expiryBefore) {
+    public Mono<Long> markExpiredPastesForDeletion() {
+        var dateOfExpiry = LocalDateTime.now();
         var criteria = Criteria
                 .where(PasteSchema.DATE_DELETED).isNull()
-                .and(PasteSchema.DATE_OF_EXPIRY).lessThan(expiryBefore);
+                .and(PasteSchema.DATE_OF_EXPIRY).lessThan(dateOfExpiry);
 
-        var update = Update.update(PasteSchema.DATE_DELETED, LocalDateTime.now());
+        var update = Update.update(PasteSchema.DATE_DELETED, dateOfExpiry);
 
         return entityTemplate.update(query(criteria), update, Paste.class);
     }

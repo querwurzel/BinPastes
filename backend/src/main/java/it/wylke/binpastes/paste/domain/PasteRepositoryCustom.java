@@ -13,6 +13,6 @@ interface PasteRepositoryCustom {
 
     Flux<Paste> searchAllLegitByFullText(String text);
 
-    Mono<Long> markExpiredPastesForDeletion(LocalDateTime expiryBefore);
+    Mono<Long> markExpiredPastesForDeletion();
 
 }
