@@ -5,12 +5,14 @@ import it.wylke.binpastes.paste.api.model.ListView;
 import it.wylke.binpastes.paste.api.model.SingleView;
 import it.wylke.binpastes.paste.domain.PasteService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,14 +56,11 @@ class PasteController {
     }
 
     @GetMapping("/search")
+    @Validated
     @ResponseBody
-    public Mono<ListView> findPastesByFullText(@RequestParam("text") String text) {
-        if (!StringUtils.hasText(text) || text.strip().length() < 3) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-
+    public Mono<ListView> findPastesByFullText(@RequestParam("text") @NotBlank @Size(min = 3) String text) {
         return pasteService
-                .findByFullText(text)
+                .findByFullText(text.strip())
                 .map(SingleView::from)
                 .collectList()
                 .map(ListView::from);

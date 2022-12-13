@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -39,10 +38,6 @@ public class PasteService {
     }
 
     public Flux<Paste> findByFullText(String text) {
-        if (StringUtils.hasText(text) && text.strip().length() < 3) {
-            throw new IllegalArgumentException("Input must have at least 3 characters!");
-        }
-
         var results = pasteRepository.searchAllLegitByFullText(text);
 
         try {
