@@ -44,4 +44,4 @@ For productive use with __MySQL__ run:
 
 I'd like to thank the creator of the original [PasteBin](https://github.com/lordelph/pastebin) in general and the authors of [sticky-notes](https://github.com/sayakb/sticky-notes) and [Paste](https://github.com/jordansamuel/PASTE)
 in particular for their work and efforts in crafting FOSS pastebins for self-hosting.
-I used and enjoyed your tools for quite some years, I even maintained them running with newer PHP versions.
+I used and enjoyed your tools for quite some years, I even maintained them running on newer PHP versions for as long as I could.
