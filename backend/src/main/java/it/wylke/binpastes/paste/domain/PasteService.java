@@ -22,9 +22,9 @@ public class PasteService {
         this.pasteRepository = pasteRepository;
     }
 
-    public Mono<Paste> create(String content, String title, String authorRemoteAddress, LocalDateTime dateOfExpiry) {
+    public Mono<Paste> create(String content, String title, boolean isEncrypted, String authorRemoteAddress, LocalDateTime dateOfExpiry) {
         return Mono
-                .just(Paste.newInstance(content, title, authorRemoteAddress, dateOfExpiry))
+                .just(Paste.newInstance(content, title, isEncrypted, authorRemoteAddress, dateOfExpiry))
                 .flatMap(pasteRepository::save)
                 .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
                 .doOnError(throwable -> log.error("Failed to create new paste", throwable));

@@ -39,8 +39,8 @@ public class Paste implements Persistable<String> {
     @Column(PasteSchema.REMOTE_ADDRESS)
     private String remoteAddress;
 
-    public static Paste newInstance(String content, String title, String remoteAddress, LocalDateTime dateOfExpiry) {
-        return NewPaste.newInstance(content, title, remoteAddress, dateOfExpiry);
+    public static Paste newInstance(String content, String title, boolean isEncrypted, String remoteAddress, LocalDateTime dateOfExpiry) {
+        return NewPaste.newInstance(content, title, isEncrypted, remoteAddress, dateOfExpiry);
     }
 
     @Override
@@ -135,12 +135,12 @@ public class Paste implements Persistable<String> {
 
     private static final class NewPaste extends Paste implements Persistable<String> {
 
-        public static Paste newInstance(String content, String title, String remoteAddress, LocalDateTime dateOfExpiry) {
+        public static Paste newInstance(String content, String title, boolean isEncrypted, String remoteAddress, LocalDateTime dateOfExpiry) {
             return new NewPaste()
                     .setId(IdGenerator.newStringId())
                     .setTitle(title)
                     .setContent(Objects.requireNonNull(content))
-                    .setIsEncrypted(false)
+                    .setIsEncrypted(isEncrypted)
                     .setRemoteAddress(remoteAddress)
                     .setDateOfExpiry(dateOfExpiry);
         }

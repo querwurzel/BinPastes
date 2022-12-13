@@ -106,6 +106,7 @@ class PasteController {
                     return pasteService.create(
                             createCmd.content(),
                             createCmd.title(),
+                            createCmd.isEncrypted(),
                             ctx.getRequest().getRemoteAddress().getAddress().getHostAddress(),
                             createCmd.dateOfExpiry()
                     );
