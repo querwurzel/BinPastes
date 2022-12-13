@@ -77,7 +77,9 @@ class PasteController {
     }
 
     @PostMapping
-    public Mono<RedirectView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CREATED)
+    public Mono<SingleView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
         return createCmd
                 .flatMap(cmd -> pasteService.create(
                         cmd.content(),
@@ -85,8 +87,8 @@ class PasteController {
                         cmd.isEncrypted(),
                         request.getRemoteAddress().getAddress().getHostAddress(),
                         cmd.dateOfExpiry()
-                )
-                .map(paste -> new RedirectView("/api/v1/paste/" + paste.getId())));
+                ))
+                .map(SingleView::from);
     }
 
     @Deprecated
