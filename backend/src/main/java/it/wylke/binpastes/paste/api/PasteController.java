@@ -46,7 +46,7 @@ class PasteController {
         this.validator = validator;
     }
 
-    @GetMapping(value = "/{pasteId}")
+    @GetMapping("/{pasteId:[a-zA-Z0-9]+}")
     @ResponseBody
     public Mono<SingleView> findPaste(@PathVariable("pasteId") String pasteId) {
         return pasteService
@@ -55,7 +55,7 @@ class PasteController {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
-    @DeleteMapping("/{pasteId}")
+    @DeleteMapping("/{pasteId:[a-zA-Z0-9]+}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePaste(@PathVariable("pasteId") String pasteId) {
         pasteService.delete(pasteId);
