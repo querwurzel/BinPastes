@@ -49,28 +49,22 @@ class PasteController {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
-    @DeleteMapping("/{pasteId:[a-zA-Z0-9]+}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePaste(@PathVariable("pasteId") String pasteId) {
-        pasteService.delete(pasteId);
-    }
-
-    @GetMapping("/search")
-    @Validated
-    @ResponseBody
-    public Mono<ListView> findPastesByFullText(@RequestParam("text") @NotBlank @Size(min = 3) String text) {
-        return pasteService
-                .findByFullText(text.strip())
-                .map(SingleView::from)
-                .collectList()
-                .map(ListView::from);
-    }
-
     @GetMapping
     @ResponseBody
     public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
+                .map(SingleView::from)
+                .collectList()
+                .map(ListView::from);
+    }
+
+    @GetMapping("/search")
+    @Validated
+    @ResponseBody
+    public Mono<ListView> searchPastes(@RequestParam("text") @NotBlank @Size(min = 3) String text) {
+        return pasteService
+                .findByFullText(text.strip())
                 .map(SingleView::from)
                 .collectList()
                 .map(ListView::from);
@@ -89,6 +83,12 @@ class PasteController {
                         cmd.dateOfExpiry()
                 ))
                 .map(SingleView::from);
+    }
+
+    @DeleteMapping("/{pasteId:[a-zA-Z0-9]+}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePaste(@PathVariable("pasteId") String pasteId) {
+        pasteService.delete(pasteId);
     }
 
     @Deprecated
