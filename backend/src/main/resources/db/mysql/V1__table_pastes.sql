@@ -7,11 +7,9 @@ CREATE TABLE `pastes` (
      `date_deleted` datetime(6) DEFAULT NULL,
      `title` varchar(512) DEFAULT NULL,
      `content` varchar(4048) NOT NULL,
-     `is_encrypted` TINYINT(1) NOT NULL,
-     PRIMARY KEY (`id`)
+     `is_encrypted` TINYINT NOT NULL,
+     PRIMARY KEY (`id`),
+     FULLTEXT (`title`, `content`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE `pastes`
-     ADD FULLTEXT(`title`, `content`);
-
-CREATE INDEX `legit_pastes` ON `pastes` (date_deleted, date_of_expiry);
+CREATE INDEX `legit_pastes` ON `pastes` (`date_deleted`, `date_of_expiry`);
