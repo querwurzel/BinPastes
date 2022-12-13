@@ -3,10 +3,34 @@
 <head>
     <meta charset="UTF-8" />
     <title>BinPastes</title>
+    <style>
+        button, input[type=submit] {
+            cursor: pointer;
+        }
+</style>
 </head>
 <body>
 
 <h1>BinPastes</h1>
+
+<form method="get" action="/api/v1/paste/search">
+
+    <fieldset>
+        <div>
+            <label for="text">Search</label>
+            <input type="text" id="text" name="text" required="required" minlength="3" />
+            <input type="submit" value="Find" />
+            <a href="/api/v1/paste">
+                <button type="button">Overview</button>
+            </a>
+        </div>
+    </fieldset>
+
+</form>
+
+<br/>
+<br/>
+<br/>
 
 <form method="post" action="/api/v1/paste">
 
@@ -30,33 +54,12 @@
         <hr/>
         <div>
             <label for="content">Content</label>
-            <textarea id="content" name="content" minlength="5" maxlength="4096" required="required" autofocus="autofocus" rows="20" cols="75"></textarea>
+            <textarea id="content" name="content" minlength="5" maxlength="4096" required="required" autofocus="autofocus" rows="20" cols="65"></textarea>
         </div>
     </fieldset>
 
     <fieldset>
-        <input type="submit" value="Submit" />
-    </fieldset>
-
-</form>
-
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-
-<form method="get" action="/api/v1/paste/search">
-
-    <fieldset>
-        <div>
-            <label for="text">Suche</label>
-            <input type="text" id="text" name="text" required="required" minlength="3" />
-        </div>
-    </fieldset>
-
-    <fieldset>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Paste" />
     </fieldset>
 
 </form>
