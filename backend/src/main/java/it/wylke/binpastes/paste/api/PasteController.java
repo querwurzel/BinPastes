@@ -36,7 +36,7 @@ class PasteController {
     private final PasteService pasteService;
 
     @Autowired
-    PasteController(final PasteService pasteService) {
+    public PasteController(final PasteService pasteService) {
         this.pasteService = pasteService;
     }
 
