@@ -1,12 +1,9 @@
 package it.wylke.binpastes.paste.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import it.wylke.binpastes.util.IdGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
@@ -16,7 +13,7 @@ import java.util.Objects;
 import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
 
 @Table(PasteSchema.TABLE_NAME)
-public class Paste implements Persistable<String> {
+public class Paste {
 
     @Id
     @Column(PasteSchema.ID)
@@ -53,17 +50,16 @@ public class Paste implements Persistable<String> {
             PasteExposure exposure,
             String remoteAddress
     ) {
-        return NewPaste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress);
+        return new Paste()
+                .setId(IdGenerator.newStringId())
+                .setTitle(title)
+                .setContent(Objects.requireNonNull(content))
+                .setIsEncrypted(isEncrypted)
+                .setExposure(Objects.requireNonNull(exposure))
+                .setRemoteAddress(remoteAddress)
+                .setDateOfExpiry(dateOfExpiry);
     }
 
-    @Override
-    @JsonIgnore
-    @Transient
-    public boolean isNew() {
-        return false;
-    }
-
-    @Override
     public String getId() {
         return id;
     }
@@ -166,33 +162,6 @@ public class Paste implements Persistable<String> {
     @Override
     public int hashCode() {
         return Objects.hash(id);
-    }
-
-    private static final class NewPaste extends Paste implements Persistable<String> {
-
-        public static Paste newInstance(
-                String title,
-                String content,
-                LocalDateTime dateOfExpiry,
-                boolean isEncrypted,
-                PasteExposure exposure,
-                String remoteAddress
-        ) {
-            return new NewPaste()
-                    .setId(IdGenerator.newStringId())
-                    .setViews(0L)
-                    .setTitle(title)
-                    .setContent(Objects.requireNonNull(content))
-                    .setIsEncrypted(isEncrypted)
-                    .setExposure(Objects.requireNonNull(exposure))
-                    .setRemoteAddress(remoteAddress)
-                    .setDateOfExpiry(dateOfExpiry);
-        }
-
-        @Override
-        public boolean isNew() {
-            return true;
-        }
     }
 
     public enum PasteExposure {
