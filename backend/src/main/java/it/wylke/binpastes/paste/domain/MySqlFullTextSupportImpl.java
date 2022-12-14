@@ -65,26 +65,27 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
             ))
             .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
                 var paste = new Paste();
-                paste.setId(row.get(PasteSchema.ID).toString());
+                paste.setId(row.get(PasteSchema.ID, String.class));
+                paste.setViews(row.get(PasteSchema.VIEWS, Long.class));
 
                 paste.setTitle(row.get(PasteSchema.TITLE) == null
                         ? null
-                        : row.get(PasteSchema.TITLE).toString());
-                paste.setContent(row.get(PasteSchema.CONTENT).toString());
-                paste.setIsEncrypted(Boolean.parseBoolean(row.get(PasteSchema.IS_ENCRYPTED).toString()));
-                paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE).toString()));
+                        : row.get(PasteSchema.TITLE, String.class));
+                paste.setContent(row.get(PasteSchema.CONTENT, String.class));
+                paste.setIsEncrypted(Boolean.parseBoolean(row.get(PasteSchema.IS_ENCRYPTED, String.class)));
+                paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE, String.class)));
 
-                paste.setDateCreated(LocalDateTime.parse(row.get(PasteSchema.DATE_CREATED).toString()));
+                paste.setDateCreated(LocalDateTime.parse(row.get(PasteSchema.DATE_CREATED, CharSequence.class)));
                 paste.setDateOfExpiry(row.get(PasteSchema.DATE_OF_EXPIRY) == null
                         ? null
-                        : LocalDateTime.parse(row.get(PasteSchema.DATE_OF_EXPIRY).toString()));
+                        : LocalDateTime.parse(row.get(PasteSchema.DATE_OF_EXPIRY, CharSequence.class)));
                 paste.setDateDeleted(row.get(PasteSchema.DATE_DELETED) == null
                         ? null
-                        : LocalDateTime.parse(row.get(PasteSchema.DATE_DELETED).toString()));
+                        : LocalDateTime.parse(row.get(PasteSchema.DATE_DELETED, CharSequence.class)));
 
                 paste.setRemoteAddress(row.get(PasteSchema.REMOTE_ADDRESS) == null
                         ? null
-                        : row.get(PasteSchema.REMOTE_ADDRESS).toString());
+                        : row.get(PasteSchema.REMOTE_ADDRESS, String.class));
                 return paste;
             })));
     }

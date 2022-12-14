@@ -5,6 +5,7 @@ import it.wylke.binpastes.util.IdGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -20,6 +21,9 @@ public class Paste implements Persistable<String> {
     @Id
     @Column(PasteSchema.ID)
     private String id;
+    @Version
+    @Column(PasteSchema.VIEWS)
+    private Long views;
     @Column(PasteSchema.TITLE)
     private String title;
     @Column(PasteSchema.CONTENT)
@@ -64,6 +68,10 @@ public class Paste implements Persistable<String> {
         return id;
     }
 
+    public Long getViews() {
+        return views;
+    }
+
     public LocalDateTime getDateCreated() {
         return this.dateCreated;
     }
@@ -88,13 +96,22 @@ public class Paste implements Persistable<String> {
         return exposure;
     }
 
-    public Paste markAsDeleted() {
-        this.dateDeleted = LocalDateTime.now();
+    public boolean isOneTime() {
+        return exposure == PasteExposure.ONCE;
+    }
+
+    public Paste markAsExpired() {
+        this.dateOfExpiry = LocalDateTime.now();
         return this;
     }
 
     protected Paste setId(final String id) {
         this.id = id;
+        return this;
+    }
+
+    protected Paste setViews(final Long views) {
+        this.views = views;
         return this;
     }
 
@@ -163,6 +180,7 @@ public class Paste implements Persistable<String> {
         ) {
             return new NewPaste()
                     .setId(IdGenerator.newStringId())
+                    .setViews(0L)
                     .setTitle(title)
                     .setContent(Objects.requireNonNull(content))
                     .setIsEncrypted(isEncrypted)
@@ -179,7 +197,8 @@ public class Paste implements Persistable<String> {
 
     public enum PasteExposure {
         PUBLIC,
-        UNLISTED
+        UNLISTED,
+        ONCE
     }
 
     public static final class PasteSchema {
@@ -187,6 +206,7 @@ public class Paste implements Persistable<String> {
         public static final String TABLE_NAME = "pastes";
 
         public static final String ID = "id";
+        public static final String VIEWS = "views";
         public static final String TITLE = "title";
         public static final String CONTENT = "content";
         public static final String IS_ENCRYPTED = "is_encrypted";

@@ -8,7 +8,9 @@ public record SingleView(
         String id,
         String title,
         String content,
+        long views,
         boolean isEncrypted,
+        boolean isOneTime,
         LocalDateTime dateCreated,
         LocalDateTime dateOfExpiry
 ) {
@@ -17,7 +19,9 @@ public record SingleView(
                 reference.getId(),
                 reference.getTitle(),
                 reference.getContent(),
+                reference.getViews(),
                 reference.isEncrypted(),
+                reference.isOneTime(),
                 reference.getDateCreated(),
                 reference.getDateOfExpiry()
         );

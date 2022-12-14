@@ -55,7 +55,8 @@ public record CreateCmd (
 
     public enum Exposure {
         PUBLIC,
-        UNLISTED;
+        UNLISTED,
+        ONCE
     }
 
     private enum ExpirationRange {

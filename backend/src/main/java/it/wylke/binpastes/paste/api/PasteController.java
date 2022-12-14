@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -28,6 +29,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import static it.wylke.binpastes.paste.api.model.ListView.*;
 import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 
 @CrossOrigin("https://paste.wilke-it.com")
@@ -56,7 +58,7 @@ class PasteController {
     public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
-                .map(SingleView::from)
+                .map(ListItemView::from)
                 .collectList()
                 .map(ListView::from);
     }
@@ -67,7 +69,7 @@ class PasteController {
     public Mono<ListView> searchPastes(@RequestParam("text") @NotBlank @Size(min = 3) String text) {
         return pasteService
                 .findByFullText(text.strip())
-                .map(SingleView::from)
+                .map(ListItemView::from)
                 .collectList()
                 .map(ListView::from);
     }
@@ -117,7 +119,7 @@ class PasteController {
                             remoteAddress(ctx.getRequest())
                     );
                 })
-                .map(paste -> new RedirectView("/api/v1/paste/" + paste.getId()));
+                .map(paste -> new RedirectView("/#" + paste.getId()));
     }
 
     private static String remoteAddress(ServerHttpRequest request) {

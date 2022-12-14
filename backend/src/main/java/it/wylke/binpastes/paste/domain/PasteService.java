@@ -39,7 +39,18 @@ public class PasteService {
     }
 
     public Mono<Paste> find(String id) {
-        return pasteRepository.findOneLegitById(id);
+        return pasteRepository
+                .findOneLegitById(id)
+                .flatMap(this::trackAccess);
+    }
+
+    private Mono<Paste> trackAccess(Paste paste) {
+        if (paste.isOneTime()) {
+            log.info("OneTime paste {} viewed and burnt", paste.getId());
+            paste.markAsExpired();
+        }
+
+        return pasteRepository.save(paste);
     }
 
     public Flux<Paste> findAll() {
@@ -62,7 +73,7 @@ public class PasteService {
     public void delete(String id) {
         pasteRepository
                 .findOneLegitById(id)
-                .map(Paste::markAsDeleted)
+                .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
                 .doOnSuccess(paste -> log.info("Deleted paste {}", id))
                 .subscribe();
