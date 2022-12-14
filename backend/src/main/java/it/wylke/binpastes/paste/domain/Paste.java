@@ -26,6 +26,8 @@ public class Paste implements Persistable<String> {
     private String content;
     @Column(PasteSchema.IS_ENCRYPTED)
     private boolean isEncrypted;
+    @Column(PasteSchema.EXPOSURE)
+    private PasteExposure exposure;
 
     @CreatedDate
     @Column(PasteSchema.DATE_CREATED)
@@ -39,8 +41,15 @@ public class Paste implements Persistable<String> {
     @Column(PasteSchema.REMOTE_ADDRESS)
     private String remoteAddress;
 
-    public static Paste newInstance(String content, String title, boolean isEncrypted, String remoteAddress, LocalDateTime dateOfExpiry) {
-        return NewPaste.newInstance(content, title, isEncrypted, remoteAddress, dateOfExpiry);
+    public static Paste newInstance(
+            String title,
+            String content,
+            LocalDateTime dateOfExpiry,
+            boolean isEncrypted,
+            PasteExposure exposure,
+            String remoteAddress
+    ) {
+        return NewPaste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress);
     }
 
     @Override
@@ -67,12 +76,16 @@ public class Paste implements Persistable<String> {
         return content;
     }
 
+    public LocalDateTime getDateOfExpiry() {
+        return dateOfExpiry;
+    }
+
     public boolean isEncrypted() {
         return this.isEncrypted;
     }
 
-    public LocalDateTime getDateOfExpiry() {
-        return dateOfExpiry;
+    public PasteExposure getExposure() {
+        return exposure;
     }
 
     public Paste markAsDeleted() {
@@ -97,6 +110,11 @@ public class Paste implements Persistable<String> {
 
     protected Paste setIsEncrypted(final boolean isEncrypted) {
         this.isEncrypted = isEncrypted;
+        return this;
+    }
+
+    protected Paste setExposure(final PasteExposure exposure) {
+        this.exposure = exposure;
         return this;
     }
 
@@ -135,12 +153,20 @@ public class Paste implements Persistable<String> {
 
     private static final class NewPaste extends Paste implements Persistable<String> {
 
-        public static Paste newInstance(String content, String title, boolean isEncrypted, String remoteAddress, LocalDateTime dateOfExpiry) {
+        public static Paste newInstance(
+                String title,
+                String content,
+                LocalDateTime dateOfExpiry,
+                boolean isEncrypted,
+                PasteExposure exposure,
+                String remoteAddress
+        ) {
             return new NewPaste()
                     .setId(IdGenerator.newStringId())
                     .setTitle(title)
                     .setContent(Objects.requireNonNull(content))
                     .setIsEncrypted(isEncrypted)
+                    .setExposure(Objects.requireNonNull(exposure))
                     .setRemoteAddress(remoteAddress)
                     .setDateOfExpiry(dateOfExpiry);
         }
@@ -151,7 +177,12 @@ public class Paste implements Persistable<String> {
         }
     }
 
-    static final class PasteSchema {
+    public enum PasteExposure {
+        PUBLIC,
+        UNLISTED
+    }
+
+    public static final class PasteSchema {
 
         public static final String TABLE_NAME = "pastes";
 
@@ -159,6 +190,7 @@ public class Paste implements Persistable<String> {
         public static final String TITLE = "title";
         public static final String CONTENT = "content";
         public static final String IS_ENCRYPTED = "is_encrypted";
+        public static final String EXPOSURE = "exposure";
         public static final String DATE_CREATED = "date_created";
         public static final String DATE_OF_EXPIRY = "date_of_expiry";
         public static final String DATE_DELETED = "date_deleted";

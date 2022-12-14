@@ -14,12 +14,13 @@ public record CreateCmd (
                            @Size(min = 5)
                            String content,
                            Boolean isEncrypted,
-                           ExpirationRange expiry
+                           ExpirationRange expiry,
+                           Exposure exposure
 ) {
 
     @Deprecated
-    public CreateCmd(String title, String content, String isEncrypted, String expiry) {
-        this(title, content, Boolean.parseBoolean(isEncrypted), ExpirationRange.valueOf(expiry));
+    public CreateCmd(String title, String content, String isEncrypted, String expiry, String exposure) {
+        this(title, content, Boolean.parseBoolean(isEncrypted), ExpirationRange.valueOf(expiry), Exposure.valueOf(exposure));
     }
 
     @Override
@@ -29,12 +30,17 @@ public record CreateCmd (
 
     @Override
     public String content() {
-        return StringUtils.hasText(content) ? content.strip() : null;
+        return StringUtils.hasText(content) ? content : null;
     }
 
     @Override
     public Boolean isEncrypted() {
-        return this.isEncrypted != null && this.isEncrypted;
+        return isEncrypted != null && isEncrypted;
+    }
+
+    @Override
+    public Exposure exposure() {
+        return exposure == null ? Exposure.PUBLIC : exposure;
     }
 
     @Override
@@ -45,6 +51,11 @@ public record CreateCmd (
 
     public LocalDateTime dateOfExpiry() {
         return expiry == null ? null : expiry.toTimestamp();
+    }
+
+    public enum Exposure {
+        PUBLIC,
+        UNLISTED;
     }
 
     private enum ExpirationRange {

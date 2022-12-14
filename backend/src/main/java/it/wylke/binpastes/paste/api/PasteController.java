@@ -28,6 +28,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
+
 @CrossOrigin("https://paste.wilke-it.com")
 @Controller
 @RequestMapping("/api/v1/paste")
@@ -76,11 +78,12 @@ class PasteController {
     public Mono<SingleView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
         return createCmd
                 .flatMap(cmd -> pasteService.create(
-                        cmd.content(),
                         cmd.title(),
+                        cmd.content(),
+                        cmd.dateOfExpiry(),
                         cmd.isEncrypted(),
-                        remoteAddress(request),
-                        cmd.dateOfExpiry()
+                        PasteExposure.valueOf(cmd.exposure().toString()),
+                        remoteAddress(request)
                 ))
                 .map(SingleView::from);
     }
@@ -101,15 +104,17 @@ class PasteController {
                         formData.getFirst("title"),
                         formData.getFirst("content"),
                         formData.getFirst("isEncrypted"),
-                        formData.getFirst("expiry")
+                        formData.getFirst("expiry"),
+                        formData.getFirst("exposure")
                     );
 
                     return pasteService.create(
-                            createCmd.content(),
                             createCmd.title(),
+                            createCmd.content(),
+                            createCmd.dateOfExpiry(),
                             createCmd.isEncrypted(),
-                            remoteAddress(ctx.getRequest()),
-                            createCmd.dateOfExpiry()
+                            PasteExposure.valueOf(createCmd.exposure().toString()),
+                            remoteAddress(ctx.getRequest())
                     );
                 })
                 .map(paste -> new RedirectView("/api/v1/paste/" + paste.getId()));

@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
 import static org.springframework.data.relational.core.query.Query.query;
 
@@ -39,6 +40,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     public Flux<Paste> findAllLegit() {
         var criteria = Criteria
                 .where(PasteSchema.DATE_DELETED).isNull()
+                .and(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
                 .and(
                         Criteria
                                 .where(PasteSchema.DATE_OF_EXPIRY).isNull()

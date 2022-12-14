@@ -8,6 +8,7 @@ CREATE TABLE `pastes` (
      `title` varchar(512) DEFAULT NULL,
      `content` varchar(4048) NOT NULL,
      `is_encrypted` TINYINT NOT NULL,
+     `exposure` ENUM('PUBLIC', 'UNLISTED') NOT NULL,
      PRIMARY KEY (`id`),
      FULLTEXT (`title`, `content`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

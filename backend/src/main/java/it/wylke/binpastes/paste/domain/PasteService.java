@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
+
 @Service
 public class PasteService {
 
@@ -21,9 +23,16 @@ public class PasteService {
         this.pasteRepository = pasteRepository;
     }
 
-    public Mono<Paste> create(String content, String title, boolean isEncrypted, String authorRemoteAddress, LocalDateTime dateOfExpiry) {
+    public Mono<Paste> create(
+            String title,
+            String content,
+            LocalDateTime dateOfExpiry,
+            boolean isEncrypted,
+            PasteExposure exposure,
+            String remoteAddress
+    ) {
         return Mono
-                .just(Paste.newInstance(content, title, isEncrypted, authorRemoteAddress, dateOfExpiry))
+                .just(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress))
                 .flatMap(pasteRepository::save)
                 .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
                 .doOnError(throwable -> log.error("Failed to create new paste", throwable));

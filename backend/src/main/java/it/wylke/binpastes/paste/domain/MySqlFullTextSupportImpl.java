@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
 
 @Primary
@@ -41,10 +42,12 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
         var query = String.format("""
                     SELECT * FROM %s
-                    WHERE %s IS NULL
+                    WHERE %s = ?exposure
+                    AND %s IS NULL
                     AND (%s IS NULL OR %s > ?expiryAfter)
                     AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE)""".strip(),
                 PasteSchema.TABLE_NAME,
+                PasteSchema.EXPOSURE,
                 PasteSchema.DATE_DELETED,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.DATE_OF_EXPIRY,
@@ -55,6 +58,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
         return Mono.from(connectionFactory.create())
             .flatMap(mySqlConnection -> Mono.from(mySqlConnection
                         .createStatement(query)
+                        .bind("exposure", PasteExposure.PUBLIC.name())
                         .bind("expiryAfter", LocalDateTime.now())
                         .bind("text", text + '*')
                         .execute()
@@ -68,6 +72,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
                         : row.get(PasteSchema.TITLE).toString());
                 paste.setContent(row.get(PasteSchema.CONTENT).toString());
                 paste.setIsEncrypted(Boolean.parseBoolean(row.get(PasteSchema.IS_ENCRYPTED).toString()));
+                paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE).toString()));
 
                 paste.setDateCreated(LocalDateTime.parse(row.get(PasteSchema.DATE_CREATED).toString()));
                 paste.setDateOfExpiry(row.get(PasteSchema.DATE_OF_EXPIRY) == null
@@ -77,9 +82,9 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
                         ? null
                         : LocalDateTime.parse(row.get(PasteSchema.DATE_DELETED).toString()));
 
-                paste.setRemoteAddress(row.get(PasteSchema.TITLE) == null
+                paste.setRemoteAddress(row.get(PasteSchema.REMOTE_ADDRESS) == null
                         ? null
-                        : row.get(PasteSchema.TITLE).toString());
+                        : row.get(PasteSchema.REMOTE_ADDRESS).toString());
                 return paste;
             })));
     }

@@ -41,7 +41,7 @@
         </div>
         <hr/>
         <div>
-            <label for="expiry">Expiry Date</label>
+            <label for="expiry">Expires in</label>
             <select id="expiry" name="expiry">
                 <option value="ONE_HOUR" selected="selected">One Hour</option>
                 <option value="ONE_DAY">One Day</option>
@@ -50,6 +50,13 @@
                 <option value="ONE_YEAR">One Year</option>
                 <option value="NEVER">Never</option>
             </select>
+        </div>
+        <hr/>
+        <div>
+            <input type="radio" id="public" name="exposure" value="PUBLIC" checked="checked">
+            <label for="public">Public</label>
+            <input type="radio" id="unlisted" name="exposure" value="UNLISTED">
+            <label for="unlisted">Unlisted</label>
         </div>
         <hr/>
         <div>
