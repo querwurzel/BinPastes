@@ -47,10 +47,10 @@ public class PasteService {
     private Mono<Paste> trackAccess(Paste paste) {
         if (paste.isOneTime()) {
             log.info("OneTime paste {} viewed and burnt", paste.getId());
-            paste.markAsExpired();
+            return pasteRepository.save(paste.markAsExpired());
         }
 
-        return pasteRepository.save(paste);
+        return Mono.just(paste);
     }
 
     public Flux<Paste> findAll() {
