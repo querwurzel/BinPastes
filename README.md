@@ -5,9 +5,10 @@ My turn on creating a simple pastebin.
 
 ## Features
 
-* overview of notes / full-text search through title and content
+* overview of notes / full-text search
 * expiry of notes after some time (or never if desired)
-* client-side encryption of the content
+* adjustable visibility of notes (exposure) 
+* client-side encryption of content
 * easy setup, single binary
     * zero knowledge required about the build tools, frameworks or programming language I chose
 
