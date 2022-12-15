@@ -19,8 +19,8 @@ public class Paste {
     @Column(PasteSchema.ID)
     private String id;
     @Version
-    @Column(PasteSchema.VIEWS)
-    private Long views;
+    @Column(PasteSchema.VERSION)
+    private Long version;
     @Column(PasteSchema.TITLE)
     private String title;
     @Column(PasteSchema.CONTENT)
@@ -64,10 +64,6 @@ public class Paste {
         return id;
     }
 
-    public Long getViews() {
-        return views;
-    }
-
     public LocalDateTime getDateCreated() {
         return this.dateCreated;
     }
@@ -106,8 +102,8 @@ public class Paste {
         return this;
     }
 
-    protected Paste setViews(final Long views) {
-        this.views = views;
+    protected Paste setVersion(final Long version) {
+        this.version = version;
         return this;
     }
 
@@ -175,7 +171,7 @@ public class Paste {
         public static final String TABLE_NAME = "pastes";
 
         public static final String ID = "id";
-        public static final String VIEWS = "views";
+        public static final String VERSION = "version";
         public static final String TITLE = "title";
         public static final String CONTENT = "content";
         public static final String IS_ENCRYPTED = "is_encrypted";

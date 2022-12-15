@@ -66,7 +66,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
             .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
                 var paste = new Paste();
                 paste.setId(row.get(PasteSchema.ID, String.class));
-                paste.setViews(row.get(PasteSchema.VIEWS, Long.class));
+                paste.setVersion(row.get(PasteSchema.VERSION, Long.class));
 
                 paste.setTitle(row.get(PasteSchema.TITLE) == null
                         ? null

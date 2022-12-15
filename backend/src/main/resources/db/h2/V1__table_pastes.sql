@@ -1,7 +1,7 @@
 
 create table pastes (
     id varchar(255) not null,
-    views bigint not null,
+    version bigint not null,
     remote_address varchar(255),
     date_created timestamp not null,
     date_of_expiry timestamp,

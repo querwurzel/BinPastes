@@ -1,7 +1,7 @@
 
 CREATE TABLE `pastes` (
      `id` varchar(255) NOT NULL,
-     `views` BigInt NOT NULL,
+     `version` BigInt NOT NULL,
      `remote_address` varchar(255) DEFAULT NULL,
      `date_created` datetime(6) NOT NULL,
      `date_of_expiry` datetime(6) DEFAULT NULL,
