@@ -28,7 +28,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import static it.wylke.binpastes.paste.api.model.ListView.*;
+import static it.wylke.binpastes.paste.api.model.ListView.ListItemView;
 import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 
 @CrossOrigin("https://paste.wilke-it.com")

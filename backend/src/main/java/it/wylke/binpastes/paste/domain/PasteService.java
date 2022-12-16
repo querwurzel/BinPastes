@@ -31,9 +31,8 @@ public class PasteService {
             PasteExposure exposure,
             String remoteAddress
     ) {
-        return Mono
-                .just(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress))
-                .flatMap(pasteRepository::save)
+        return pasteRepository
+                .save(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress))
                 .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
                 .doOnError(throwable -> log.error("Failed to create new paste", throwable));
     }
@@ -58,16 +57,11 @@ public class PasteService {
     }
 
     public Flux<Paste> findByFullText(String text) {
-        var results = pasteRepository.searchAllLegitByFullText(text);
-
-        // TODO try out
-        // transformDeferred()
-        // zip()
-
-        return results
-                .count()
-                .doOnSuccess(count -> log.info("Found {} pastes searching for: {}", count, text))
-                .thenMany(results);
+        return pasteRepository
+                .searchAllLegitByFullText(text)
+                .collectList()
+                .doOnSuccess(pastes -> log.info("Found {} pastes searching for: {}", pastes.size(), text))
+                .flatMapMany(Flux::fromIterable);
     }
 
     public void delete(String id) {
