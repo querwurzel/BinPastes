@@ -1,6 +1,5 @@
 package it.wylke.binpastes.paste.domain;
 
-import io.r2dbc.spi.Statement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -61,13 +60,13 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
                 ))
                 .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
                     var paste = new Paste();
-                    paste.setId(row.get(PasteSchema.ID, String.class));
-                    paste.setVersion(row.get(PasteSchema.VERSION, Long.class));
+                    paste.setId(row.get(PasteSchema.ID).toString());
+                    paste.setVersion(Long.parseLong(row.get(PasteSchema.VERSION).toString()));
 
                     paste.setTitle(row.get(PasteSchema.TITLE) == null
                             ? null
-                            : row.get(PasteSchema.TITLE, String.class));
-                    paste.setContent(row.get(PasteSchema.CONTENT, String.class));
+                            : row.get(PasteSchema.TITLE).toString());
+                    paste.setContent(row.get(PasteSchema.CONTENT).toString());
                     paste.setIsEncrypted(Boolean.parseBoolean(row.get(PasteSchema.IS_ENCRYPTED).toString()));
                     paste.setExposure(row.get(PasteSchema.EXPOSURE, PasteExposure.class));
 
@@ -81,7 +80,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
                     paste.setRemoteAddress(row.get(PasteSchema.REMOTE_ADDRESS) == null
                             ? null
-                            : row.get(PasteSchema.REMOTE_ADDRESS, String.class));
+                            : row.get(PasteSchema.REMOTE_ADDRESS).toString());
                     return paste;
                 })));
     }

@@ -29,7 +29,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import static it.wylke.binpastes.paste.api.model.ListView.ListItemView;
-import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 
 @CrossOrigin("https://paste.wilke-it.com")
 @Controller
@@ -83,7 +82,7 @@ class PasteController {
                         cmd.content(),
                         cmd.dateOfExpiry(),
                         cmd.isEncrypted(),
-                        PasteExposure.valueOf(cmd.exposure().toString()),
+                        cmd.pasteExposure(),
                         remoteAddress(request)
                 ))
                 .map(SingleView::from);
@@ -114,7 +113,7 @@ class PasteController {
                             createCmd.content(),
                             createCmd.dateOfExpiry(),
                             createCmd.isEncrypted(),
-                            PasteExposure.valueOf(createCmd.exposure().toString()),
+                            createCmd.pasteExposure(),
                             remoteAddress(ctx.getRequest())
                     );
                 })

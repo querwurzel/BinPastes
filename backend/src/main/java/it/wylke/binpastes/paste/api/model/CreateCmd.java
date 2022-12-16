@@ -43,16 +43,15 @@ public record CreateCmd (
     }
 
     @Override
+    @Deprecated
     public Exposure exposure() {
-        return exposure == null
-                ? Exposure.PUBLIC // default exposure if not set
-                : exposure;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     @Deprecated
     public ExpirationRange expiry() {
-        return expiry;
+        throw new UnsupportedOperationException();
     }
 
     public LocalDateTime dateOfExpiry() {
@@ -61,7 +60,13 @@ public record CreateCmd (
                 : expiry.toTimestamp();
     }
 
-    public enum Exposure {
+    public String pasteExposure() {
+        return exposure == null
+                ? Exposure.PUBLIC.name() // default exposure if not set
+                : exposure.name();
+    }
+
+    private enum Exposure {
         PUBLIC,
         UNLISTED,
         ONCE
