@@ -25,12 +25,16 @@ public record CreateCmd (
 
     @Override
     public String title() {
-        return StringUtils.hasText(title) ? title.strip() : null;
+        return StringUtils.hasText(title)
+                ? title.strip()
+                : null;
     }
 
     @Override
     public String content() {
-        return StringUtils.hasText(content) ? content : null;
+        return StringUtils.hasText(content)
+                ? content
+                : null;
     }
 
     @Override
@@ -40,7 +44,9 @@ public record CreateCmd (
 
     @Override
     public Exposure exposure() {
-        return exposure == null ? Exposure.PUBLIC : exposure;
+        return exposure == null
+                ? Exposure.PUBLIC // default exposure if not set
+                : exposure;
     }
 
     @Override
@@ -50,7 +56,9 @@ public record CreateCmd (
     }
 
     public LocalDateTime dateOfExpiry() {
-        return expiry == null ? null : expiry.toTimestamp();
+        return expiry == null
+                ? ExpirationRange.ONE_DAY.toTimestamp() // default expiry if not set
+                : expiry.toTimestamp();
     }
 
     public enum Exposure {

@@ -60,14 +60,14 @@ public class PasteService {
     public Flux<Paste> findByFullText(String text) {
         var results = pasteRepository.searchAllLegitByFullText(text);
 
-        try {
-            return results;
-        } finally {
-            results
+        // TODO try out
+        // transformDeferred()
+        // zip()
+
+        return results
                 .count()
-                // TODO clarify: Calling 'subscribe' in non-blocking context is not recommended
-                .subscribe(count -> log.info("Found {} pastes searching for: {}", count, text));
-        }
+                .doOnSuccess(count -> log.info("Found {} pastes searching for: {}", count, text))
+                .thenMany(results);
     }
 
     public void delete(String id) {
