@@ -62,6 +62,7 @@ class PasteController {
     public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NO_CONTENT)))
                 .map(ListItemView::from)
                 .collectList()
                 .map(ListView::from);
@@ -71,7 +72,8 @@ class PasteController {
     @ResponseBody
     public Mono<ListView> searchPastes(@RequestParam("text") @NotBlank @Size(min = 3) @Pattern(regexp = "[\\pL\\pN\\s]+") String text) {
         return pasteService
-                .findByFullText(text.strip())
+                .findByFullText(text)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NO_CONTENT)))
                 .map(ListItemView::from)
                 .collectList()
                 .map(ListView::from);

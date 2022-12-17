@@ -69,7 +69,7 @@ public class PasteService {
                 .findOneLegitById(id)
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnSuccess(paste -> log.info("Deleted paste {}", id))
+                .doOnNext(paste -> log.info("Deleted paste {}", id))
                 .subscribe();
     }
 
