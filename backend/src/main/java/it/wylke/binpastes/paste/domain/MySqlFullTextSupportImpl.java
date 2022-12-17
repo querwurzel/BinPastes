@@ -52,11 +52,11 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
         return Mono.from(connectionFactory.create())
                 .flatMap(mySqlConnection -> Mono.from(mySqlConnection
-                            .createStatement(query)
-                            .bind("exposure", PasteExposure.PUBLIC.name())
-                            .bind("expiryAfter", LocalDateTime.now())
-                            .bind("text", text + '*')
-                            .execute()
+                        .createStatement(query)
+                        .bind("exposure", PasteExposure.PUBLIC.name())
+                        .bind("expiryAfter", LocalDateTime.now())
+                        .bind("text", text + '*')
+                        .execute()
                 ))
                 .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
                     var paste = new Paste();
