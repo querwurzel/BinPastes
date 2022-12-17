@@ -27,7 +27,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
     @Override
     public Flux<Paste> searchByFullText(final String text) {
-        /**
+        /*
          * Seems not to be supported by dev.miku:r2dbc-mysql
          * java.lang.IllegalArgumentException: Cannot encode value of type 'class io.r2dbc.spi.Parameters$InParameter'
          **/
@@ -35,7 +35,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
         entityTemplate
                 .getDatabaseClient()
                 .sql("SELECT * FROM pastes WHERE date_deleted IS NULL AND (date_of_expiry IS NULL OR date_of_expiry > CURRENT_TIMESTAMP) AND MATCH(title, content) AGAINST(?text IN BOOLEAN MODE)")
-                .bind("text", Parameters.inOut(R2dbcType.VARCHAR, text + '*'))
+                .bind("text", text + '*'))
 */
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
