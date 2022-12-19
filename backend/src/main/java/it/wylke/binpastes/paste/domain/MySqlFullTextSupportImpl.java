@@ -34,16 +34,15 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 /*
         entityTemplate
                 .getDatabaseClient()
-                .sql("SELECT * FROM pastes WHERE date_deleted IS NULL AND (date_of_expiry IS NULL OR date_of_expiry > CURRENT_TIMESTAMP) AND MATCH(title, content) AGAINST(?text IN BOOLEAN MODE)")
+                .sql("SELECT * FROM pastes WHERE (date_of_expiry IS NULL OR date_of_expiry > CURRENT_TIMESTAMP) AND MATCH(title, content) AGAINST(?text IN BOOLEAN MODE)")
                 .bind("text", text + '*'))
 */
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
 
-        var query = String.format("SELECT * FROM %s WHERE %s = ?exposure AND %s IS NULL AND (%s IS NULL OR %s > ?expiryAfter) AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE)".strip(),
+        var query = String.format("SELECT * FROM %s WHERE %s = ?exposure AND (%s IS NULL OR %s > ?expiryAfter) AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE)".strip(),
                 PasteSchema.TABLE_NAME,
                 PasteSchema.EXPOSURE,
-                PasteSchema.DATE_DELETED,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.TITLE,

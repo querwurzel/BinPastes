@@ -26,7 +26,6 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     public Mono<Paste> findOneLegitById(String id) {
         var criteria = Criteria
                 .where(PasteSchema.ID).is(id)
-                .and(PasteSchema.DATE_DELETED).isNull()
                 .and(
                         Criteria
                                 .where(PasteSchema.DATE_OF_EXPIRY).isNull()
@@ -39,8 +38,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     public Flux<Paste> findAllLegit() {
         var criteria = Criteria
-                .where(PasteSchema.DATE_DELETED).isNull()
-                .and(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
                 .and(
                         Criteria
                                 .where(PasteSchema.DATE_OF_EXPIRY).isNull()

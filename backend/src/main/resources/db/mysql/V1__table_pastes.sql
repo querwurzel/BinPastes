@@ -14,4 +14,4 @@ CREATE TABLE `pastes` (
      FULLTEXT (`title`, `content`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE INDEX `legit_pastes` ON `pastes` (`date_deleted`, `date_of_expiry`);
+CREATE INDEX `pastes_ttl` ON `pastes` (`date_deleted`, `date_of_expiry`);

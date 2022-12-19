@@ -26,7 +26,7 @@ public class Paste {
     @Column(PasteSchema.CONTENT)
     private String content;
     @Column(PasteSchema.IS_ENCRYPTED)
-    private boolean isEncrypted;
+    private Boolean isEncrypted;
     @Column(PasteSchema.EXPOSURE)
     private PasteExposure exposure;
 
@@ -102,7 +102,7 @@ public class Paste {
         return this;
     }
 
-    protected Paste setVersion(final Long version) {
+    protected Paste setVersion(final long version) {
         this.version = version;
         return this;
     }
