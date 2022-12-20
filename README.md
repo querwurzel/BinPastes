@@ -34,7 +34,7 @@ TODO
 ### How to build
 
 For productive use with __MySQL__ run:
-`./mvnw clean package -Dmysql`
+`./mvnw clean package -Denv=mysql`
 
 ### How to run
 
