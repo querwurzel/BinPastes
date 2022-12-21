@@ -39,10 +39,10 @@ class PasteCleanupService {
     private void cleanUpDeletedPastes() {
         pasteRepository
                 .deleteByDateDeletedBefore(LocalDateTime.now().minusMonths(6))
-                .doFirst(() -> log.info("Deletion: Deleting pastes marked for deletion permanently .."))
+                .doFirst(() -> log.info("Deletion: deleting pastes marked for deletion .."))
                 .doOnSuccess(count -> {
                     if (count > 0) {
-                        log.warn("Deletion: deleted {} pastes permanently", count);
+                        log.warn("Deletion: deleted {} pastes", count);
                     } else {
                         log.info("Deletion: no qualified pastes found for deletion");
                     }
