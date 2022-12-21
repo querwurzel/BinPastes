@@ -15,6 +15,7 @@ public record ListView(
     public record ListItemView (
             String id,
             String title,
+            int sizeInBytes,
             boolean isEncrypted,
             LocalDateTime dateCreated,
             LocalDateTime dateOfExpiry
@@ -23,6 +24,7 @@ public record ListView(
             return new ListItemView(
                     reference.getId(),
                     reference.getTitle(),
+                    reference.getContent().getBytes().length,
                     reference.isEncrypted(),
                     reference.getDateCreated(),
                     reference.getDateOfExpiry()
