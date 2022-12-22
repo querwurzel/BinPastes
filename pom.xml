@@ -43,7 +43,7 @@
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.0.0</spring-boot-bom.version>
     <junixsocket.version>2.6.1</junixsocket.version>
-    <flyway.version>9.10.1</flyway.version>
+    <flyway.version>9.10.2</flyway.version>
     <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
   </properties>
 
