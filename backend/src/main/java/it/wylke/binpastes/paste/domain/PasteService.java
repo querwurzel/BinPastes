@@ -1,5 +1,6 @@
 package it.wylke.binpastes.paste.domain;
 
+import it.wylke.binpastes.paste.business.tracking.TrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ public class PasteService {
 
     private static final Logger log = LoggerFactory.getLogger(PasteService.class);
 
+    private final TrackingService trackingService;
     private final PasteRepository pasteRepository;
 
     @Autowired
-    public PasteService(final PasteRepository pasteRepository) {
+    public PasteService(final PasteRepository pasteRepository, final TrackingService trackingService) {
         this.pasteRepository = pasteRepository;
+        this.trackingService = trackingService;
     }
 
     public Mono<Paste> create(
@@ -45,12 +48,15 @@ public class PasteService {
     }
 
     private Mono<Paste> trackAccess(Paste paste) {
+        var result = Mono.just(paste);
+
         if (paste.isOneTime()) {
             log.info("OneTime paste {} viewed and burnt", paste.getId());
-            return pasteRepository.save(paste.markAsExpired());
+            result = pasteRepository.save(paste.markAsExpired());
         }
 
-        return Mono.just(paste);
+        trackingService.trackView(paste.getId());
+        return result;
     }
 
     public Flux<Paste> findAll() {

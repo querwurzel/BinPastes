@@ -10,6 +10,8 @@ create table pastes (
     content varchar(4048) not null,
     is_encrypted boolean not null,
     exposure varchar(255) not null,
+    views bigint not null,
+    last_viewed timestamp,
     primary key (id)
 );
 
