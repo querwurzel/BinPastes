@@ -5,16 +5,48 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>it.wylke.binpaste</groupId>
-        <artifactId>binpaste</artifactId>
+        <groupId>it.wylke.binpastes</groupId>
+        <artifactId>binpastes</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>frontend</artifactId>
 
-    <dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>dist</directory>
+            </resource>
+        </resources>
 
-    </dependencies>
+        <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <configuration>
+                    <nodeVersion>v18.12.1</nodeVersion>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
