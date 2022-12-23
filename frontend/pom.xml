@@ -14,12 +14,6 @@
     <artifactId>frontend</artifactId>
 
     <build>
-        <resources>
-            <resource>
-                <directory>dist</directory>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>com.github.eirslett</groupId>
@@ -42,6 +36,26 @@
                         </goals>
                         <configuration>
                             <arguments>install</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>resources</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <!-- TODO change to DIST once FE build system is established -->
+                                    <directory>public</directory>
+                                </resource>
+                            </resources>
+                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

@@ -38,6 +38,7 @@
     <maven.compiler.release>17</maven.compiler.release>
 
     <!-- maven plugin versions -->
+    <maven-frontend-plugin.version>1.12.1</maven-frontend-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 
     <!-- 3rd-party library versions -->
@@ -58,6 +59,11 @@
           <version>${spring-boot-bom.version}</version>
         </plugin>
         <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${maven-frontend-plugin.version}</version>
+        </plugin>
+        <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
           <version>${jacoco-maven-plugin.version}</version>
@@ -76,19 +82,6 @@
           <target>${maven.compiler.target}</target>
           <encoding>UTF-8</encoding>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-help-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>show-profiles</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>active-profiles</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
@@ -118,30 +111,9 @@
 
       <!-- External dependencies -->
       <dependency>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-core</artifactId>
-        <version>${flyway.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-mysql</artifactId>
-        <version>${flyway.version}</version>
-      </dependency>
-      <dependency>
         <groupId>dev.miku</groupId>
         <artifactId>r2dbc-mysql</artifactId>
         <version>${r2dbc-mysql.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>artemis-server</artifactId>
-        <version>${artemis.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>artemis-core-client</artifactId>
-        <version>${artemis.version}</version>
       </dependency>
 
       <dependency>

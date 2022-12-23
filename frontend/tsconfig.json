@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "module": "ESNext",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "esModuleInterop": false,
+    "sourceMap": false,
+    "allowJs": false,
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "rootDir": "src",
+    "moduleResolution": "node"
+  }
+}
