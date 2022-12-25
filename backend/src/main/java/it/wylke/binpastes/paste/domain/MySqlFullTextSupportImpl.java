@@ -40,13 +40,14 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
 
-        var query = String.format("SELECT * FROM %s WHERE %s = ?exposure AND (%s IS NULL OR %s > ?expiryAfter) AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE)".strip(),
+        var query = String.format("SELECT * FROM %s WHERE %s = ?exposure AND (%s IS NULL OR %s > ?expiryAfter) AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE) ORDER BY %s DESC".strip(),
                 PasteSchema.TABLE_NAME,
                 PasteSchema.EXPOSURE,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.TITLE,
-                PasteSchema.CONTENT
+                PasteSchema.CONTENT,
+                PasteSchema.DATE_CREATED
         );
 
         return Mono.from(connectionFactory.create())

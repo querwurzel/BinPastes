@@ -1,8 +1,10 @@
 package it.wylke.binpastes.paste.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -10,7 +12,6 @@ import java.time.LocalDateTime;
 
 import static it.wylke.binpastes.paste.domain.Paste.PasteExposure;
 import static it.wylke.binpastes.paste.domain.Paste.PasteSchema;
-import static org.springframework.data.relational.core.query.Query.query;
 
 @Component
 class SimpleFullTextSupportImpl implements FullTextSearchSupport {
@@ -36,6 +37,13 @@ class SimpleFullTextSupportImpl implements FullTextSearchSupport {
                 );
 
         return entityTemplate
-                .select(query(criteria), Paste.class);
+                .select(Paste.class)
+                .matching(
+                        Query
+                                .query(criteria)
+                                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED))
+                )
+                .all();
+
     }
 }
