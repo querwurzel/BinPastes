@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Controller;
@@ -31,9 +30,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.support.WebExchangeBindException;
-import org.springframework.web.reactive.result.view.RedirectView;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import static it.wylke.binpastes.paste.api.model.ListView.ListItemView;
@@ -108,33 +105,6 @@ class PasteController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePaste(@PathVariable("pasteId") String pasteId) {
         pasteService.delete(pasteId);
-    }
-
-    @Deprecated
-    @PostMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mono<RedirectView> createPasteByForm(ServerWebExchange ctx) {
-        return ctx
-                .getFormData()
-                .flatMap(formData -> {
-                    var createCmd = new CreateCmd(
-                        formData.getFirst("title"),
-                        formData.getFirst("content"),
-                        formData.getFirst("isEncrypted"),
-                        formData.getFirst("expiry"),
-                        formData.getFirst("exposure")
-                    );
-
-                    return pasteService.create(
-                            createCmd.title(),
-                            createCmd.content(),
-                            createCmd.dateOfExpiry(),
-                            createCmd.isEncrypted(),
-                            createCmd.pasteExposure(),
-                            remoteAddress(ctx.getRequest())
-                    );
-                })
-                .map(paste -> new RedirectView("/#" + paste.getId()));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})

@@ -18,11 +18,6 @@ public record CreateCmd (
                            Exposure exposure
 ) {
 
-    @Deprecated
-    public CreateCmd(String title, String content, String isEncrypted, String expiry, String exposure) {
-        this(title, content, Boolean.parseBoolean(isEncrypted), ExpirationRange.valueOf(expiry), Exposure.valueOf(exposure));
-    }
-
     @Override
     public String title() {
         return StringUtils.hasText(title)
