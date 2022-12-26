@@ -1,11 +1,17 @@
 import {createResource, createSignal, For, JSX, Match, Switch} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {createPaste, findAll, searchAll} from './api/client';
+import AES from 'crypto-js/aes';
 import './App.module.css';
 import styles from './App.module.css';
 
+interface FormModel extends CreatePasteCmd {
+  password: string
+}
+
 const App: () => JSX.Element = () => {
 
+  const [lastPaste, setLastPaste] = createSignal<string>(null);
   const [search, setSearch] = createSignal<string>(null);
 
   const resetSearchForm = () => {
@@ -27,11 +33,11 @@ const App: () => JSX.Element = () => {
   }
 
   const [data, { refetch }] = createResource<any[]>(listOrSearch);
-  const [form, setForm] = createStore<CreatePasteCmd>(null);
+  const [form, setForm] = createStore<FormModel>(null);
 
   let creationForm: HTMLFormElement
 
-  const updateFormField = (fieldName: keyof CreatePasteCmd) => (event: Event) => {
+  const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
     const inputElement = event.currentTarget as HTMLInputElement;
 
     setForm({
@@ -42,9 +48,38 @@ const App: () => JSX.Element = () => {
   const submitCreateForm = (e: Event) => {
     e.preventDefault();
 
-    createPaste(form)
+    const data: CreatePasteCmd = {
+      title: form.title,
+      content: form.content,
+      expiry: form.expiry,
+      exposure: form.exposure
+    }
+
+    if (form.password) {
+      data.content = AES.encrypt(form.content, form.password).toString();
+      data.isEncrypted = true;
+    }
+
+    createPaste(data)
+      .then(resp => {
+        setLastPaste(resp.id);
+        navigator.clipboard.writeText(resp.id);
+      })
+      .then(_ => displaySuccess())
       .then(_ => resetCreateForm())
       .then(_ => refetch())
+  }
+
+  const displaySuccess = () => {
+    if (creationForm) {
+      for (const fieldset of creationForm.children) {
+        fieldset.classList.add(styles.notification)
+
+        window.setTimeout(() => {
+          fieldset.classList.remove(styles.notification)
+        }, 2000)
+      }
+    }
   }
 
   const resetCreateForm = () => {
@@ -55,7 +90,7 @@ const App: () => JSX.Element = () => {
     <>
       <h1>BinPastes</h1>
 
-      <form id="createForm" ref={creationForm} onSubmit={submitCreateForm}>
+      <form ref={creationForm} onSubmit={submitCreateForm}>
 
         <fieldset>
           <div>
@@ -87,8 +122,26 @@ const App: () => JSX.Element = () => {
           <hr/>
           <div>
             <label for="content">Content</label>
-            <textarea id="content" name="content" minLength="5" maxLength="4096" required="required"
-                      autofocus="autofocus" rows="20" cols="75" placeholder={'Paste here'} onChange={updateFormField('content')}></textarea>
+            <textarea id="content"
+                      name="content"
+                      minLength="5"
+                      maxLength="4096"
+                      required="required"
+                      autofocus="autofocus"
+                      rows="20"
+                      cols="75"
+                      placeholder={'Paste here'}
+                      onChange={updateFormField('content')}></textarea>
+          </div>
+          <hr/>
+          <div>
+            <label for="key">Password (optional) </label>
+            <input id="key"
+                   name="key"
+                   type="password"
+                   placeholder={'Password'}
+                   autocomplete="one-time-code"
+                   onChange={updateFormField('password')}/>
           </div>
         </fieldset>
 
@@ -118,6 +171,8 @@ const App: () => JSX.Element = () => {
             <input type="submit" value="Find" />
             &#32;
             <input type="reset" value="All" />
+            &#32;
+            <span>{lastPaste()}</span>
           </div>
         </fieldset>
 
@@ -133,6 +188,7 @@ const App: () => JSX.Element = () => {
                   <tr>
                     <th>Id</th>
                     <th>Title</th>
+                    <th>Encrypted?</th>
                     <th>Size (bytes)</th>
                     <th>Date Created <span>▼</span></th>
                     <th>Date Of Expiry</th>
@@ -143,6 +199,7 @@ const App: () => JSX.Element = () => {
                   <tr>
                     <td>{item.id}</td>
                     <td>{item.title}</td>
+                    <td>{item.isEncrypted ? 'true' : 'false'}</td>
                     <td>{item.sizeInBytes}</td>
                     <td>{item.dateCreated}</td>
                     <td>{item.dateOfExpiry}</td>

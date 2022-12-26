@@ -12,7 +12,7 @@ const apiBaseUrl = () => {
   }
 }
 
-export const createPaste = (cmd: CreatePasteCmd) => {
+export const createPaste = (cmd: CreatePasteCmd): Promise<Object> => {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url, {

@@ -1,8 +1,7 @@
 {
-  "name": "vite-template-solid",
+  "name": "binpastes-frontend",
   "version": "1.0.0",
-  "description": "",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -11,6 +10,7 @@
     "serve": "vite preview"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "pnpm": "^7.19.0",
     "typescript": "^4.9.4",
     "vite": "^4.0.3",

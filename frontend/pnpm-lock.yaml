@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/crypto-js': ^4.1.1
   crypto-js: ^4.1.1
   pnpm: ^7.19.0
   solid-js: ^1.6.6
@@ -13,6 +14,7 @@ dependencies:
   solid-js: 1.6.6
 
 devDependencies:
+  '@types/crypto-js': 4.1.1
   pnpm: 7.19.0
   typescript: 4.9.4
   vite: 4.0.3
@@ -590,6 +592,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.0
       '@jridgewell/sourcemap-codec': 1.4.14
+    dev: true
+
+  /@types/crypto-js/4.1.1:
+    resolution: {integrity: sha512-BG7fQKZ689HIoc5h+6D2Dgq1fABRa0RbBWKBd9SP/MVRVXROflpm5fhwyATX5duFmbStzyzyycPB8qUYKDH3NA==}
     dev: true
 
   /ansi-styles/3.2.1:

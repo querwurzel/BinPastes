@@ -25,16 +25,6 @@ textarea {
   height: 20em;
 }
 
-.notification {
-  display: block;
-  position: fixed;
-  top: 25%;
-  font-size: 5em;
-  color: green;
-  font-weight: bolder;
-  transition: display 1s;
-}
-
 .action {
   display: block;
   color: aqua;
@@ -70,4 +60,14 @@ textarea {
   .pasteTable td:last-child {
     display: none;
   }
+}
+
+.notification {
+  animation: gfx 1.8s alternate;
+}
+
+@keyframes gfx {
+  0% { background-color: initial }
+  50% { background-color: greenyellow }
+  100% { background-color: initial }
 }
