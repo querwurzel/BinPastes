@@ -98,7 +98,7 @@ public class MessagingClient {
                         .setTimestamp(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli())
                         .putStringProperty("pasteId", pasteId);
 
-                //log.debug("Sending tracking message for paste {}", pasteId);
+                //log.info("Sending tracking message for paste {}", pasteId);
 
                 clientProducer.send(clientMessage);
             } catch (ActiveMQException e) {
@@ -125,6 +125,8 @@ public class MessagingClient {
 
         @Override
         public void onMessage(final ClientMessage message) {
+            log.debug("Receiving tracking message for paste");
+
             var timestamp = Instant.ofEpochMilli(message.getTimestamp());
             var timeViewed = LocalDateTime.ofInstant(timestamp, ZoneOffset.UTC);
             var pasteId = message.getStringProperty(PASTE_ID_PROPERTY);

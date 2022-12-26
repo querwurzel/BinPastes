@@ -102,8 +102,8 @@ class TrackingConfig {
     @Bean(destroyMethod = "shutdown")
     public ThreadPoolTaskExecutor clientThreadPool() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
-        pool.setCorePoolSize(1);
-        pool.setMaxPoolSize(1);
+        pool.setCorePoolSize(4);
+        pool.setMaxPoolSize(4);
         pool.setAllowCoreThreadTimeOut(true);
 
         pool.setThreadNamePrefix("artemis-client-");

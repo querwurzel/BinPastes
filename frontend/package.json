@@ -1,19 +1,23 @@
 {
-  "name": "frontend",
+  "name": "vite-template-solid",
   "version": "1.0.0",
   "description": "",
+  "license": "MIT",
+  "type": "module",
   "scripts": {
-    "test": "jest"
-  },
-  "author": "querwurzelt",
-  "license": "Apache-2.0",
-  "engines": {
-    "node": "18"
-  },
-  "dependencies": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
   },
   "devDependencies": {
-    "jest": "^29.3.1",
-    "typescript": "^4.9.4"
+    "pnpm": "^7.19.0",
+    "typescript": "^4.9.4",
+    "vite": "^4.0.3",
+    "vite-plugin-solid": "^2.5.0"
+  },
+  "dependencies": {
+    "crypto-js": "^4.1.1",
+    "solid-js": "^1.6.6"
   }
 }

@@ -1,0 +1,73 @@
+
+button,
+select,
+input[type=submit],
+input[type=radio] {
+  cursor: pointer;
+}
+
+label {
+  white-space: nowrap;
+}
+
+fieldset {
+  border-radius: 7px;
+}
+
+hr {
+  color: #cfcfcf;
+}
+
+textarea {
+  font-family: monospace;
+  box-sizing: border-box;
+  width: 100%;
+  height: 20em;
+}
+
+.notification {
+  display: block;
+  position: fixed;
+  top: 25%;
+  font-size: 5em;
+  color: green;
+  font-weight: bolder;
+  transition: display 1s;
+}
+
+.action {
+  display: block;
+  color: aqua;
+}
+
+.pasteTable {
+  text-align: left;
+  box-sizing: border-box;
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+.pasteTable td {
+  border-top: 1px dotted black;
+}
+
+@media screen and (max-width:600px) {
+
+  .pasteTable {
+    table-layout: fixed;
+  }
+
+  .pasteTable th,td {
+    text-overflow: ellipsis " [..]";
+    width: 20%;
+    overflow: hidden;
+  }
+
+  .pasteTable th:nth-child(3),
+  .pasteTable th:last-child,
+  .pasteTable td:nth-child(3),
+  .pasteTable td:last-child {
+    display: none;
+  }
+}
