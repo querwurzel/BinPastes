@@ -10,3 +10,8 @@ updates:
     open-pull-requests-limit: 20
     schedule:
       interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 20
