@@ -33,7 +33,10 @@ class SimpleFullTextSupportImpl implements FullTextSearchSupport {
                 )
                 .and(Criteria
                         .where(PasteSchema.TITLE).like(text + '%')
-                        .or(PasteSchema.CONTENT).like(text + '%')
+                        .or(Criteria
+                                .where(PasteSchema.CONTENT).like(text + '%')
+                                .and(PasteSchema.IS_ENCRYPTED).isFalse()
+                        )
                 );
 
         return entityTemplate
