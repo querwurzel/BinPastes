@@ -44,8 +44,6 @@ public class TrackingService {
                 .findById(pasteId)
                 .flatMap(paste -> pasteRepository.save(paste.trackView(timeViewed)))
                 .doOnNext(paste -> log.debug("Tracked view on paste {}", paste.getId()))
-                //.subscribeOn(Schedulers.single())
-                //.subscribe();
                 .block();
     }
 
