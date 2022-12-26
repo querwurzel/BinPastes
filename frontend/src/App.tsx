@@ -91,7 +91,7 @@ const App: () => JSX.Element = () => {
     <>
       <h1>BinPastes</h1>
 
-      <form ref={creationForm} onSubmit={submitCreateForm}>
+      <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off">
 
         <fieldset>
           <div>
