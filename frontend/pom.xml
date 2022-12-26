@@ -39,7 +39,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>pnpm install</id>
+            <id>pnpm build</id>
             <goals>
               <goal>npx</goal>
             </goals>
