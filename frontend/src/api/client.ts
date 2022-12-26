@@ -1,8 +1,10 @@
+const HOST_LOCALHOST = 'localhost:8080';
 const HOST_DEVELOPMENT = 'localhost:3000';
 
 const apiBaseUrl = () => {
   switch (window.location.host) {
     case HOST_DEVELOPMENT:
+    case HOST_LOCALHOST:
       return 'http://localhost:8080';
     default:
       console.log('Host:', window.location.host);

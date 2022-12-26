@@ -9,7 +9,7 @@ const App: () => JSX.Element = () => {
   const [search, setSearch] = createSignal<string>(null);
 
   const resetSearchForm = () => {
-    searchForm?.reset();
+    setSearch(null);
     refetch();
   }
 
@@ -29,7 +29,6 @@ const App: () => JSX.Element = () => {
   const [data, { refetch }] = createResource<any[]>(listOrSearch);
   const [form, setForm] = createStore<CreatePasteCmd>(null);
 
-  let searchForm: HTMLFormElement
   let creationForm: HTMLFormElement
 
   const updateFormField = (fieldName: keyof CreatePasteCmd) => (event: Event) => {
@@ -101,7 +100,7 @@ const App: () => JSX.Element = () => {
 
       <br/>
 
-      <form ref={searchForm} onReset={resetSearchForm} onSubmit={submitSearchForm}>
+      <form onReset={resetSearchForm} onSubmit={submitSearchForm}>
 
         <fieldset>
           <div>
