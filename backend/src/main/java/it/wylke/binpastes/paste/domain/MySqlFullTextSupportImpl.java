@@ -40,22 +40,24 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
 
-        var query = String.format("SELECT * FROM %s WHERE %s = ?exposure AND (%s IS NULL OR %s > ?expiryAfter) AND MATCH(%s, %s) AGAINST(?text IN BOOLEAN MODE) ORDER BY %s DESC".strip(),
+        var query = String.format("SELECT * FROM %s WHERE %s = ? AND (%s IS NULL OR %s > ?) AND (MATCH(%s) AGAINST(? IN BOOLEAN MODE) OR (MATCH(%s) AGAINST(? IN BOOLEAN MODE) AND %s IS FALSE)) ORDER BY %s DESC",
                 PasteSchema.TABLE_NAME,
                 PasteSchema.EXPOSURE,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.TITLE,
                 PasteSchema.CONTENT,
+                PasteSchema.IS_ENCRYPTED,
                 PasteSchema.DATE_CREATED
         );
 
         return Mono.from(connectionFactory.create())
                 .flatMap(mySqlConnection -> Mono.from(mySqlConnection
                         .createStatement(query)
-                        .bind("exposure", PasteExposure.PUBLIC.name())
-                        .bind("expiryAfter", LocalDateTime.now())
-                        .bind("text", text + '*')
+                        .bind(0, PasteExposure.PUBLIC.name())
+                        .bind(1, LocalDateTime.now())
+                        .bind(2, text + '*')
+                        .bind(3, text + '*')
                         .execute()
                 ))
                 .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {

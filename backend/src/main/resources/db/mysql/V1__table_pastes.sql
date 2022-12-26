@@ -13,7 +13,8 @@ CREATE TABLE `pastes` (
      `views` BigInt not null,
      `last_viewed` datetime(6),
      PRIMARY KEY (`id`),
-     FULLTEXT (`title`, `content`)
+     FULLTEXT (`title`),
+     FULLTEXT (`content`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE INDEX `pastes_ttl` ON `pastes` (`date_deleted`, `date_of_expiry`);
