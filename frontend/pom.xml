@@ -60,8 +60,7 @@
             <configuration>
               <resources>
                 <resource>
-                  <!-- TODO change to DIST once FE build system is established -->
-                  <directory>public</directory>
+                  <directory>dist</directory>
                 </resource>
               </resources>
               <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
