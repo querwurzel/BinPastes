@@ -1,7 +1,9 @@
 package it.wylke.binpastes.paste.domain;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
+import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,21 +39,28 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     }
 
     public Flux<Paste> findAllLegit() {
-        var criteria = Criteria
-                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
-                .and(
-                        Criteria
-                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
-                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
-                );
-
         return entityTemplate
-                .select(query(criteria), Paste.class);
+                .select(Paste.class)
+                .matching(
+                        Query
+                                .query(
+                                        Criteria
+                                                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                                                .and(
+                                                        Criteria
+                                                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                                                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
+                                                )
+                                )
+                                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED))
+                )
+                .all();
     }
 
     @Override
     public Mono<Long> markExpiredPastesForDeletion() {
         var dateOfExpiry = LocalDateTime.now();
+
         var criteria = Criteria
                 .where(PasteSchema.DATE_DELETED).isNull()
                 .and(PasteSchema.DATE_OF_EXPIRY).lessThan(dateOfExpiry);

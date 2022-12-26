@@ -12,7 +12,9 @@ public record SingleView(
         boolean isEncrypted,
         boolean isOneTime,
         LocalDateTime dateCreated,
-        LocalDateTime dateOfExpiry
+        LocalDateTime dateOfExpiry,
+        LocalDateTime lastViewed,
+        long views
 ) {
     public static SingleView from(Paste reference) {
         return new SingleView(
@@ -23,7 +25,9 @@ public record SingleView(
                 reference.isEncrypted(),
                 reference.isOneTime(),
                 reference.getDateCreated(),
-                reference.getDateOfExpiry()
+                reference.getDateOfExpiry(),
+                reference.getLastViewed(),
+                reference.getViews()
         );
     }
 }

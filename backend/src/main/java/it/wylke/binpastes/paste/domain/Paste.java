@@ -42,6 +42,11 @@ public class Paste {
     @Column(PasteSchema.REMOTE_ADDRESS)
     private String remoteAddress;
 
+    @Column(PasteSchema.LAST_VIEWED)
+    private LocalDateTime lastViewed;
+    @Column(PasteSchema.VIEWS)
+    private Long views;
+
     public static Paste newInstance(
             String title,
             String content,
@@ -57,7 +62,8 @@ public class Paste {
                 .setIsEncrypted(isEncrypted)
                 .setExposure(Objects.requireNonNull(exposure))
                 .setRemoteAddress(remoteAddress)
-                .setDateOfExpiry(dateOfExpiry);
+                .setDateOfExpiry(dateOfExpiry)
+                .setViews(0);
     }
 
     public String getId() {
@@ -88,13 +94,28 @@ public class Paste {
         return exposure;
     }
 
+    public LocalDateTime getLastViewed() {
+        return lastViewed;
+    }
+
+    public long getViews() {
+        return views;
+    }
+
     public boolean isOneTime() {
         return exposure == PasteExposure.ONCE;
     }
 
+    public Paste trackView(LocalDateTime lastViewed) {
+        if (this.getLastViewed() == null || this.getLastViewed().isBefore(lastViewed)) {
+            setLastViewed(lastViewed);
+        }
+
+        return this.setViews(this.getViews() + 1);
+    }
+
     public Paste markAsExpired() {
-        this.dateOfExpiry = LocalDateTime.now();
-        return this;
+        return this.setDateOfExpiry(LocalDateTime.now());
     }
 
     protected Paste setId(final String id) {
@@ -147,6 +168,16 @@ public class Paste {
         return this;
     }
 
+    protected Paste setLastViewed(final LocalDateTime lastViewed) {
+        this.lastViewed = lastViewed;
+        return this;
+    }
+
+    protected Paste setViews(final long views) {
+        this.views = views;
+        return this;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
@@ -180,6 +211,8 @@ public class Paste {
         public static final String DATE_OF_EXPIRY = "date_of_expiry";
         public static final String DATE_DELETED = "date_deleted";
         public static final String REMOTE_ADDRESS = "remote_address";
+        public static final String LAST_VIEWED = "last_viewed";
+        public static final String VIEWS = "views";
 
     }
 }

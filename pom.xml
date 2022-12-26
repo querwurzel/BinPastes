@@ -6,12 +6,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
     <relativePath/><!-- lookup parent from repository -->
   </parent>
 
-  <groupId>it.wylke.binpaste</groupId>
-  <artifactId>binpaste</artifactId>
+  <groupId>it.wylke.binpastes</groupId>
+  <artifactId>binpastes</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>BinPastes</name>
@@ -24,7 +24,7 @@
   </licenses>
 
   <modules>
-    <!--<module>frontend</module>-->
+    <module>frontend</module>
     <module>backend</module>
   </modules>
 
@@ -38,12 +38,14 @@
     <maven.compiler.release>17</maven.compiler.release>
 
     <!-- maven plugin versions -->
+    <maven-frontend-plugin.version>1.12.1</maven-frontend-plugin.version>
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 
     <!-- 3rd-party library versions -->
-    <spring-boot-bom.version>3.0.0</spring-boot-bom.version>
+    <spring-boot-bom.version>3.0.1</spring-boot-bom.version>
     <junixsocket.version>2.6.1</junixsocket.version>
-    <flyway.version>9.10.1</flyway.version>
+    <flyway.version>9.10.2</flyway.version>
+    <artemis.version>2.27.1</artemis.version>
     <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
   </properties>
 
@@ -55,6 +57,11 @@
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring-boot-bom.version}</version>
+        </plugin>
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>${maven-frontend-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -76,24 +83,23 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-help-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>show-profiles</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>active-profiles</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
   <dependencyManagement>
     <dependencies>
+      <!-- Project dependencies -->
+      <dependency>
+        <groupId>it.wylke.binpastes</groupId>
+        <artifactId>frontend</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>it.wylke.binpastes</groupId>
+        <artifactId>backend</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <!-- Spring & Spring Boot-->
       <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -103,17 +109,7 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- Project dependencies -->
-      <dependency>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-core</artifactId>
-        <version>${flyway.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.flywaydb</groupId>
-        <artifactId>flyway-mysql</artifactId>
-        <version>${flyway.version}</version>
-      </dependency>
+      <!-- External dependencies -->
       <dependency>
         <groupId>dev.miku</groupId>
         <artifactId>r2dbc-mysql</artifactId>
