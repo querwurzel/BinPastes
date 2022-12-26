@@ -63,6 +63,7 @@ const App: () => JSX.Element = () => {
     createPaste(data)
       .then(resp => {
         setLastPaste(resp.id);
+        window.location.hash = resp.id;
         navigator.clipboard.writeText(resp.id);
       })
       .then(_ => displaySuccess())
