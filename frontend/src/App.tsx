@@ -198,7 +198,7 @@ const App: () => JSX.Element = () => {
                 <tbody>
                 <For each={data()}>{item =>
                   <tr>
-                    <td>{item.id}</td>
+                    <td><a href={'/api/v1/paste/' + item.id}>{item.id}</a></td>
                     <td>{item.title}</td>
                     <td>{item.isEncrypted ? 'true' : 'false'}</td>
                     <td>{item.sizeInBytes}</td>
