@@ -1,4 +1,32 @@
 
+.header {
+  margin-bottom: 2rem;
+}
+
+.content {
+  display: flex;
+  gap: 10px;
+}
+
+.head, .left, .right, .footer, .content {
+  /*border: 1px solid red;*/
+}
+
+.left {
+  flex-basis: 65%;
+  min-width: 400px;
+}
+
+.right {
+  flex-basis: 35%;
+}
+
+.footer {
+  margin-top: 2rem;
+}
+
+
+
 button,
 select,
 input[type=submit],

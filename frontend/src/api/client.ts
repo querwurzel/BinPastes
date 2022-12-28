@@ -26,8 +26,11 @@ export const createPaste = (cmd: CreatePasteCmd): Promise<Object> => {
     .catch(reason => console.error(reason))
 }
 
-export const findOne = (id: string) => {
+export const findOne = (id: string): Promise<Object> => {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
+
+  return fetch(url)
+    .then(value => value.json())
 }
 
 export const findAll = (): Promise<any[]> => {

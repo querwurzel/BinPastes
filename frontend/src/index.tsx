@@ -1,7 +1,12 @@
 /* @refresh reload */
-import {createSignal, JSX} from 'solid-js';
+import {Router} from '@solidjs/router';
+import {JSX} from 'solid-js';
 import {render} from 'solid-js/web';
 import App from './App';
 import './index.css';
 
-render(() => <App />, document.getElementById('root'));
+render((): JSX.Element => (
+  <Router>
+    <App />
+  </Router>
+), document.getElementById('root'));

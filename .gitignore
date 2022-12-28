@@ -31,5 +31,7 @@ build/
 ### VS Code ###
 .vscode/
 
+.DS_Store
+
 # Binpastes
 tracking/

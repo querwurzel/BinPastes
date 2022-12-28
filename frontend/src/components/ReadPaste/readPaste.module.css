@@ -1,0 +1,12 @@
+
+.read h3,
+.read h4,
+.read pre {
+  margin: 1rem;
+  padding: 0;
+}
+
+.read {
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+}
