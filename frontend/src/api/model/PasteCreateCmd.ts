@@ -1,5 +1,5 @@
 
-interface CreatePasteCmd {
+export interface PasteCreateCmd {
   title?: string
   content: string
   isEncrypted?: boolean

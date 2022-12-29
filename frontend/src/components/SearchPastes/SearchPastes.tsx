@@ -1,7 +1,7 @@
 import {createResource, createSignal, JSX} from 'solid-js';
 import {searchAll} from '../../api/client';
 
-const Search: () => JSX.Element = () => {
+const SearchPastes: () => JSX.Element = () => {
 
   const [search, setSearch] = createSignal<string>(null);
 
@@ -34,4 +34,4 @@ const Search: () => JSX.Element = () => {
   )
 }
 
-export default Search
+export default SearchPastes

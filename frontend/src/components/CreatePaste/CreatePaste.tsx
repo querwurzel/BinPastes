@@ -1,17 +1,23 @@
-import {JSX} from 'solid-js';
+import {A} from '@solidjs/router';
+import {Component, createSignal, JSX, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {createPaste} from '../../api/client';
+import {PasteCreateCmd} from '../../api/model/PasteCreateCmd';
+import {PasteView} from '../../api/model/PasteView';
 import {encrypt} from '../../crypto/Crypto';
+import styles from './createPaste.module.css';
 
-interface FormModel extends CreatePasteCmd {
+interface FormModel extends PasteCreateCmd {
   password: string
 }
 
-const CreatePaste: () => JSX.Element = () => {
+const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCreated}): JSX.Element => {
 
   let creationForm: HTMLFormElement
 
   const [form, setForm] = createStore<FormModel>(null);
+
+  const [lastPaste, setLastPaste] = createSignal<string>(null);
 
   const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
     const inputElement = event.currentTarget as HTMLInputElement;
@@ -29,7 +35,7 @@ const CreatePaste: () => JSX.Element = () => {
   const submitCreateForm = (e: Event) => {
     e.preventDefault();
 
-    const data: CreatePasteCmd = {
+    const data: PasteCreateCmd = {
       title: form.title,
       content: form.content,
       expiry: form.expiry,
@@ -43,14 +49,26 @@ const CreatePaste: () => JSX.Element = () => {
 
     createPaste(data)
       .then(resp => {
-        window.location.hash = resp.id;
-        navigator.clipboard.writeText(resp.id);
+        resetCreateForm();
+
+        const url = window.location.origin + '/paste/' + resp.id;
+
+        setLastPaste(url);
+
+        navigator.clipboard
+          .writeText(url)
+          .then(_ => onCreated(resp))
+          .catch(_ => onCreated(resp))
       })
-      .then(_ => resetCreateForm())
   }
 
   return (
     <div>
+
+      <Show when={lastPaste()}>
+        <p class={styles.lastPaste}><strong>One-Time Paste:</strong> <span>{lastPaste()}</span></p>
+      </Show>
+
       <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off">
 
         <fieldset>

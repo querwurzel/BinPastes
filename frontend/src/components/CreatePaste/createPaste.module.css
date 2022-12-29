@@ -1,0 +1,9 @@
+
+.lastPaste {
+    color: green;
+    user-select: none;
+}
+
+.lastPaste span {
+    user-select: all;
+}

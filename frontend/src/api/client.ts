@@ -1,3 +1,7 @@
+import {PasteCreateCmd} from './model/PasteCreateCmd';
+import {PasteList, PasteListView} from './model/PasteListView';
+import {PasteView} from './model/PasteView';
+
 const HOST_LOCALHOST = 'localhost:8080';
 const HOST_DEVELOPMENT = 'localhost:3000';
 
@@ -7,12 +11,11 @@ const apiBaseUrl = () => {
     case HOST_LOCALHOST:
       return 'http://localhost:8080';
     default:
-      console.log('Host:', window.location.host);
       return 'https://paste.wilke-it.com';
   }
 }
 
-export const createPaste = (cmd: CreatePasteCmd): Promise<Object> => {
+export const createPaste = (cmd: PasteCreateCmd): Promise<PasteView> => {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url, {
@@ -22,38 +25,49 @@ export const createPaste = (cmd: CreatePasteCmd): Promise<Object> => {
       },
       body: JSON.stringify(cmd)
     })
-    .then(value => value.json())
-    .catch(reason => console.error(reason))
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json<PasteView>()
+      } else {
+        throw new Error()
+      }
+    });
 }
 
-export const findOne = (id: string): Promise<Object> => {
+export const findOne = (id: string): Promise<PasteView> => {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url)
-    .then(value => value.json())
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json<PasteView>()
+      } else {
+        throw new Error('404')
+      }
+    })
 }
 
-export const findAll = (): Promise<any[]> => {
+export const findAll = (): Promise<Array<PasteListView>> => {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url)
-    .then(value => value.json())
-    .then(value => value.pastes)
+    .then(value => value.json<PasteList>())
+    .then(value => value.pastes);
 }
 
-export const searchAll = (term: string): Promise<any[]> => {
+export const searchAll = (term: string): Promise<Array<PasteListView>> => {
   const params = new URLSearchParams([['text', term]]);
   const url = new URL('/api/v1/paste/search?' + params.toString(), apiBaseUrl());
 
   return fetch(url)
-    .then(value => value.json())
-    .then(value => value.pastes)
+    .then(value => value.json<PasteList>())
+    .then(value => value.pastes);
 }
 
 export const deletePaste = (id: string) => {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
-  fetch(url, {
+  return fetch(url, {
     method: 'DELETE'
   });
 }
