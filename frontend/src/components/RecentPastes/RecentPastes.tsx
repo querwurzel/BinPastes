@@ -9,7 +9,7 @@ const RecentPastes: () => JSX.Element = () => {
 
   const [pastes, { refetch }] = createResource<any[]>(findAll);
 
-  window.setInterval(refetch, 10_000);
+  window.setInterval(refetch, 120_000);
 
   return (
     <div class={styles.recentPastes}>
@@ -27,7 +27,7 @@ const RecentPastes: () => JSX.Element = () => {
           <ol>
             <For each={pastes()}>{item =>
             <li>
-              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img width="15px" src={lock} alt="lock" /></Show></p>
+              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img width="15px" src={lock} alt="lock" /></Show></p>
               <p>Created: {item.dateCreated} | Size: {item.sizeInBytes} bytes</p>
             </li>
             }

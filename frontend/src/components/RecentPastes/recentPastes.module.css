@@ -22,3 +22,9 @@
     padding-top: 0;
     border-left: 1px dotted #cfcfcf;
 }
+
+.item {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
+}
