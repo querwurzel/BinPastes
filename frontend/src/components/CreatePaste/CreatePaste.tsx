@@ -29,7 +29,14 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
 
   const resetCreateForm = () => {
     creationForm?.reset();
-    setForm(null);
+    setForm({
+      title: null,
+      password: null,
+      isEncrypted: null,
+      content: null,
+      expiry: null,
+      exposure: null
+    } as FormModel)
   }
 
   const submitCreateForm = (e: Event) => {
