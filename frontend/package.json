@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "license": "Apache-2.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/querwurzel/BinPastes"
+  },
   "scripts": {
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview"
+  },
+  "engine-strict": true,
+  "engines": {
+    "node": "18"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
