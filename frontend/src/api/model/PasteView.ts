@@ -8,6 +8,6 @@ export interface PasteView {
   isOneTime: boolean
   dateCreated: Date
   dateOfExpiry?: Date
-  lastViewed: Date
+  lastViewed?: Date
   views: number
 }
