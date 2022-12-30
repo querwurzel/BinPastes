@@ -102,6 +102,14 @@ public class Paste {
         return views;
     }
 
+    public boolean isPublic() {
+        return exposure == PasteExposure.PUBLIC;
+    }
+
+    public boolean isHidden() {
+        return !this.isPublic();
+    }
+
     public boolean isOneTime() {
         return exposure == PasteExposure.ONCE;
     }
