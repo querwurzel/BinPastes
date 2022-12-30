@@ -7,9 +7,11 @@
 
 .lastPaste span {
     user-select: all;
+    cursor: pointer;
 }
 
-.lastPaste span:active {
+.lastPaste span::selection {
+    color: white;
     background-color: greenyellow;
 }
 
@@ -20,6 +22,8 @@
 
 .createForm fieldset {
     border-radius: 7px;
+    border-width: 1px;
+    margin-bottom: 10px;
 }
 
 .createForm hr {
@@ -28,19 +32,23 @@
 }
 
 .createForm div {
-    padding: .5rem;
+    margin: .5rem;
 }
 
 .createForm label {
+    margin: .5rem 1rem .5rem .5rem;
     display: inline-block;
-    margin: .5rem;
-    white-space: nowrap;
+    font-weight: normal;
+}
+
+.createForm div label:first-child {
+    font-weight: bold;
 }
 
 .createForm input, select {
     width: initial;
     display: inline;
-    margin: 0;
+    margin: 0 .2rem 0 0;
 }
 
 .createForm textarea {
@@ -50,10 +58,10 @@
     height: 20em;
 }
 
-button,
-select,
-input[type=submit],
-input[type=reset],
-input[type=radio] {
+.createForm button,
+.createForm select,
+.createForm input[type=submit],
+.createForm input[type=reset],
+.createForm input[type=radio] {
     cursor: pointer;
 }

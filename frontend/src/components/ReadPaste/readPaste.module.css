@@ -7,6 +7,11 @@
   padding: 0;
 }
 
+.read pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
 .read {
   border: 1px solid #cfcfcf;
   border-radius: 10px;

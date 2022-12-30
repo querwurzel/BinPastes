@@ -6,7 +6,6 @@ import {decrypt} from '../../crypto/Crypto';
 import openLock from './open-padlock.png';
 import lock from './padlock.png';
 import styles from './readPaste.module.css';
-import './readPaste.module.css';
 
 const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
 

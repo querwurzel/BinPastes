@@ -70,19 +70,16 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
 
   return (
     <div>
-
-
-
       <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off" class={styles.createForm}>
 
         <fieldset>
           <div>
-            <label for="title">Title (optional) </label>
+            <label for="title">Title (optional): </label>
             <input type="text" id="title" name="title" placeholder={'Title'} onChange={updateFormField('title')}/>
           </div>
           <hr/>
           <div>
-            <label for="expiry">Expires in </label>
+            <label for="expiry">Expires in: </label>
             <select id="expiry" name="expiry" onChange={updateFormField('expiry')}>
               <option value="ONE_HOUR">One Hour</option>
               <option value="ONE_DAY" selected="selected">One Day</option>
@@ -94,24 +91,28 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
           </div>
           <hr/>
           <div>
-            <label>Visible</label>
-            <input type="radio" id="public" name="exposure" value="PUBLIC" checked="checked"
-                   onChange={updateFormField('exposure')}/>
+            <label>Visibility: </label>
             <label for="public">
+              <input type="radio"
+                     id="public"
+                     name="exposure"
+                     value="PUBLIC"
+                     checked="checked"
+                     onChange={updateFormField('exposure')}/>
               Public
             </label>
-            <input type="radio" id="unlisted" name="exposure" value="UNLISTED" onChange={updateFormField('exposure')}/>
             <label for="unlisted">
+              <input type="radio" id="unlisted" name="exposure" value="UNLISTED" onChange={updateFormField('exposure')}/>
               Unlisted
             </label>
-            <input type="radio" id="once" name="exposure" value="ONCE" onChange={updateFormField('exposure')}/>
             <label for="once">
+              <input type="radio" id="once" name="exposure" value="ONCE" onChange={updateFormField('exposure')}/>
               Once (One-Time)
             </label>
           </div>
           <hr/>
           <div>
-            <label for="content">Content</label>
+            <label for="content">Content: </label>
             <textarea id="content"
                       name="content"
                       minLength="5"
@@ -125,7 +126,7 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
           </div>
           <hr/>
           <div>
-            <label for="key">Password (optional) </label>
+            <label for="key">Password (optional): </label>
             <input id="key"
                    name="key"
                    type="password"
@@ -138,7 +139,7 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
         <fieldset>
           <input type="submit" value="Paste"/>
           <Show when={lastPaste()}>
-            <span class={styles.lastPaste}><strong>One-Time Paste:</strong> <span>{lastPaste()}</span> ⎘</span>
+            <span class={styles.lastPaste}><span>{lastPaste()}</span> ⎘</span>
           </Show>
         </fieldset>
 
