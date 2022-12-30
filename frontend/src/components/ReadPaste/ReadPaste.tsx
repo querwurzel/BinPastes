@@ -56,19 +56,17 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       </Show>
 
       <Show when={paste.isEncrypted && !clearText()}>
-        <p>
+        <p class={styles.decrypt}>
           <strong>ENCRYPTED!</strong> Enter password to decode:
           &#32;
           <input ref={keyInput} type="password" onKeyUp={decryptContent}/>
           &#32;
-          <button onClick={decryptContent} class={styles.key}>🗝</button>
+          <button onClick={decryptContent}>🗝</button>
         </p>
       </Show>
 
       <Show when={clearText()} fallback={<pre>{paste.content}</pre>}>
-        <pre>
-            {clearText()}
-        </pre>
+        <pre>{clearText()}</pre>
       </Show>
 
     </div>

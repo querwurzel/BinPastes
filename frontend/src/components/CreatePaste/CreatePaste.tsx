@@ -1,4 +1,3 @@
-import {A} from '@solidjs/router';
 import {Component, createSignal, JSX, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {createPaste} from '../../api/client';
@@ -72,11 +71,9 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
   return (
     <div>
 
-      <Show when={lastPaste()}>
-        <p class={styles.lastPaste}><strong>One-Time Paste:</strong> <span>{lastPaste()}</span></p>
-      </Show>
 
-      <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off">
+
+      <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off" class={styles.createForm}>
 
         <fieldset>
           <div>
@@ -97,14 +94,20 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
           </div>
           <hr/>
           <div>
-            <span>Visible</span>
+            <label>Visible</label>
             <input type="radio" id="public" name="exposure" value="PUBLIC" checked="checked"
                    onChange={updateFormField('exposure')}/>
-            <label for="public">Public</label>
+            <label for="public">
+              Public
+            </label>
             <input type="radio" id="unlisted" name="exposure" value="UNLISTED" onChange={updateFormField('exposure')}/>
-            <label for="unlisted">Unlisted</label>
+            <label for="unlisted">
+              Unlisted
+            </label>
             <input type="radio" id="once" name="exposure" value="ONCE" onChange={updateFormField('exposure')}/>
-            <label for="once">Once (One-Time)</label>
+            <label for="once">
+              Once (One-Time)
+            </label>
           </div>
           <hr/>
           <div>
@@ -134,6 +137,9 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
 
         <fieldset>
           <input type="submit" value="Paste"/>
+          <Show when={lastPaste()}>
+            <span class={styles.lastPaste}><strong>One-Time Paste:</strong> <span>{lastPaste()}</span> ⎘</span>
+          </Show>
         </fieldset>
 
       </form>

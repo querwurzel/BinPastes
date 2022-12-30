@@ -4,6 +4,7 @@ specifiers:
   '@solidjs/router': ^0.6.0
   '@types/crypto-js': ^4.1.1
   crypto-js: ^4.1.1
+  mvp.css: ^1.12.0
   pnpm: ^7.21.0
   solid-js: ^1.6.6
   typescript: ^4.9.4
@@ -13,6 +14,7 @@ specifiers:
 dependencies:
   '@solidjs/router': 0.6.0_solid-js@1.6.6
   crypto-js: 4.1.1
+  mvp.css: 1.12.0
   solid-js: 1.6.6
 
 devDependencies:
@@ -820,6 +822,10 @@ packages:
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
+
+  /mvp.css/1.12.0:
+    resolution: {integrity: sha512-X/nIJUP/aIaD6gzPEOLIQxxotZEpRhnwKADT4ydxnnt8AACOSu/PJxFKCW1ouxbXVVERWOYxJp/tA45U0EVPaw==}
+    dev: false
 
   /nanoid/3.3.4:
     resolution: {integrity: sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==}

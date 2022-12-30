@@ -1,6 +1,5 @@
 import {A} from '@solidjs/router';
 import {JSX} from 'solid-js';
-import '../App.module.css';
 
 const NotFound: () => JSX.Element = () => {
 

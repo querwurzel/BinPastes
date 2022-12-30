@@ -1,9 +1,8 @@
 import {A} from '@solidjs/router';
 import {createResource, For, JSX, Match, Show, Switch} from 'solid-js';
 import {findAll} from '../../api/client';
-import styles from './recentPastes.module.css';
 import lock from '../ReadPaste/padlock.png';
-import './recentPastes.module.css';
+import styles from './recentPastes.module.css';
 
 const RecentPastes: () => JSX.Element = () => {
 

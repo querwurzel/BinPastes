@@ -1,5 +1,4 @@
 import {JSX} from 'solid-js';
-import '../App.module.css';
 
 const Search: () => JSX.Element = () => {
 

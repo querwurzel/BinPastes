@@ -12,16 +12,22 @@
   border-radius: 10px;
 }
 
-.key {
-  border: 1px solid grey;
-  border-radius: 5px;
-  width: 23px;
-  height: 23px;
-}
-
-.key:active {
-}
-
 .onetime {
   color: red;
+}
+
+.decrypt input {
+  display: inline-block;
+}
+
+.decrypt button {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  margin: 0;
+}
+
+.decrypt button:active {
+  background: grey;
 }

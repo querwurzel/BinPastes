@@ -1,7 +1,6 @@
 import {useParams} from '@solidjs/router';
 import {createResource, JSX, Match, Switch} from 'solid-js';
 import {findOne} from '../api/client';
-import '../App.module.css';
 import ReadPaste from '../components/ReadPaste/ReadPaste';
 import NotFound from './404';
 

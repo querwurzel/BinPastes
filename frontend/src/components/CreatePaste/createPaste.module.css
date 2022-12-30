@@ -1,9 +1,59 @@
 
 .lastPaste {
+    margin: 1rem;
     color: green;
     user-select: none;
 }
 
 .lastPaste span {
     user-select: all;
+}
+
+.lastPaste span:active {
+    background-color: greenyellow;
+}
+
+.createForm {
+    border: none;
+    padding: 0;
+}
+
+.createForm fieldset {
+    border-radius: 7px;
+}
+
+.createForm hr {
+    margin: 0;
+    color: #000000;
+}
+
+.createForm div {
+    padding: .5rem;
+}
+
+.createForm label {
+    display: inline-block;
+    margin: .5rem;
+    white-space: nowrap;
+}
+
+.createForm input, select {
+    width: initial;
+    display: inline;
+    margin: 0;
+}
+
+.createForm textarea {
+    font-family: monospace;
+    box-sizing: border-box;
+    width: 100%;
+    height: 20em;
+}
+
+button,
+select,
+input[type=submit],
+input[type=reset],
+input[type=radio] {
+    cursor: pointer;
 }
