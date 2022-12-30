@@ -51,8 +51,9 @@ public class PasteService {
         var result = Mono.just(paste);
 
         if (paste.isOneTime()) {
-            log.info("OneTime paste {} viewed and burnt", paste.getId());
-            result = pasteRepository.save(paste.markAsExpired());
+            result = pasteRepository
+                    .save(paste.markAsExpired())
+                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
         }
 
         trackingService.trackView(paste.getId());
@@ -77,7 +78,7 @@ public class PasteService {
                 .filter(Paste::isHidden)
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnNext(paste -> log.info("Deleted paste {}", id))
+                .doOnNext(paste -> log.info("Deleted paste {}", paste.getId()))
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
     }

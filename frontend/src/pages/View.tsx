@@ -14,11 +14,6 @@ const View: () => JSX.Element = () => {
   return (
     <>
       <Switch>
-        <Match when={paste.loading}>
-
-          <span>Loading ..</span>
-
-        </Match>
         <Match when={paste.error}>
 
           <NotFound />
