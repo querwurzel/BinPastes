@@ -11,8 +11,6 @@ const View: () => JSX.Element = () => {
 
   const [paste] = createResource(() => params.id,(pasteId) => findOne(pasteId));
 
-  console.log(paste.state)
-
   return (
     <>
       <Switch>

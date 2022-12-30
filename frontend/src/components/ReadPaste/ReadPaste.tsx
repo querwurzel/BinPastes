@@ -27,8 +27,14 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
     e.preventDefault();
   }
 
-  const deleteIt = () => {
-    deletePaste(paste.id)
+  const deleteIt = (e: Event) => {
+    const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
+
+    if (window.confirm(msg)) {
+      deletePaste(paste.id);
+    } else {
+      e.preventDefault();
+    }
   }
 
   return (
@@ -52,7 +58,9 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       <Show when={paste.isEncrypted && !clearText()}>
         <p>
           <strong>ENCRYPTED!</strong> Enter password to decode:
+          &#32;
           <input ref={keyInput} type="password" onKeyUp={decryptContent}/>
+          &#32;
           <button onClick={decryptContent} class={styles.key}>🗝</button>
         </p>
       </Show>
