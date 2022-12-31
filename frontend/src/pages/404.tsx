@@ -4,9 +4,9 @@ import {JSX} from 'solid-js';
 const NotFound: () => JSX.Element = () => {
 
   return (
-    <div>
-      <h3>Your advertising could be here.</h3>
-      <p>Because nothing is here yet.</p>
+    <div style="margin:1rem">
+      <h3><i>404</i> Nothing around here :(</h3>
+      <p>But your advertising could be.</p>
 
       <p><A href={'/'}>Start over?</A></p>
     </div>

@@ -35,8 +35,7 @@ import reactor.core.publisher.Mono;
 
 import static it.wylke.binpastes.paste.api.model.ListView.ListItemView;
 
-@CrossOrigin
-//@CrossOrigin("https://paste.wilke-it.com")
+@CrossOrigin({"https://paste.wilke-it.com", "http://localhost:3000", "http://localhost:8080"})
 @Controller
 @Validated
 @RequestMapping("/api/v1/paste")

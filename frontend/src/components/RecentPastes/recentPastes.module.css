@@ -1,7 +1,7 @@
 .recentPastes {
     margin-top: 0;
     padding-top: 0;
-    border-left: 1px dotted #cfcfcf;
+    border-left: 1px dotted #a5a5a5;
 }
 
 .recentPastes h3 {
@@ -20,7 +20,7 @@
 .recentPastes li {
     list-style: none;
     padding-left: 1rem;
-    border-top: 1px dotted #cfcfcf;
+    border-top: 1px dotted #a5a5a5;
 }
 
 .item {
@@ -32,6 +32,6 @@
 @media screen and (max-width:750px) {
     .recentPastes {
         border-left: none;
-        border-bottom: 1px dotted #cfcfcf;
+        border-bottom: 1px dotted #a5a5a5;
     }
 }

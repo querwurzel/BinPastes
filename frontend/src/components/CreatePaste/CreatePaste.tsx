@@ -75,7 +75,7 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
         <fieldset>
           <div>
             <label for="title">Title (optional): </label>
-            <input type="text" id="title" name="title" placeholder={'Title'} onChange={updateFormField('title')}/>
+            <input type="text" id="title" name="title" placeholder={'Title'} maxLength={255} onChange={updateFormField('title')}/>
           </div>
           <hr/>
           <div>

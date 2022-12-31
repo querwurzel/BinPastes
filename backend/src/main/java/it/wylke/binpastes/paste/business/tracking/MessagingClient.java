@@ -25,8 +25,8 @@ public class MessagingClient {
 
     private static final String PASTE_ID_PROPERTY = "pasteId";
 
-    @Autowired
-    private Executor clientThreadPool;
+    private final Executor consumerThreadPool;
+    private final Executor producerThreadPool;
 
     private final ThreadLocal<ClientSession> clientSessionThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<ClientProducer> clientProducers = new ThreadLocal<>();
@@ -34,12 +34,13 @@ public class MessagingClient {
 
     private final ClientSessionFactory sessionFactory;
 
-    public MessagingClient(final ClientSessionFactory clientSessionFactory) {
-        sessionFactory = clientSessionFactory;
+    public MessagingClient(final ClientSessionFactory clientSessionFactory, Executor consumerThreadPool, Executor producerThreadPool) {
+        this.sessionFactory = clientSessionFactory;
+        this.consumerThreadPool = consumerThreadPool;
+        this.producerThreadPool = producerThreadPool;
     }
 
     public void setMessageConsumer(Consumer<Message> messageConsumer) {
-
             Mono.fromRunnable(() -> {
                 try {
                     var session = clientSessionThreadLocal.get();
@@ -66,7 +67,7 @@ public class MessagingClient {
                     throw new IllegalStateException(e);
                 }
             })
-            .subscribeOn(Schedulers.fromExecutor(clientThreadPool))
+            .subscribeOn(Schedulers.fromExecutor(consumerThreadPool))
             .subscribe();
     }
 
@@ -98,15 +99,13 @@ public class MessagingClient {
                         .setTimestamp(LocalDateTime.now().toInstant(ZoneOffset.UTC).toEpochMilli())
                         .putStringProperty("pasteId", pasteId);
 
-                //log.info("Sending tracking message for paste {}", pasteId);
-
                 clientProducer.send(clientMessage);
             } catch (ActiveMQException e) {
                 e.printStackTrace();
             }
 
         })
-        .subscribeOn(Schedulers.fromExecutor(this.clientThreadPool))
+        .subscribeOn(Schedulers.fromExecutor(producerThreadPool))
         .subscribe();
     }
 

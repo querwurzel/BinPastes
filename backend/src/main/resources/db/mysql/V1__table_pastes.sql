@@ -7,7 +7,7 @@ CREATE TABLE `pastes` (
      `date_of_expiry` datetime(6) DEFAULT NULL,
      `date_deleted` datetime(6) DEFAULT NULL,
      `title` varchar(512) DEFAULT NULL,
-     `content` varchar(4048) NOT NULL,
+     `content` varchar(4096) NOT NULL,
      `is_encrypted` TINYINT NOT NULL,
      `exposure` ENUM('PUBLIC', 'UNLISTED', 'ONCE') NOT NULL,
      `views` BigInt not null,

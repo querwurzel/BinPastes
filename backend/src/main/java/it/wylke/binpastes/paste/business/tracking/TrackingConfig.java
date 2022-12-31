@@ -23,8 +23,8 @@ import java.util.concurrent.TimeUnit;
 class TrackingConfig {
 
     @Bean
-    public MessagingClient messagingClient(ClientSessionFactory clientSessionFactory) {
-        return new MessagingClient(clientSessionFactory);
+    public MessagingClient messagingClient(ClientSessionFactory clientSessionFactory, Executor consumerThreadPool, Executor producerThreadPool) {
+        return new MessagingClient(clientSessionFactory, consumerThreadPool, producerThreadPool);
     }
 
     @Bean(destroyMethod = "stop")
@@ -100,32 +100,36 @@ class TrackingConfig {
     }*/
 
     @Bean(destroyMethod = "shutdown")
-    public ThreadPoolTaskExecutor clientThreadPool() {
+    public ThreadPoolTaskExecutor consumerThreadPool() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
         pool.setCorePoolSize(1);
         pool.setMaxPoolSize(1);
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("artemis-client-");
+        pool.setThreadNamePrefix("artemis-consumer-");
+        return pool;
+    }
+
+    @Bean(destroyMethod = "shutdown")
+    public ThreadPoolTaskExecutor producerThreadPool() {
+        ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
+        pool.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        pool.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
+        pool.setAllowCoreThreadTimeOut(true);
+        pool.setThreadNamePrefix("artemis-producer-");
         return pool;
     }
 
     @Bean(destroyMethod = "close")
     @DependsOn("activeMqServer")
-    public ServerLocator serverLocator(Executor clientThreadPool) throws Exception {
-        //Assert.isTrue(activeMqServer.getActiveMQServer().isStarted(), "Server not started!");
-
+    public ServerLocator serverLocator(Executor producerThreadPool) throws Exception {
         ServerLocator serverLocator = ActiveMQClient.createServerLocator("vm://0");
         serverLocator.setReconnectAttempts(1);
         //serverLocator.setConnectionTTL(10_000);
         serverLocator.setUseGlobalPools(false);
         serverLocator.setAutoGroup(true);
         serverLocator.setGroupID("binpastes-views");
-        serverLocator.setThreadPools(clientThreadPool, Executors.newSingleThreadScheduledExecutor());
-
-
-
+        serverLocator.setThreadPools(producerThreadPool, Executors.newSingleThreadScheduledExecutor());
         serverLocator.setPreAcknowledge(true);
-
         return serverLocator;
     }
 
