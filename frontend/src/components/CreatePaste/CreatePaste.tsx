@@ -71,7 +71,6 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
   return (
     <div>
       <form ref={creationForm} onSubmit={submitCreateForm} autocomplete="off" class={styles.createForm}>
-
         <fieldset>
           <div>
             <label for="title">Title (optional): </label>
@@ -81,11 +80,12 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
           <div>
             <label for="expiry">Expires in: </label>
             <select id="expiry" name="expiry" onChange={updateFormField('expiry')}>
-              <option value="ONE_HOUR">One Hour</option>
-              <option value="ONE_DAY" selected="selected">One Day</option>
-              <option value="ONE_WEEK">One Week</option>
-              <option value="ONE_MONTH">One Month</option>
-              <option value="ONE_YEAR">One Year</option>
+              <option value="ONE_HOUR">1 Hour</option>
+              <option value="ONE_DAY" selected="selected">1 Day</option>
+              <option value="ONE_WEEK">1 Week</option>
+              <option value="ONE_MONTH">1 Month</option>
+              <option value="THREE_MONTH">3 Months</option>
+              <option value="ONE_YEAR">1 Year</option>
               <option value="NEVER">Never</option>
             </select>
           </div>

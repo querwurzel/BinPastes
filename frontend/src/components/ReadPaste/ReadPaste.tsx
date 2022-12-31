@@ -7,11 +7,23 @@ import openLock from './open-padlock.png';
 import lock from './padlock.png';
 import styles from './readPaste.module.css';
 
+// TODO clone feature -> take paste, navigate to createForm, prefill form
+
 const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
 
   const [clearText, setClearText] = createSignal<string>(null);
 
   let keyInput: HTMLInputElement;
+
+  const urlify = (text: string): String => {
+    const urls = text.match(/((((ftp|http|https?):\/\/)|(w{3}\.))[\-\w@:%_\+.~#?,&\/\/=]+)/g);
+
+    if (urls) {
+      urls.forEach(url => text = text.replace(url, `<a target="_blank" href="${url}">${url}</a>`));
+    }
+
+    return text.replace("(", "<br/>(")
+  };
 
   const decryptContent = (e: KeyboardEvent | MouseEvent) => {
     if (e instanceof KeyboardEvent && e.key !== "Enter") {

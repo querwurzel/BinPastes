@@ -7,15 +7,16 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
-public record CreateCmd (
-                           String title,
-                           @NotNull
-                           @NotBlank
-                           @Size(min = 5)
-                           String content,
-                           Boolean isEncrypted,
-                           ExpirationRange expiry,
-                           Exposure exposure
+public record CreateCmd(
+        @Size(max = 255)
+        String title,
+        @NotNull
+        @NotBlank
+        @Size(min = 5, max = 4096)
+        String content,
+        Boolean isEncrypted,
+        ExpirationRange expiry,
+        Exposure exposure
 ) {
 
     @Override
@@ -90,6 +91,12 @@ public record CreateCmd (
             @Override
             public LocalDateTime toTimestamp() {
                 return LocalDateTime.now().plusMonths(1);
+            }
+        },
+        THREE_MONTHS {
+            @Override
+            public LocalDateTime toTimestamp() {
+                return LocalDateTime.now().plusMonths(3);
             }
         },
         ONE_YEAR {
