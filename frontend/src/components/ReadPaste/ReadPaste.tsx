@@ -1,4 +1,5 @@
 import {A} from '@solidjs/router';
+import linkifyElement from 'linkify-element';
 import {Component, createSignal, JSX, Show} from 'solid-js';
 import {deletePaste} from '../../api/client';
 import {PasteView} from '../../api/model/PasteView';
@@ -15,17 +16,18 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
 
   let keyInput: HTMLInputElement;
 
-  const urlify = (text: string): String => {
-    const urls = text.match(/((((ftp|http|https?):\/\/)|(w{3}\.))[\-\w@:%_\+.~#?,&\/\/=]+)/g);
+  let content: HTMLPreElement;
 
-    if (urls) {
-      urls.forEach(url => text = text.replace(url, `<a target="_blank" href="${url}">${url}</a>`));
-    }
+  const linkify = () => {
+      linkifyElement(content, {
+        target: {
+          url: "_blank",
+          email: null,
+        }
+      });
+  }
 
-    return text.replace("(", "<br/>(")
-  };
-
-  const decryptContent = (e: KeyboardEvent | MouseEvent) => {
+  const onDecrypt = (e: KeyboardEvent | MouseEvent) => {
     if (e instanceof KeyboardEvent && e.key !== "Enter") {
       return;
     }
@@ -38,7 +40,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
     e.preventDefault();
   }
 
-  const deleteIt = (e: Event) => {
+  const onDelete = (e: Event) => {
     const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
 
     if (window.confirm(msg)) {
@@ -47,6 +49,8 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       e.preventDefault();
     }
   }
+
+  queueMicrotask(linkify);
 
   return (
     <div class={styles.read}>
@@ -59,7 +63,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
         Last seen: {paste.lastViewed || '-'}
-        <Show when={!paste.isPublic} keyed> | <A onClick={deleteIt} href={'/'} title="Delete">🗑</A></Show>
+        <Show when={!paste.isPublic} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
       </h4>
 
       <Show when={paste.isOneTime}>
@@ -70,13 +74,13 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
         <p class={styles.decrypt}>
           <strong>ENCRYPTED!</strong> Enter password to decode:
           &#32;
-          <input ref={keyInput} type="password" onKeyUp={decryptContent}/>
+          <input ref={keyInput} type="password" onKeyUp={onDecrypt}/>
           &#32;
-          <button onClick={decryptContent}>🗝</button>
+          <button onClick={onDecrypt}>🗝</button>
         </p>
       </Show>
 
-      <Show when={clearText()} fallback={<pre>{paste.content}</pre>}>
+      <Show when={clearText()} fallback={<pre ref={content}>{paste.content}</pre>}>
         <pre>{clearText()}</pre>
       </Show>
 
