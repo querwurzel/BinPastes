@@ -63,7 +63,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
         Expires: {paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'} |
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
-        Last seen: {paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}
+        Last viewed: {paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}
         <Show when={!paste.isPublic} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
       </h4>
 
