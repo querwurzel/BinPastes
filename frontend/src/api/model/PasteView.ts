@@ -7,8 +7,8 @@ export interface PasteView {
   isPublic: boolean
   isEncrypted: boolean
   isOneTime: boolean
-  dateCreated: Date
-  dateOfExpiry?: Date
-  lastViewed?: Date
+  dateCreated: string
+  dateOfExpiry?: string
+  lastViewed?: string
   views: number
 }

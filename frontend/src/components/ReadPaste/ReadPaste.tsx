@@ -4,6 +4,7 @@ import {Component, createSignal, JSX, Show} from 'solid-js';
 import {deletePaste} from '../../api/client';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/Crypto';
+import {toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
 import openLock from './open-padlock.png';
 import lock from './padlock.png';
 import styles from './readPaste.module.css';
@@ -58,11 +59,11 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       <h3><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? openLock : lock} alt="lock" /></Show> {paste.title || 'Untitled'}</h3>
 
       <h4>
-        Created: {paste.dateCreated} |
-        Expires: {paste.dateOfExpiry || 'Never'} |
+        Created: {toDateTimeString(paste.dateCreated)} |
+        Expires: {paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'} |
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
-        Last seen: {paste.lastViewed || '-'}
+        Last seen: {paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}
         <Show when={!paste.isPublic} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
       </h4>
 

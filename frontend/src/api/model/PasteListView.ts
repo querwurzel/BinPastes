@@ -4,8 +4,8 @@ export interface PasteListView {
   title?: string
   sizeInBytes: number
   isEncrypted: boolean
-  dateCreated: Date
-  dateOfExpiry?: Date
+  dateCreated: string
+  dateOfExpiry?: string
 }
 
 export interface PasteList {

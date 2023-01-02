@@ -1,6 +1,7 @@
 import {A} from '@solidjs/router';
 import {createResource, For, JSX, Match, Show, Switch} from 'solid-js';
 import {findAll} from '../../api/client';
+import {toDateString} from '../../datetime/DateTimeUtil';
 import lock from '../ReadPaste/padlock.png';
 import styles from './recentPastes.module.css';
 
@@ -27,7 +28,7 @@ const RecentPastes: () => JSX.Element = () => {
             <For each={pastes()}>{item =>
             <li>
               <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img width="15px" src={lock} alt="lock" /></Show></p>
-              <p>Created: {item.dateCreated} | Size: {item.sizeInBytes} bytes</p>
+              <p>Created: {toDateString(item.dateCreated)} | Size: {item.sizeInBytes} bytes</p>
             </li>
             }
             </For>
