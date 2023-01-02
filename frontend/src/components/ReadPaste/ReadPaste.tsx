@@ -59,7 +59,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       <h3><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? openLock : lock} alt="lock" /></Show> {paste.title || 'Untitled'}</h3>
 
       <h4>
-        Created: {toDateTimeString(paste.dateCreated)} |
+        Created: <span title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</span> |
         Expires: {paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'} |
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
