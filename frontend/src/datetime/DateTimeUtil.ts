@@ -32,36 +32,36 @@ export const relativeDiffLabel = (date: string | Date): string => {
   const now = new Date();
   const diff = Math.trunc((now.getTime() / 1000) - (instance.getTime() / 1000)); // seconds
 
-  if (diff > 60 * 60 * 24 * 7 * 4) { // > 4 weeks
-    return toDateTimeString(instance);
+  if (diff > 2419200) { // > 4 weeks 60 * 60 * 24 * 7 * 4
+    return toDateString(instance);
   }
 
-  if (diff < 60 * 2) { // minute
+  if (diff < 120) { // minute 60 * 2
     return "1 minute ago"
   }
-  if (diff < 60 * 60) { // minutes
+  if (diff < 3600) { // minutes 60 * 60
     return Math.trunc(diff / 60)  + " minutes ago";
   }
 
-  if (diff < (60 * 60) * 2) { // hour
+  if (diff < 7200) { // hour (60 * 60) * 2
     return '1 hour ago';
   }
-  if (diff < (60 * 60) * 24) { // hours
-    return Math.trunc(diff / (60 * 60)) + ' hours ago';
+  if (diff < 86400) { // hours (60 * 60) * 24
+    return Math.trunc(diff / 3600) + ' hours ago';
   }
 
-  if (diff < (60 * 60 * 24) * 2) { // day
+  if (diff < 172800) { // day (60 * 60 * 24) * 2
     return '1 day ago';
   }
-  if (diff < (60 * 60 * 24) * 7) { // days
-    return Math.trunc(diff / (60 * 60 * 24)) + ' days ago';
+  if (diff < 604800) { // days (60 * 60 * 24) * 7
+    return Math.trunc(diff / 86400) + ' days ago';
   }
 
-  if (diff < (60 * 60 * 24 * 7) * 2) { // week
+  if (diff < 1209600) { // week (60 * 60 * 24 * 7) * 2
     return '1 week ago';
   }
-  if (diff < (60 * 60 * 24 * 7) * 4) { // weeks
-    return Math.trunc(diff / (60 * 60 * 24 * 7)) + ' weeks ago';
+  if (diff < 2419200) { // weeks (60 * 60 * 24 * 7) * 4
+    return Math.trunc(diff / 604800) + ' weeks ago';
   }
 };
 
