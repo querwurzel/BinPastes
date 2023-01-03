@@ -102,10 +102,7 @@ const CreatePaste: Component<{onCreatePaste: (paste: PasteCreateCmd) => Promise<
           </div>
           <hr/>
           <div>
-            <label for="content">Content: </label>
-            <textarea id="content"
-                      name="content"
-                      minLength="5"
+            <textarea minLength="5"
                       maxLength="4096"
                       required={true}
                       autofocus={true}

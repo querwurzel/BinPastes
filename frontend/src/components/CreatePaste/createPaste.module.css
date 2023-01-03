@@ -24,6 +24,7 @@
     border: 1px dotted #a5a5a5;
     border-radius: 7px;
     margin-bottom: 10px;
+    padding: 5px 10px;
 }
 
 .createForm hr {
@@ -33,38 +34,50 @@
 }
 
 .createForm div {
-    margin: .5rem;
+    margin: 1rem .5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
 }
 
-.createForm label {
-    margin: .5rem 1rem .5rem .5rem;
+.createForm label,
+.createForm input[type=password],
+.createForm input[type=text],
+.createForm input[type=radio],
+.createForm select {
     display: inline-block;
-    font-weight: normal;
-    cursor: pointer;
-}
-
-.createForm div label:first-child {
-    font-weight: bold;
-    cursor: initial;
-}
-
-.createForm input, select {
     width: initial;
-    display: inline;
-    margin: 0 .2rem 0 0;
+    margin: 0;
 }
 
-.createForm textarea {
-    font-family: monospace;
-    box-sizing: border-box;
-    width: 100%;
-    height: 20em;
+.createForm input[type=radio] {
+    margin-right: .3rem;
 }
 
+
+.createForm label,
 .createForm button,
 .createForm select,
 .createForm input[type=submit],
 .createForm input[type=reset],
 .createForm input[type=radio] {
     cursor: pointer;
+}
+
+.createForm label {
+    font-weight: normal;
+}
+
+.createForm label:first-child {
+    font-weight: bold;
+    cursor: initial;
+}
+
+.createForm textarea {
+    font-family: monospace;
+    box-sizing: border-box;
+    margin: 0;
+    padding: .5rem;
+    width: 100%;
+    height: 20em;
 }
