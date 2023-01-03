@@ -30,7 +30,7 @@ export const relativeDiffLabel = (date: string | Date): string => {
 
   const instance = date instanceof Date ? date : toDate(date);
   const now = new Date();
-  const diff = Math.trunc((now.getTime() / 1000) - (instance.getTime() / 1000)); // seconds
+  const diff = Math.trunc((now.getTime() - instance.getTime()) / 1000); // seconds
 
   if (diff > 2419200) { // > 4 weeks 60 * 60 * 24 * 7 * 4
     return toDateString(instance);

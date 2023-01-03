@@ -1,6 +1,6 @@
 import {A} from '@solidjs/router';
 import linkifyElement from 'linkify-element';
-import {Component, createSignal, JSX, Show} from 'solid-js';
+import {Component, createEffect, createSignal, JSX, Show} from 'solid-js';
 import {deletePaste} from '../../api/client';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/Crypto';
@@ -19,14 +19,16 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
 
   let content: HTMLPreElement;
 
-  const linkify = () => {
-      linkifyElement(content, {
-        target: {
-          url: "_blank",
-          email: null,
-        }
-      });
+  const linkify = (_: string | undefined) => {
+    linkifyElement(content, {
+      target: {
+        url: "_blank",
+        email: null,
+      }
+    });
   }
+
+  createEffect(() => linkify(clearText()));
 
   const onDecrypt = (e: KeyboardEvent | MouseEvent) => {
     if (e instanceof KeyboardEvent && e.key !== "Enter") {
@@ -51,8 +53,6 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
     }
   }
 
-  queueMicrotask(linkify);
-
   return (
     <div class={styles.read}>
 
@@ -64,7 +64,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
         Last viewed: {paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}
-        <Show when={!paste.isPublic} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
+        <Show when={paste.isErasable} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
       </h4>
 
       <Show when={paste.isOneTime}>
@@ -82,7 +82,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       </Show>
 
       <Show when={clearText()} fallback={<pre ref={content}>{paste.content}</pre>}>
-        <pre>{clearText()}</pre>
+        <pre ref={content}>{clearText()}</pre>
       </Show>
 
     </div>

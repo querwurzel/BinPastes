@@ -6,8 +6,10 @@ export const encrypt = (clearText: string, key: string): string => {
 }
 
 export const decrypt = (cipherText: string, key: string): string | null => {
-  const wordArray = AES.decrypt(cipherText, key);
-  const clearText = wordArray.toString(CryptoJS.enc.Utf8);
-
-  return clearText || null;
+  try {
+    const wordArray = AES.decrypt(cipherText, key);
+    return wordArray.toString(CryptoJS.enc.Utf8) || null;
+  } catch (_) {
+    return null;
+  }
 }

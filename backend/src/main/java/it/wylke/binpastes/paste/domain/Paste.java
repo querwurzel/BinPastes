@@ -35,10 +35,10 @@ public class Paste {
     private LocalDateTime dateCreated;
     @Column(PasteSchema.DATE_OF_EXPIRY)
     private LocalDateTime dateOfExpiry;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Column(PasteSchema.DATE_DELETED)
     private LocalDateTime dateDeleted;
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Column(PasteSchema.REMOTE_ADDRESS)
     private String remoteAddress;
 
@@ -102,12 +102,8 @@ public class Paste {
         return views;
     }
 
-    public boolean isPublic() {
-        return exposure == PasteExposure.PUBLIC;
-    }
-
-    public boolean isHidden() {
-        return !this.isPublic();
+    public boolean isErasable() {
+        return exposure == PasteExposure.UNLISTED;
     }
 
     public boolean isOneTime() {

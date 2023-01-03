@@ -4,7 +4,7 @@ export interface PasteView {
   title?: string
   content: string
   sizeInBytes: number
-  isPublic: boolean
+  isErasable: boolean
   isEncrypted: boolean
   isOneTime: boolean
   dateCreated: string

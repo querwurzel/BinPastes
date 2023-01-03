@@ -75,7 +75,7 @@ public class PasteService {
     public void delete(String id) {
         pasteRepository
                 .findOneLegitById(id)
-                .filter(Paste::isHidden)
+                .filter(Paste::isErasable)
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
                 .doOnNext(paste -> log.info("Deleted paste {}", paste.getId()))

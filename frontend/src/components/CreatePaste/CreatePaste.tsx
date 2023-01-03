@@ -1,8 +1,6 @@
 import {Component, createSignal, JSX, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
-import {createPaste} from '../../api/client';
 import {PasteCreateCmd} from '../../api/model/PasteCreateCmd';
-import {PasteView} from '../../api/model/PasteView';
 import {encrypt} from '../../crypto/Crypto';
 import styles from './createPaste.module.css';
 
@@ -10,7 +8,7 @@ interface FormModel extends PasteCreateCmd {
   password: string
 }
 
-const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCreated}): JSX.Element => {
+const CreatePaste: Component<{onCreatePaste: (paste: PasteCreateCmd) => Promise<string>}> = ({onCreatePaste}): JSX.Element => {
 
   let creationForm: HTMLFormElement
 
@@ -53,18 +51,10 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
       data.isEncrypted = true;
     }
 
-    createPaste(data)
-      .then(resp => {
-        resetCreateForm();
-
-        const url = window.location.origin + '/paste/' + resp.id;
-
+    onCreatePaste(data)
+      .then(url => {
         setLastPaste(url);
-
-        navigator.clipboard
-          .writeText(url)
-          .then(_ => onCreated(resp))
-          .catch(_ => onCreated(resp))
+        resetCreateForm();
       })
   }
 
@@ -81,7 +71,7 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
             <label for="expiry">Expires in: </label>
             <select id="expiry" name="expiry" onChange={updateFormField('expiry')}>
               <option value="ONE_HOUR">1 Hour</option>
-              <option value="ONE_DAY" selected="selected">1 Day</option>
+              <option value="ONE_DAY" selected={true}>1 Day</option>
               <option value="ONE_WEEK">1 Week</option>
               <option value="ONE_MONTH">1 Month</option>
               <option value="THREE_MONTH">3 Months</option>
@@ -97,7 +87,7 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
                      id="public"
                      name="exposure"
                      value="PUBLIC"
-                     checked="checked"
+                     checked={true}
                      onChange={updateFormField('exposure')}/>
               Public
             </label>
@@ -117,8 +107,8 @@ const CreatePaste: Component<{onCreated: (paste: PasteView) => void}> = ({onCrea
                       name="content"
                       minLength="5"
                       maxLength="4096"
-                      required="required"
-                      autofocus="autofocus"
+                      required={true}
+                      autofocus={true}
                       rows="20"
                       cols="75"
                       placeholder={'Paste here'}
