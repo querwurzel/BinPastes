@@ -10,7 +10,7 @@
     <relativePath/><!-- lookup parent from repository -->
   </parent>
 
-  <groupId>it.wylke.binpastes</groupId>
+  <groupId>com.github.binpastes</groupId>
   <artifactId>binpastes</artifactId>
   <version>1.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -90,12 +90,12 @@
     <dependencies>
       <!-- Project dependencies -->
       <dependency>
-        <groupId>it.wylke.binpastes</groupId>
+        <groupId>com.github.binpastes</groupId>
         <artifactId>frontend</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>it.wylke.binpastes</groupId>
+        <groupId>com.github.binpastes</groupId>
         <artifactId>backend</artifactId>
         <version>${project.version}</version>
       </dependency>
