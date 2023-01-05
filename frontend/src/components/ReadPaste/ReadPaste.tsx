@@ -1,12 +1,10 @@
 import {A} from '@solidjs/router';
 import linkifyElement from 'linkify-element';
-import {Component, createEffect, createSignal, JSX, Show} from 'solid-js';
+import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import {deletePaste} from '../../api/client';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/Crypto';
 import {toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
-import openLock from './open-padlock.png';
-import lock from './padlock.png';
 import styles from './readPaste.module.css';
 
 // TODO clone feature -> take paste, navigate to createForm, prefill form
@@ -19,16 +17,16 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
 
   let content: HTMLPreElement;
 
-  const linkify = (_: string | undefined) => {
+  const linkify = () => {
     linkifyElement(content, {
       target: {
-        url: "_blank",
+        url: '_blank',
         email: null,
       }
     });
   }
 
-  createEffect(() => linkify(clearText()));
+  createEffect(on(clearText, () => linkify()));
 
   const onDecrypt = (e: KeyboardEvent | MouseEvent) => {
     if (e instanceof KeyboardEvent && e.key !== "Enter") {
@@ -56,7 +54,7 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
   return (
     <div class={styles.read}>
 
-      <h3><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? openLock : lock} alt="lock" /></Show> {paste.title || 'Untitled'}</h3>
+      <h3><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? '/assets/images/open-padlock.png' : '/assets/images/padlock.png'} alt="lock" /></Show> {paste.title || 'Untitled'}</h3>
 
       <h4>
         Created: <span title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</span> |

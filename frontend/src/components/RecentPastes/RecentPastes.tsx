@@ -1,8 +1,7 @@
 import {A} from '@solidjs/router';
 import {createResource, For, JSX, Match, Show, Switch} from 'solid-js';
 import {findAll} from '../../api/client';
-import {relativeDiffLabel, toDateString} from '../../datetime/DateTimeUtil';
-import lock from '../ReadPaste/padlock.png';
+import {relativeDiffLabel} from '../../datetime/DateTimeUtil';
 import styles from './recentPastes.module.css';
 
 const RecentPastes: () => JSX.Element = () => {
@@ -27,7 +26,7 @@ const RecentPastes: () => JSX.Element = () => {
           <ol>
             <For each={pastes()}>{item =>
             <li>
-              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img width="15px" src={lock} alt="lock" /></Show></p>
+              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img src="/assets/images/padlock.png" alt="lock" /></Show></p>
               <p>Created: {relativeDiffLabel(item.dateCreated)} | Size: {item.sizeInBytes} bytes</p>
             </li>
             }

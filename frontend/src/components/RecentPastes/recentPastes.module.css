@@ -29,6 +29,10 @@
     gap: 3px;
 }
 
+.item img {
+    width: 15px;
+}
+
 @media screen and (max-width:750px) {
     .recentPastes {
         border-left: none;

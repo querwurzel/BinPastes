@@ -4,17 +4,17 @@ import {PasteCreateCmd} from '../../api/model/PasteCreateCmd';
 import {encrypt} from '../../crypto/Crypto';
 import styles from './createPaste.module.css';
 
-interface FormModel extends PasteCreateCmd {
+interface FormModel extends Omit<PasteCreateCmd, 'isEncrypted'> {
   password: string
 }
 
 const CreatePaste: Component<{onCreatePaste: (paste: PasteCreateCmd) => Promise<string>}> = ({onCreatePaste}): JSX.Element => {
 
-  let creationForm: HTMLFormElement
-
   const [form, setForm] = createStore<FormModel>(null);
 
   const [lastPaste, setLastPaste] = createSignal<string>(null);
+
+  let creationForm: HTMLFormElement
 
   const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
     const inputElement = event.currentTarget as HTMLInputElement;
@@ -29,7 +29,6 @@ const CreatePaste: Component<{onCreatePaste: (paste: PasteCreateCmd) => Promise<
     setForm({
       title: null,
       password: null,
-      isEncrypted: null,
       content: null,
       expiry: null,
       exposure: null
