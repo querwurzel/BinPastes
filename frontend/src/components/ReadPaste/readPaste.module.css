@@ -18,6 +18,10 @@
   border-radius: 10px;
 }
 
+.clone {
+  font-size: 1.5rem;
+}
+
 .onetime {
   color: red;
 }
