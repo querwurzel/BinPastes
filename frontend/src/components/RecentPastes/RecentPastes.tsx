@@ -1,19 +1,48 @@
 import {A} from '@solidjs/router';
-import {createResource, For, JSX, Match, Show, Switch} from 'solid-js';
-import {findAll} from '../../api/client';
+import {createResource, For, JSX, Match, onMount, Show, Switch} from 'solid-js';
+import ApiClient from '../../api/client';
+import {PasteListView} from '../../api/model/PasteListView';
+import AppContext from '../../AppContext';
 import {relativeDiffLabel} from '../../datetime/DateTimeUtil';
 import styles from './recentPastes.module.css';
 
 const RecentPastes: () => JSX.Element = () => {
 
-  const [pastes, { refetch }] = createResource<any[]>(findAll);
+  const [pastes, { mutate, refetch }] = createResource(ApiClient.findAll);
 
-  window.setInterval(refetch, 120_000);
+  const appContext = AppContext;
+
+  let refresh = window.setInterval(refetch, 60_000)
+
+  const restartJob = () => {
+    window.clearInterval(refresh);
+    refresh = window.setInterval(refetch, 60_000);
+  }
+
+  onMount(() => {
+    appContext.onPasteCreated((paste) => {
+      if (!paste.isPublic) {
+        return;
+      }
+
+      const newItem: PasteListView = {
+        id: paste.id,
+        dateCreated: paste.dateCreated,
+        title: paste.title,
+        dateOfExpiry: paste.dateOfExpiry,
+        isEncrypted: paste.isEncrypted,
+        sizeInBytes: paste.sizeInBytes
+      };
+
+      restartJob();
+      mutate(prev => [newItem].concat(prev))
+    })
+  })
 
   return (
     <div class={styles.recentPastes}>
 
-      <Switch fallback={<div>Loading ..</div>}>
+      <Switch>
         <Match when={pastes.loading}>
           <h3>Loading ..</h3>
         </Match>
@@ -23,6 +52,7 @@ const RecentPastes: () => JSX.Element = () => {
             &nbsp;
             <span onclick={refetch} style="cursor:pointer">↻</span>
           </h3>
+
           <ol>
             <For each={pastes()}>{item =>
             <li>
@@ -32,12 +62,10 @@ const RecentPastes: () => JSX.Element = () => {
             }
             </For>
           </ol>
-
         </Match>
       </Switch>
-
-  </div>
-)
+    </div>
+  )
 }
 
 export default RecentPastes

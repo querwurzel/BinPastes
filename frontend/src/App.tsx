@@ -5,9 +5,8 @@ import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
 import Create from './pages/Create';
+import Read from './pages/Read';
 import Search from './pages/Search';
-import View from './pages/View';
-import './App.module.css';
 
 const NotFound = lazy(() => import("./pages/404"));
 
@@ -15,30 +14,32 @@ const App: () => JSX.Element = () => {
 
   return (
     <>
-        <div class={styles.head}>
+        <header class={styles.head}>
           <Header />
-        </div>
+        </header>
 
         <div class={styles.content}>
 
-          <div class={styles.left}>
+          <main class={styles.left}>
+            <div class={styles.leftContainer}>
             <Routes>
-              <Route path="/" component={Create} />
+              <Route path="/" component={Create}  />
               <Route path="/paste/search" component={Search} />
-              <Route path="/paste/:id" component={View} />
+              <Route path="/paste/:id" component={Read} />
               <Route path="*" component={NotFound} />
             </Routes>
-          </div>
+            </div>
+          </main>
 
-          <div class={styles.right}>
+          <aside class={styles.right}>
             <RecentPastes />
-          </div>
+          </aside>
 
         </div>
 
-        <div class={styles.footer}>
+        <footer class={styles.footer}>
           <Footer />
-        </div>
+        </footer>
     </>
   )
 }

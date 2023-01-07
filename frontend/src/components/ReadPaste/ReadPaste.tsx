@@ -1,23 +1,24 @@
-import {A} from '@solidjs/router';
 import linkifyElement from 'linkify-element';
 import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
-import {deletePaste} from '../../api/client';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/Crypto';
 import {toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
 import styles from './readPaste.module.css';
 
-// TODO clone feature -> take paste, navigate to createForm, prefill form
+interface ReadPasteProps {
+  paste: PasteView
+  onClonePaste: () => void
+  onDeletePaste: () => void
+}
 
-const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
+const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePaste}): JSX.Element => {
 
   const [clearText, setClearText] = createSignal<string>(null);
 
   let keyInput: HTMLInputElement;
-
   let content: HTMLPreElement;
 
-  const linkify = () => {
+  const linkifyContent = () => {
     linkifyElement(content, {
       target: {
         url: '_blank',
@@ -25,58 +26,64 @@ const ReadPaste: Component<{paste: PasteView}> = ({paste}): JSX.Element => {
       }
     });
   }
-
-  createEffect(on(clearText, () => linkify()));
-
-  const onDecrypt = (e: KeyboardEvent | MouseEvent) => {
-    if (e instanceof KeyboardEvent && e.key !== "Enter") {
-      return;
-    }
-
+  const decryptContent = () => {
     const key = keyInput.value;
     const cipherText = paste.content;
     const clearText = decrypt(cipherText, key);
 
     setClearText(clearText);
-    e.preventDefault();
   }
 
-  const onDelete = (e: Event) => {
-    const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
-
-    if (window.confirm(msg)) {
-      deletePaste(paste.id);
-    } else {
-      e.preventDefault();
+  const onDecryptClick = () => {
+    decryptContent();
+  }
+  const onDecryptSubmit = (e: KeyboardEvent) => {
+    if (e instanceof KeyboardEvent && e.key !== "Enter") {
+      decryptContent();
     }
   }
+  const onCloneClick = (e: Event) => {
+    e.preventDefault();
+    onClonePaste();
+  }
+  const onDeleteClick = (e: Event) => {
+    e.preventDefault();
+
+    const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
+    if (window.confirm(msg)) {
+      onDeletePaste();
+    }
+  }
+
+  createEffect(on(clearText, () => linkifyContent()));
 
   return (
     <div class={styles.read}>
 
-      <h3><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? '/assets/images/open-padlock.png' : '/assets/images/padlock.png'} alt="lock" /></Show> {paste.title || 'Untitled'}</h3>
+      <h2><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? '/assets/images/padlock_open.png' : '/assets/images/padlock.png'} alt="lock" /></Show> {paste.title || 'Untitled'}</h2>
 
-      <h4>
-        Created: <span title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</span> |
-        Expires: {paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'} |
+      <p>
+        Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
+        Expires: <time>{paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'}</time> |
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
-        Last viewed: {paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}
-        <Show when={paste.isErasable} keyed> | <A onClick={onDelete} href={'/'} title="Delete">🗑</A></Show>
-      </h4>
-
-      <Show when={paste.isOneTime}>
-        <h4 class={styles.onetime}><strong>For your eyes only! This paste will burn after reading.</strong></h4>
-      </Show>
+        Last viewed: <time>{paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}</time>
+        <Show when={paste.isPublic} keyed> | <a onClick={onClonePaste} href="#" title="Clone">⎘</a></Show>
+        <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete">🗑</a></Show>
+      </p>
 
       <Show when={paste.isEncrypted && !clearText()}>
         <p class={styles.decrypt}>
           <strong>ENCRYPTED!</strong> Enter password to decode:
           &#32;
-          <input ref={keyInput} type="password" onKeyUp={onDecrypt}/>
+          <input ref={keyInput} type="password" onKeyUp={onDecryptSubmit}/>
           &#32;
-          <button onClick={onDecrypt}>🗝</button>
+          <button onClick={onDecryptClick}>🗝</button>
         </p>
+      </Show>
+
+      <Show when={paste.isOneTime}>
+        <h3 class={styles.onetime}><strong>For your eyes only! This paste will burn after reading.</strong></h3>
       </Show>
 
       <Show when={clearText()} fallback={<pre ref={content}>{paste.content}</pre>}>

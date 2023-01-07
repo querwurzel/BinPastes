@@ -1,18 +1,19 @@
 import {createResource, createSignal, JSX} from 'solid-js';
-import {searchAll} from '../../api/client';
+import ApiClient from '../../api/client';
+import {PasteListView} from '../../api/model/PasteListView';
 
 const SearchPastes: () => JSX.Element = () => {
 
   const [search, setSearch] = createSignal<string>(null);
 
-  const [data, { refetch }] = createResource<any[]>(searchTerm);
+  const [results, { refetch }] = createResource(() => search(), () => searchTerm());
 
-  const searchTerm = (): Promise<any[]> => {
+  const searchTerm = (): Promise<Array<PasteListView>> => {
     if (search() && search().length >= 3) {
-      return searchAll(search());
+      return ApiClient.searchAll(search());
     }
 
-    return Promise.resolve(null);
+    return Promise.resolve([]);
   }
 
   const resetSearchForm = () => {

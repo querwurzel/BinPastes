@@ -86,10 +86,6 @@ public class Paste {
         return dateOfExpiry;
     }
 
-    public boolean isEncrypted() {
-        return this.isEncrypted;
-    }
-
     public PasteExposure getExposure() {
         return exposure;
     }
@@ -100,6 +96,14 @@ public class Paste {
 
     public long getViews() {
         return views;
+    }
+
+    public boolean isEncrypted() {
+        return this.isEncrypted;
+    }
+
+    public boolean isPublic() {
+        return this.exposure == PasteExposure.PUBLIC;
     }
 
     public boolean isErasable() {

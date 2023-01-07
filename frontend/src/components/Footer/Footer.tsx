@@ -4,9 +4,7 @@ const Footer: () => JSX.Element = () => {
 
   return (
     <div>
-
-      <p>© 2022</p>
-
+      <span>© 2022</span>
     </div>
   )
 }

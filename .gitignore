@@ -34,4 +34,5 @@ build/
 .DS_Store
 
 # Binpastes
-tracking/
+/tracking/
+/backend/tracking/

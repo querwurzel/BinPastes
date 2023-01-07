@@ -1,7 +1,7 @@
 
 .lastPaste {
-    margin: 1rem;
-    color: green;
+    margin: .5rem;
+    color: greenyellow;
     user-select: none;
 }
 
@@ -12,7 +12,7 @@
 
 .lastPaste span::selection {
     color: white;
-    background-color: greenyellow;
+    background-color: green;
 }
 
 .createForm {
@@ -49,6 +49,14 @@
     width: initial;
     margin: 0;
 }
+
+.createForm input[type=submit],
+.createForm input[type=reset] {
+    display: inline-block;
+    width: initial;
+    margin: .5rem;
+}
+
 
 .createForm input[type=radio] {
     margin-right: .3rem;

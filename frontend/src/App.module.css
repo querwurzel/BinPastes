@@ -1,6 +1,8 @@
 
 .head {
   margin: 2rem;
+  padding: 0;
+  text-align: left;
 }
 
 .content {
@@ -11,6 +13,12 @@
 
 .left {
   flex-basis: 65%;
+  padding: 0;
+}
+
+.leftContainer {
+  position: sticky;
+  top: 3rem;
 }
 
 .right {
@@ -32,4 +40,3 @@
   }
 
 }
-

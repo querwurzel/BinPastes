@@ -5,9 +5,7 @@ const Header: () => JSX.Element = () => {
 
   return (
     <div>
-
       <h1><A href={'/'}>BinPastes</A></h1>
-
     </div>
   )
 }
