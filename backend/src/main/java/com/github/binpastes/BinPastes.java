@@ -10,10 +10,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableR2dbcRepositories
 @EnableR2dbcAuditing
 @EnableScheduling
-public class BinPastesApplication {
+public class BinPastes {
 
     public static void main(String[] args) {
-        SpringApplication.run(BinPastesApplication.class, args);
+        SpringApplication.run(BinPastes.class, args);
     }
 
 }

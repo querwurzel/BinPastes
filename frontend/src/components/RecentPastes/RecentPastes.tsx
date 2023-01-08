@@ -1,5 +1,5 @@
 import {A} from '@solidjs/router';
-import {createResource, For, JSX, Match, onMount, Show, Switch} from 'solid-js';
+import {createResource, For, JSX, Match, onCleanup, onMount, Show, Switch} from 'solid-js';
 import ApiClient from '../../api/client';
 import {PasteListView} from '../../api/model/PasteListView';
 import AppContext from '../../AppContext';
@@ -12,11 +12,11 @@ const RecentPastes: () => JSX.Element = () => {
 
   const appContext = AppContext;
 
-  let refresh = window.setInterval(refetch, 60_000)
+  let refreshTimer = window.setInterval(refetch, 60_000)
 
   const restartJob = () => {
-    window.clearInterval(refresh);
-    refresh = window.setInterval(refetch, 60_000);
+    window.clearInterval(refreshTimer);
+    refreshTimer = window.setInterval(refetch, 60_000);
   }
 
   onMount(() => {
@@ -38,6 +38,8 @@ const RecentPastes: () => JSX.Element = () => {
       mutate(prev => [newItem].concat(prev))
     })
   })
+
+  onCleanup(() => window.clearInterval(refreshTimer));
 
   return (
     <div class={styles.recentPastes}>

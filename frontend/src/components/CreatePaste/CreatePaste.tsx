@@ -1,4 +1,4 @@
-import {Component, createSignal, JSX, Show} from 'solid-js';
+import {Component, createSignal, JSX, onMount, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {PasteCreateCmd} from '../../api/model/PasteCreateCmd';
 import {encrypt} from '../../crypto/Crypto';
@@ -31,6 +31,20 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
   const [lastPaste, setLastPaste] = createSignal<string>(null);
 
   let creationForm: HTMLFormElement
+
+  onMount(() => {
+    creationForm.onkeydown = submitCreateFormHotKey
+  })
+
+  const submitCreateFormHotKey = (e: KeyboardEvent) => {
+    if (e.altKey || e.shiftKey || e.metaKey) {
+      return;
+    }
+
+    if (e.ctrlKey && e.code === 'Enter') {
+      creationForm.requestSubmit();
+    }
+  }
 
   const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
     const inputElement = event.currentTarget as HTMLInputElement;
@@ -82,12 +96,12 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
       <fieldset>
         <div>
           <label for="title">Title (optional): </label>
-          <input type="text" id="title" name="title" placeholder={'Title'} maxLength={255} value={form.title} onChange={updateFormField('title')}/>
+          <input type="text" id="title" name="title" placeholder={'Title'} maxLength={255} value={form.title} onKeyUp={updateFormField('title')}/>
         </div>
         <hr/>
         <div>
           <label for="expiry">Expires in: </label>
-          <select id="expiry" name="expiry" onChange={updateFormField('expiry')}>
+          <select id="expiry" name="expiry" onKeyUp={updateFormField('expiry')}>
             <option value="ONE_HOUR">1 Hour</option>
             {/* @ts-ignore selected={true} malfunctioning, is not rendered */}
             <option value="ONE_DAY" /* selected={true} */ selected="selected">1 Day</option>
@@ -103,15 +117,15 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
           <label>Visibility: </label>
           <label for="public">
             {/* @ts-ignore checked={true} malfunctioning, is not rendered */}
-            <input type="radio" id="public" name="exposure" value="PUBLIC" /* checked={true} */ checked="checked" onChange={updateFormField('exposure')}/>
+            <input type="radio" id="public" name="exposure" value="PUBLIC" /* checked={true} */ checked="checked" onKeyUp={updateFormField('exposure')}/>
             Public
           </label>
           <label for="unlisted">
-            <input type="radio" id="unlisted" name="exposure" value="UNLISTED" onChange={updateFormField('exposure')}/>
+            <input type="radio" id="unlisted" name="exposure" value="UNLISTED" onKeyUp={updateFormField('exposure')}/>
             Unlisted
           </label>
           <label for="once">
-            <input type="radio" id="once" name="exposure" value="ONCE" onChange={updateFormField('exposure')}/>
+            <input type="radio" id="once" name="exposure" value="ONCE" onKeyUp={updateFormField('exposure')}/>
             Once (One-Time)
           </label>
         </div>
@@ -124,7 +138,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
                     rows="20"
                     cols="75"
                     placeholder={'Paste here'}
-                    onChange={updateFormField('content')}>{form.content}</textarea>
+                    onKeyUp={updateFormField('content')}>{form.content}</textarea>
         </div>
         <hr/>
         <div>
@@ -134,7 +148,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
                  type="password"
                  placeholder={'Password'}
                  autocomplete="one-time-code"
-                 onChange={updateFormField('password')}/>
+                 onKeyUp={updateFormField('password')}/>
         </div>
       </fieldset>
 
@@ -142,7 +156,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
         <Show when={lastPaste()}>
           <p class={styles.lastPaste}><span>{lastPaste()}</span> ⎘</p>
         </Show>
-        <input type="submit" value="Paste" />
+        <input type="submit" value="Paste Ctrl+⏎" />
         <input type="reset" value="Reset" />
       </fieldset>
 

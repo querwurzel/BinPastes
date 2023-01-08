@@ -38,7 +38,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
     decryptContent();
   }
   const onDecryptSubmit = (e: KeyboardEvent) => {
-    if (e instanceof KeyboardEvent && e.key !== "Enter") {
+    if (e instanceof KeyboardEvent && e.key === "Enter") {
       decryptContent();
     }
   }
@@ -68,7 +68,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         Size: {paste.sizeInBytes} bytes |
         Views: {paste.views} |
         Last viewed: <time>{paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}</time>
-        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onClonePaste} href="#" title="Clone" class={styles.clone}>⎘</a></Show>
+        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}>⎘</a></Show>
         <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete">🗑</a></Show>
       </p>
 
