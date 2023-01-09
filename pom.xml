@@ -127,14 +127,6 @@
         <version>${junixsocket.version}</version>
       </dependency>
 
-      <!-- OS dependencies -->
-      <dependency>
-        <groupId>io.netty</groupId>
-        <artifactId>netty-resolver-dns-native-macos</artifactId>
-        <version>${netty.version}</version>
-        <classifier>osx-aarch_64</classifier>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 

@@ -45,10 +45,10 @@ const RecentPastes: () => JSX.Element = () => {
     <div class={styles.recentPastes}>
 
       <Switch>
-        <Match when={pastes.loading || pastes.error}>
+        <Match when={pastes.error}>
           <h3>Loading ..</h3>
         </Match>
-        <Match when={pastes.state === 'ready'}>
+        <Match when={pastes.latest}>
           <h3>
             <strong>{pastes()?.length} pastes</strong>
             &nbsp;
