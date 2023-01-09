@@ -7,8 +7,10 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
@@ -86,8 +88,12 @@ public class Paste {
         return dateOfExpiry;
     }
 
-    public PasteExposure getExposure() {
+    protected PasteExposure getExposure() {
         return exposure;
+    }
+
+    protected String getRemoteAddress() {
+        return remoteAddress;
     }
 
     public LocalDateTime getLastViewed() {
@@ -106,8 +112,14 @@ public class Paste {
         return this.exposure == PasteExposure.PUBLIC;
     }
 
-    public boolean isErasable() {
-        return exposure == PasteExposure.UNLISTED;
+    public boolean isErasable(String remoteAddress) {
+        if (PasteExposure.UNLISTED == getExposure()) {
+            return true;
+        }
+
+        final var createdBySameAuthor = remoteAddress.equals(getRemoteAddress());
+        final var createdLastHour = Duration.between(getDateCreated(), LocalDateTime.now()).getSeconds() < TimeUnit.HOURS.toSeconds(1);
+        return PasteExposure.PUBLIC == getExposure() && createdLastHour && createdBySameAuthor;
     }
 
     public boolean isOneTime() {

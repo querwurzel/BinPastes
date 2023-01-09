@@ -23,6 +23,15 @@
     border-top: 1px dotted #a5a5a5;
 }
 
+.refresh {
+    cursor: pointer;
+    color: var(--color-link);
+}
+
+.refresh:active {
+    filter: brightness(var(--hover-brightness));
+}
+
 .item {
     display: inline-flex;
     align-items: start;

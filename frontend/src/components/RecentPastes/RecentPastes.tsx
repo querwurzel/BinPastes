@@ -52,7 +52,7 @@ const RecentPastes: () => JSX.Element = () => {
           <h3>
             <strong>{pastes()?.length} pastes</strong>
             &nbsp;
-            <span onclick={refetch} style="cursor:pointer">↻</span>
+            <span class={styles.refresh} onClick={refetch}>↻</span>
           </h3>
 
           <ol>

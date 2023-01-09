@@ -72,10 +72,10 @@ public class PasteService {
                 .flatMapMany(Flux::fromIterable);
     }
 
-    public void delete(String id) {
+    public void delete(String id, String remoteAddress) {
         pasteRepository
                 .findOneLegitById(id)
-                .filter(Paste::isErasable)
+                .filter(paste -> paste.isErasable(remoteAddress))
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
                 .doOnNext(paste -> log.info("Deleted paste {}", paste.getId()))

@@ -3,6 +3,7 @@ package com.github.binpastes.paste.api;
 import com.github.binpastes.paste.api.model.CreateCmd;
 import com.github.binpastes.paste.api.model.ListView;
 import com.github.binpastes.paste.api.model.SingleView;
+import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.PasteService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
@@ -52,7 +53,7 @@ class PasteController {
 
     @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     @ResponseBody
-    public Mono<SingleView> findPaste(@PathVariable("pasteId") String pasteId, ServerHttpResponse response) {
+    public Mono<SingleView> findPaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request, ServerHttpResponse response) {
         return pasteService
                 .find(pasteId)
                 .doOnNext(paste -> {
@@ -60,7 +61,7 @@ class PasteController {
                         response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "no-store");
                     }
                 })
-                .map(SingleView::from)
+                .map(reference -> SingleView.from(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
@@ -97,13 +98,13 @@ class PasteController {
                         cmd.pasteExposure(),
                         remoteAddress(request)
                 ))
-                .map(SingleView::from);
+                .map((Paste reference) -> SingleView.from(reference, remoteAddress(request)));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deletePaste(@PathVariable("pasteId") String pasteId) {
-        pasteService.delete(pasteId);
+    public void deletePaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request) {
+        pasteService.delete(pasteId, remoteAddress(request));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})

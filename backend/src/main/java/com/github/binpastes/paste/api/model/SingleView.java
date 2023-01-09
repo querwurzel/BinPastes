@@ -18,14 +18,14 @@ public record SingleView(
         LocalDateTime lastViewed,
         long views
 ) {
-    public static SingleView from(Paste reference) {
+    public static SingleView from(Paste reference, String remoteAddress) {
         return new SingleView(
                 reference.getId(),
                 reference.getTitle(),
                 reference.getContent(),
                 reference.getContent().getBytes().length,
                 reference.isPublic(),
-                reference.isErasable(),
+                reference.isErasable(remoteAddress),
                 reference.isEncrypted(),
                 reference.isOneTime(),
                 reference.getDateCreated(),
