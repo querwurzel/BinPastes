@@ -56,7 +56,7 @@ const findAll = (): Promise<Array<PasteListView>> => {
 }
 
 const searchAll = (term: string): Promise<Array<PasteListView>> => {
-  const params = new URLSearchParams([['text', term]]);
+  const params = new URLSearchParams([['term', term]]);
   const url = new URL('/api/v1/paste/search?' + params.toString(), apiBaseUrl());
 
   return fetch(url)

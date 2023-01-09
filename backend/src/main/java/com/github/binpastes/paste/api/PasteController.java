@@ -77,9 +77,9 @@ class PasteController {
 
     @GetMapping("/search")
     @ResponseBody
-    public Mono<ListView> searchPastes(@RequestParam("text") @NotBlank @Size(min = 3) @Pattern(regexp = "[\\pL\\pN\\s]+") String text) {
+    public Mono<ListView> searchPastes(@RequestParam("term") @NotBlank @Size(min = 3) @Pattern(regexp = "[\\pL\\pN\\s]+") String term) {
         return pasteService
-                .findByFullText(text)
+                .findByFullText(term)
                 .map(ListItemView::from)
                 .collectList()
                 .map(ListView::from);
