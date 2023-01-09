@@ -1,8 +1,8 @@
 
 .lastPaste {
     margin: .5rem;
-    color: greenyellow;
     user-select: none;
+    color: green;
 }
 
 .lastPaste span {
@@ -13,6 +13,12 @@
 .lastPaste span::selection {
     color: white;
     background-color: green;
+}
+
+@media (prefers-color-scheme: dark) {
+    .lastPaste {
+        color: greenyellow;
+    }
 }
 
 .createForm {
