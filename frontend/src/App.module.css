@@ -39,4 +39,8 @@
     margin: 3rem 0;
   }
 
+  .leftContainer {
+    position: static;
+  }
+
 }

@@ -29,7 +29,7 @@ const createPaste = (cmd: PasteCreateCmd): Promise<PasteView> => {
       if (resp.ok) {
         return resp.json()
       } else {
-        throw new Error()
+        throw new Error(resp.status.toString())
       }
     });
 }
@@ -42,7 +42,7 @@ const findOne = (id: string): Promise<PasteView> => {
       if (resp.ok) {
         return resp.json()
       } else {
-        throw new Error('404')
+        throw new Error(resp.status.toString())
       }
     })
 }
