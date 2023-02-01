@@ -42,7 +42,7 @@
     <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
 
     <!-- 3rd-party library versions -->
-    <spring-boot-bom.version>3.0.1</spring-boot-bom.version>
+    <spring-boot-bom.version>3.0.2</spring-boot-bom.version>
     <junixsocket.version>2.6.1</junixsocket.version>
     <flyway.version>9.11.0</flyway.version>
     <artemis.version>2.27.1</artemis.version>
