@@ -25,7 +25,7 @@
     "vite-plugin-solid": "^2.5.0"
   },
   "dependencies": {
-    "@solidjs/router": "^0.6.0",
+    "@solidjs/router": "^0.7.0",
     "crypto-js": "^4.1.1",
     "linkify-element": "^4.1.0",
     "linkifyjs": "^4.1.0",
