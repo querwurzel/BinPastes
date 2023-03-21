@@ -1,7 +1,7 @@
 import linkifyElement from 'linkify-element';
 import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import {PasteView} from '../../api/model/PasteView';
-import {decrypt} from '../../crypto/Crypto';
+import {decrypt} from '../../crypto/CryptoUtil';
 import {toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
 import styles from './readPaste.module.css';
 

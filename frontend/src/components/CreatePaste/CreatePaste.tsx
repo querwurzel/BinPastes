@@ -1,7 +1,7 @@
 import {Component, createSignal, JSX, onMount, Show} from 'solid-js';
 import {createStore} from 'solid-js/store';
 import {PasteCreateCmd} from '../../api/model/PasteCreateCmd';
-import {encrypt} from '../../crypto/Crypto';
+import {encrypt} from '../../crypto/CryptoUtil';
 import styles from './createPaste.module.css';
 
 export interface CloneModel {
