@@ -47,12 +47,17 @@
 }
 
 .createForm label,
-.createForm input[type=password],
-.createForm input[type=text],
 .createForm input[type=radio],
 .createForm select {
     display: inline-block;
     width: initial;
+    margin: 0;
+}
+
+.createForm input[type=text],
+.createForm input[type=password] {
+    display: inline-block;
+    width: 20rem;
     margin: 0;
 }
 

@@ -1,5 +1,6 @@
 package com.github.binpastes.paste.business.tracking;
 
+import com.github.binpastes.paste.business.tracking.MessagingClient.Message;
 import com.github.binpastes.paste.domain.PasteRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.function.Consumer;
 
 @Service
 public class TrackingService {
@@ -28,8 +28,12 @@ public class TrackingService {
     }
 
     @PostConstruct
-    private void configure() {
-        this.messagingClient.setMessageConsumer(new MessageConsumer());
+    private void run() {
+        this.messagingClient
+                .receiveMessage()
+                .doOnNext(this::receiveView)
+                .repeat()
+                .subscribe();
     }
 
     public void trackView(String pasteId) {
@@ -37,19 +41,15 @@ public class TrackingService {
         messagingClient.sendMessage(pasteId);
     }
 
-    private void receiveView(String pasteId, LocalDateTime timeViewed) {
+    public void receiveView(String pasteId, LocalDateTime timeViewed) {
         pasteRepository
                 .findById(pasteId)
                 .flatMap(paste -> pasteRepository.save(paste.trackView(timeViewed)))
                 .doOnNext(paste -> log.debug("Tracked view on paste {}", paste.getId()))
-                .block();
+                .subscribe();
     }
 
-    private final class MessageConsumer implements Consumer<MessagingClient.Message> {
-
-        @Override
-        public void accept(final MessagingClient.Message message) {
-            TrackingService.this.receiveView(message.pasteId(), message.timeViewed());
-        }
+    private void receiveView(Message message) {
+        this.receiveView(message.pasteId(), message.timeViewed());
     }
 }

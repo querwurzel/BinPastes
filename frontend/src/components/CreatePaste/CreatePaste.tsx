@@ -95,11 +95,6 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
     <form ref={creationForm} onSubmit={submitCreateForm} onReset={resetStore} autocomplete="off" class={styles.createForm}>
       <fieldset>
         <div>
-          <label for="title">Title (optional): </label>
-          <input type="text" id="title" name="title" placeholder={'Title'} maxLength={255} value={form.title} onInput={updateFormField('title')}/>
-        </div>
-        <hr/>
-        <div>
           <label for="expiry">Expires in: </label>
           <select id="expiry" name="expiry" onChange={updateFormField('expiry')}>
             <option value="ONE_HOUR">1 Hour</option>
@@ -131,6 +126,27 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
         </div>
         <hr/>
         <div>
+          <label htmlFor="title">Title (optional): </label>
+          <input type="text"
+                 id="title"
+                 name="title"
+                 placeholder={'Title'}
+                 maxLength={255}
+                 value={form.title}
+                 onInput={updateFormField('title')}/>
+        </div>
+        <hr/>
+        <div>
+          <label htmlFor="key">Password (optional): </label>
+          <input id="key"
+                 name="key"
+                 type="password"
+                 placeholder={'Password'}
+                 autoComplete="one-time-code"
+                 onInput={updateFormField('password')}/>
+        </div>
+        <hr/>
+        <div>
           <textarea minLength="5"
                     maxLength="4096"
                     required={true}
@@ -139,16 +155,6 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
                     cols="75"
                     placeholder={'Paste here'}
                     onInput={updateFormField('content')}>{form.content}</textarea>
-        </div>
-        <hr/>
-        <div>
-          <label for="key">Password (optional): </label>
-          <input id="key"
-                 name="key"
-                 type="password"
-                 placeholder={'Password'}
-                 autocomplete="one-time-code"
-                 onInput={updateFormField('password')}/>
         </div>
       </fieldset>
 

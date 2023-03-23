@@ -16,14 +16,17 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-class TrackingConfig {
+class MessagingConfig {
 
     @Bean
-    public MessagingClient messagingClient(ClientSessionFactory clientSessionFactory, Executor consumerThreadPool, Executor producerThreadPool) {
+    public MessagingClient messagingClient(
+            ClientSessionFactory clientSessionFactory,
+            Executor consumerThreadPool,
+            Executor producerThreadPool
+    ) {
         return new MessagingClient(clientSessionFactory, consumerThreadPool, producerThreadPool);
     }
 
@@ -121,14 +124,12 @@ class TrackingConfig {
 
     @Bean(destroyMethod = "close")
     @DependsOn("activeMqServer")
-    public ServerLocator serverLocator(Executor producerThreadPool) throws Exception {
+    public ServerLocator serverLocator() throws Exception {
         ServerLocator serverLocator = ActiveMQClient.createServerLocator("vm://0");
         serverLocator.setReconnectAttempts(1);
-        //serverLocator.setConnectionTTL(10_000);
         serverLocator.setUseGlobalPools(false);
         serverLocator.setAutoGroup(true);
         serverLocator.setGroupID("binpastes-views");
-        serverLocator.setThreadPools(producerThreadPool, Executors.newSingleThreadScheduledExecutor());
         serverLocator.setPreAcknowledge(true);
         return serverLocator;
     }
