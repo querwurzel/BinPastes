@@ -118,7 +118,7 @@ class PasteController {
             return request.getHeaders().getFirst("X-Forwarded-For");
         }
 
-        if (request.getRemoteAddress().getAddress() == null) {
+        if (request.getRemoteAddress() == null) {
             return null;
         }
 

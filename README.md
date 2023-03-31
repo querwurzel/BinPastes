@@ -23,23 +23,31 @@ Apache License 2.0 ([Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0))
 
 Just put the [JDK](https://adoptium.net/temurin/releases/) somewhere on your file system.
 The `bin` folder contains the `java` binary.
-You may also want to create an environment variable pointing to the JDK directory.
-
-`export JAVA_HOME=/path/to/jdk`
 
 ### How to configure
 
-TODO
+For productive use with __MySQL__ configure:
+
+- [application-mysql.properties](https://github.com/querwurzel/BinPastes/blob/main/backend/src/main/resources/application-mysql.properties)
+  - username
+  - password
+  - table (default: `binpastes`)
 
 ### How to build
 
 For productive use with __MySQL__ run:
-`./mvnw clean package -Denv=mysql`
+
+```console
+./mvnw clean package -Denv=mysql
+```
 
 ### How to run
 
 For productive use with __MySQL__ run:
-`java -Dspring.profiles.active=mysql -jar binpastes.jar`
+
+```console
+java -Dspring.profiles.active=mysql -jar binpastes.jar
+```
 
 ## Credits
 
