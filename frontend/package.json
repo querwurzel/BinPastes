@@ -19,17 +19,17 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",
-    "pnpm": "^7.30.0",
-    "typescript": "^5.0.2",
+    "pnpm": "^8.1.0",
+    "typescript": "^5.0.3",
     "vite": "^4.2.1",
     "vite-plugin-solid": "^2.6.1"
   },
   "dependencies": {
-    "@solidjs/router": "^0.8.1",
+    "@solidjs/router": "^0.8.2",
     "crypto-js": "^4.1.1",
-    "linkify-element": "^4.1.0",
-    "linkifyjs": "^4.1.0",
+    "linkify-element": "^4.1.1",
+    "linkifyjs": "^4.1.1",
     "mvp.css": "^1.12.0",
-    "solid-js": "^1.6.15"
+    "solid-js": "^1.6.16"
   }
 }
