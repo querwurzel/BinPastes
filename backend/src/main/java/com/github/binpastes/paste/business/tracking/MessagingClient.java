@@ -27,7 +27,7 @@ public class MessagingClient {
     private final Scheduler consumerThreadPool;
     private final Scheduler producerThreadPool;
     private final ClientSessionFactory sessionFactory;
-    private final ThreadLocal<ClientSession> clientSessionThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<ClientSession> sessions = new ThreadLocal<>();
     private final ThreadLocal<ClientProducer> clientProducers = new ThreadLocal<>();
     private final ThreadLocal<ClientConsumer> clientConsumers = new ThreadLocal<>();
 
@@ -40,14 +40,7 @@ public class MessagingClient {
     public void sendMessage(String pasteId) {
         Mono.fromRunnable(() -> {
             try {
-                var session = clientSessionThreadLocal.get();
-                if (session == null) {
-                    session = this.sessionFactory.createSession(true, true);
-                    clientSessionThreadLocal.set(session);
-
-                    session.start();
-                }
-
+                var session = session();
                 var clientProducer = this.clientProducers.get();
 
                 if (clientProducer == null) {
@@ -73,20 +66,13 @@ public class MessagingClient {
     public Mono<Message> receiveMessage() {
         return Mono.fromCallable(() -> {
             try {
-                var session = clientSessionThreadLocal.get();
-                if (session == null) {
-                    session = this.sessionFactory.createSession(true, true);
-                    session.start();
+                var session = session();
+                var clientConsumer = this.clientConsumers.get();
 
-                    clientSessionThreadLocal.set(session);
-                }
-
-                if (this.clientConsumers.get() == null) {
-                    var clientConsumer = session.createConsumer(new SimpleString("pasteTrackingQueue"));
+                if (clientConsumer == null) {
+                    clientConsumer = session.createConsumer(new SimpleString("pasteTrackingQueue"));
                     this.clientConsumers.set(clientConsumer);
                 }
-
-                var clientConsumer = this.clientConsumers.get();
 
                 ClientMessage message = clientConsumer.receive();
                 log.debug("Received tracking message for paste");
@@ -97,10 +83,22 @@ public class MessagingClient {
 
                 return new Message(pasteId, timeViewed);
             } catch (ActiveMQException e) {
-                throw e;
+                throw new RuntimeException(e);
             }
         })
         .subscribeOn(consumerThreadPool);
+    }
+
+    private ClientSession session() throws ActiveMQException {
+        var session = sessions.get();
+
+        if (session == null) {
+            session = this.sessionFactory.createSession(true, true);
+            session.start();
+            sessions.set(session);
+        }
+
+        return session;
     }
 
     public record Message (
