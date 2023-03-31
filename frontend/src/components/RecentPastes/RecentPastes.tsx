@@ -50,7 +50,7 @@ const RecentPastes: () => JSX.Element = () => {
         </Match>
         <Match when={pastes.latest}>
           <h3>
-            <strong>{pastes()?.length} pastes</strong>
+            <strong>Last {pastes()?.length} pastes</strong>
             &nbsp;
             <span class={styles.refresh} onClick={refetch}>↻</span>
           </h3>
