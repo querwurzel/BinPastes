@@ -48,16 +48,15 @@ public class PasteService {
     }
 
     private Mono<Paste> trackAccess(Paste paste) {
-        var result = Mono.just(paste);
+        trackingService.trackView(paste.getId());
 
         if (paste.isOneTime()) {
-            result = pasteRepository
+            return pasteRepository
                     .save(paste.markAsExpired())
                     .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
         }
 
-        trackingService.trackView(paste.getId());
-        return result;
+        return Mono.just(paste);
     }
 
     public Flux<Paste> findAll() {
@@ -67,6 +66,7 @@ public class PasteService {
     public Flux<Paste> findByFullText(String text) {
         return pasteRepository
                 .searchAllLegitByFullText(text)
+                // TODO remove when fulltext search is finalised
                 .collectList()
                 .doOnSuccess(pastes -> log.info("Found {} pastes searching for: {}", pastes.size(), text))
                 .flatMapMany(Flux::fromIterable);

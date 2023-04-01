@@ -7,10 +7,9 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
@@ -112,18 +111,28 @@ public class Paste {
         return this.exposure == PasteExposure.PUBLIC;
     }
 
-    public boolean isErasable(String remoteAddress) {
-        if (PasteExposure.UNLISTED == getExposure()) {
-            return true;
-        }
-
-        final var createdBySameAuthor = remoteAddress.equals(getRemoteAddress());
-        final var createdLastHour = Duration.between(getDateCreated(), LocalDateTime.now()).getSeconds() < TimeUnit.HOURS.toSeconds(1);
-        return PasteExposure.PUBLIC == getExposure() && createdLastHour && createdBySameAuthor;
+    public boolean isUnlisted() {
+        return this.exposure == PasteExposure.UNLISTED;
     }
 
     public boolean isOneTime() {
         return exposure == PasteExposure.ONCE;
+    }
+
+    public boolean isErasable(String remoteAddress) {
+        if (this.isUnlisted()) {
+            return true;
+        }
+
+        if (this.isPublic()) {
+            final var createdBySameAuthor = remoteAddress.equals(this.getRemoteAddress());
+
+            if (createdBySameAuthor) {
+                return ChronoUnit.MINUTES.between(this.getDateCreated(), LocalDateTime.now()) < 60L;
+            }
+        }
+
+        return false;
     }
 
     public Paste trackView(LocalDateTime lastViewed) {
