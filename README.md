@@ -38,7 +38,7 @@ For productive use with __MySQL__ configure:
 For productive use with __MySQL__ run:
 
 ```console
-./mvnw clean package -Denv=mysql
+./mvnw clean package -Denv=mysql # results in backend/build/binpastes.jar
 ```
 
 ### How to run
