@@ -128,7 +128,7 @@ public class Paste {
             final var createdBySameAuthor = remoteAddress.equals(this.getRemoteAddress());
 
             if (createdBySameAuthor) {
-                return ChronoUnit.MINUTES.between(this.getDateCreated(), LocalDateTime.now()) < 60L;
+                return ChronoUnit.MINUTES.between(this.getDateCreated(), LocalDateTime.now()) <= 60L;
             }
         }
 
