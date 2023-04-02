@@ -47,7 +47,7 @@
     <junixsocket.version>2.6.2</junixsocket.version>
     <flyway.version>9.16.1</flyway.version>
     <artemis.version>2.28.0</artemis.version>
-    <r2dbc-mysql.version>0.8.2.RELEASE</r2dbc-mysql.version>
+    <r2dbc-mysql.version>1.0.0</r2dbc-mysql.version>
     <r2dbc-mariadb.version>1.1.4</r2dbc-mariadb.version>
   </properties>
 
@@ -118,7 +118,7 @@
 
       <!-- External dependencies -->
       <dependency>
-        <groupId>dev.miku</groupId>
+        <groupId>io.asyncer</groupId>
         <artifactId>r2dbc-mysql</artifactId>
         <version>${r2dbc-mysql.version}</version>
       </dependency>
