@@ -127,6 +127,10 @@
                     <groupId>dev.miku</groupId>
                     <artifactId>r2dbc-mysql</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>org.mariadb</groupId>
+                    <artifactId>r2dbc-mariadb</artifactId>
+                </dependency>
 
                 <!-- junixsocket -->
                 <dependency>

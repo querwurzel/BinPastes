@@ -70,7 +70,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
                             : row.get(PasteSchema.TITLE, String.class));
                     paste.setContent(row.get(PasteSchema.CONTENT, String.class));
                     paste.setIsEncrypted(row.get(PasteSchema.IS_ENCRYPTED, Byte.class) == (byte)1);
-                    paste.setExposure(row.get(PasteSchema.EXPOSURE, PasteExposure.class));
+                    paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE, String.class)));
 
                     paste.setDateCreated(row.get(PasteSchema.DATE_CREATED, LocalDateTime.class));
                     paste.setDateOfExpiry(row.get(PasteSchema.DATE_OF_EXPIRY) == null
