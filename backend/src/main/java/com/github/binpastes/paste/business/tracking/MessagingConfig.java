@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 class MessagingConfig {
 
     @Bean
+    @DependsOn("flywayInitializer")
     public MessagingClient messagingClient(
             ClientSessionFactory clientSessionFactory,
             Executor consumerThreadPool,
