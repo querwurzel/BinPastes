@@ -31,7 +31,7 @@ For productive use with __MySQL__ configure:
 - [application-mysql.properties](https://github.com/querwurzel/BinPastes/blob/main/backend/src/main/resources/application-mysql.properties)
   - username
   - password
-  - table (default: `binpastes`)
+  - database (default: `binpastes`)
 
 ### How to build
 
