@@ -40,7 +40,7 @@
     <!-- maven plugin versions -->
     <maven-frontend-plugin.version>1.12.1</maven-frontend-plugin.version>
     <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
-    <jacoco-maven-plugin.version>0.8.8</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.9</jacoco-maven-plugin.version>
 
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.0.5</spring-boot-bom.version>
