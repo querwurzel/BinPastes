@@ -11,7 +11,7 @@ export const toDateString = (date: string | Date): string => {
   }
 
   const instance = date instanceof Date ? date : toDate(date);
-  return instance.toLocaleDateString('de', {day: '2-digit', month: 'long', year: 'numeric'});
+  return instance.toLocaleDateString(navigator.language || 'en', {day: '2-digit', month: 'long', year: 'numeric'});
 }
 
 export const toTimeString = (date: string | Date): string => {
@@ -20,7 +20,7 @@ export const toTimeString = (date: string | Date): string => {
   }
 
   const instance = date instanceof Date ? date : toDate(date);
-  return instance.toLocaleTimeString('de', {hour: '2-digit', minute: '2-digit'});
+  return instance.toLocaleTimeString(navigator.language || 'en', {hour: '2-digit', minute: '2-digit'});
 }
 
 export const relativeDiffLabel = (date: string | Date): string => {
