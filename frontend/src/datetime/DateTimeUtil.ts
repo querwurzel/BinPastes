@@ -11,7 +11,7 @@ export const toDateString = (date: string | Date): string => {
   }
 
   const instance = date instanceof Date ? date : toDate(date);
-  return instance.toLocaleDateString('de', {day: '2-digit', month: '2-digit', year: 'numeric'});
+  return instance.toLocaleDateString('de', {day: '2-digit', month: 'long', year: 'numeric'});
 }
 
 export const toTimeString = (date: string | Date): string => {
