@@ -30,6 +30,6 @@
     "linkify-element": "^4.1.1",
     "linkifyjs": "^4.1.1",
     "mvp.css": "^1.12.0",
-    "solid-js": "^1.6.16"
+    "solid-js": "^1.7.6"
   }
 }
