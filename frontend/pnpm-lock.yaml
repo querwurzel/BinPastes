@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@solidjs/router':
     specifier: ^0.8.2
@@ -25,8 +29,8 @@ devDependencies:
     specifier: ^4.1.1
     version: 4.1.1
   pnpm:
-    specifier: ^8.6.3
-    version: 8.6.3
+    specifier: ^8.6.5
+    version: 8.6.5
   typescript:
     specifier: ^5.1.3
     version: 5.1.3
@@ -858,8 +862,8 @@ packages:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: true
 
-  /pnpm@8.6.3:
-    resolution: {integrity: sha512-0Y4neugHIJEEa8y8oJMfd9wwgHkc1hIq6JC/UEEl2K92s3+zPaKH26n7u22m67E+MU6fpKRkx+/+PYWZzr5yQw==}
+  /pnpm@8.6.5:
+    resolution: {integrity: sha512-mztfvneJl4o9gCWfQlFKio6gVYhJbFazWUVBcomJ9u/yspwScHUxMyWvxOed1a543roo+aeIjp5VQkHOoTWFAg==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
