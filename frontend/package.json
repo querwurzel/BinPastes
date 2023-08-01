@@ -21,7 +21,7 @@
     "@types/crypto-js": "^4.1.1",
     "pnpm": "^8.6.7",
     "typescript": "^5.1.6",
-    "vite": "^4.4.3",
+    "vite": "^4.4.7",
     "vite-plugin-solid": "^2.7.0"
   },
   "dependencies": {
