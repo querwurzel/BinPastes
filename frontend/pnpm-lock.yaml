@@ -18,8 +18,8 @@ dependencies:
     specifier: ^4.1.1
     version: 4.1.1
   mvp.css:
-    specifier: ^1.13.0
-    version: 1.13.0
+    specifier: ^1.14.0
+    version: 1.14.0
   solid-js:
     specifier: ^1.7.8
     version: 1.7.8
@@ -844,8 +844,8 @@ packages:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
 
-  /mvp.css@1.13.0:
-    resolution: {integrity: sha512-fTbyDKROJ/EGL7Zy3yG9oVgCnzDFaOQUkSeStkMehhb51Xb6HsowyTgUltsWV/cLopRqhkzdgjrojk5A+c9/pQ==}
+  /mvp.css@1.14.0:
+    resolution: {integrity: sha512-f7F8dUw3kCA80z4myG4z5ymsrNK0oft2JQ1Fz0brpc+vIimJhpLk5B/rI44IQLgjpBDNIRzaZfwZUdndKs6j3w==}
     dev: false
 
   /nanoid@3.3.6:
