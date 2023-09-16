@@ -42,7 +42,7 @@ public class WebServerConfig implements WebFluxConfigurer {
 
     /**
      * This gives back control to the SPA (index.html) for paths/routes that are not served by the backend.
-     * The list of paths needs to in sync with all routes in the SPA.
+     * The list of paths needs to be in sync with all routes in the SPA.
      */
     @Bean
     public RouterFunctionMapping indexRoute(@Value("static/index.html") final ClassPathResource indexHtml) {
