@@ -15,11 +15,11 @@ const Read: Component = (): JSX.Element => {
   const params = useParams<{id: string}>();
 
   const [paste] = createResource(() => params.id, (id) => ApiClient.findOne(id), {
-    initialValue: appContext.popCreatedPaste(),
+    initialValue: appContext.popPasteCreated(),
   });
 
   const clonePaste = () => {
-    appContext.pushClonedPaste({
+    appContext.pushPasteCloned({
       title: paste().title,
       content: paste().content
     })
@@ -29,6 +29,7 @@ const Read: Component = (): JSX.Element => {
   const deletePaste = () => {
     ApiClient.deletePaste(paste().id)
       .then(_ => {
+        appContext.pushPasteDeleted(paste());
         navigate('/')
       })
       .catch(() => {})
