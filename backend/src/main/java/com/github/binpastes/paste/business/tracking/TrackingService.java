@@ -10,7 +10,9 @@ import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
 @Service
 public class TrackingService {
@@ -40,15 +42,16 @@ public class TrackingService {
 
     public void trackView(String pasteId) {
         log.debug("Tracking view on paste {}", pasteId);
-        messagingClient.sendMessage(pasteId);
+        messagingClient.sendMessage(pasteId, Instant.now());
     }
 
-    public void receiveView(String pasteId, LocalDateTime timeViewed) {
+    public void receiveView(String pasteId, Instant timeViewed) {
+        var timestamp = LocalDateTime.ofInstant(timeViewed, ZoneOffset.UTC);
         pasteRepository
                 .findById(pasteId)
-                .flatMap(paste -> pasteRepository.save(paste.trackView(timeViewed)))
+                .flatMap(paste -> pasteRepository.save(paste.trackView(timestamp)))
                 .doOnSuccess(paste -> log.debug("Tracked view on paste {}", paste.getId()))
-                .doOnError(OptimisticLockingFailureException.class, e -> messagingClient.sendMessage(pasteId))
+                .doOnError(OptimisticLockingFailureException.class, e -> messagingClient.sendMessage(pasteId, timeViewed))
                 .onErrorResume(OptimisticLockingFailureException.class, e -> Mono.empty())
                 .subscribe();
     }
