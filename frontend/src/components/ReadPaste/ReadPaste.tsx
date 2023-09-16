@@ -29,13 +29,12 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   const decryptContent = (content: string, key: string) => {
     setClearText(decrypt(content, key));
   }
-
   const onDecryptClick = () => {
-    decryptContent(keyInput.value, paste.content);
+    decryptContent(paste.content, keyInput.value);
   }
   const onDecryptSubmit = (e: KeyboardEvent) => {
     if (e instanceof KeyboardEvent && e.key === "Enter") {
-      decryptContent(keyInput.value, paste.content);
+      decryptContent(paste.content, keyInput.value);
     }
   }
   const onCloneClick = (e: Event) => {
