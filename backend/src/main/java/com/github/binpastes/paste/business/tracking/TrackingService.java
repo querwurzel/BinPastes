@@ -42,7 +42,7 @@ public class TrackingService {
 
     public void trackView(String pasteId) {
         log.debug("Tracking view on paste {}", pasteId);
-        messagingClient.sendMessage(pasteId, Instant.now());
+        messagingClient.sendMessage(pasteId, LocalDateTime.now().toInstant(ZoneOffset.UTC));
     }
 
     public void receiveView(String pasteId, Instant timeViewed) {
