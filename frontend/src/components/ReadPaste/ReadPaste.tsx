@@ -3,6 +3,7 @@ import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
 import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
+import {Lock, Unlock, Key, Trash, Copy} from '../../assets/Vectors';
 import styles from './readPaste.module.css';
 
 interface ReadPasteProps {
@@ -55,7 +56,14 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   return (
     <div class={styles.read}>
 
-      <h2><Show when={paste.isEncrypted} keyed><img width="15px" src={clearText() ? '/assets/images/padlock_open.png' : '/assets/images/padlock.png'} alt="lock" /></Show> {paste.title || 'Untitled'}</h2>
+      <h2>
+        <Show when={paste.isEncrypted} keyed>
+          <Show when={clearText()} keyed fallback={<Lock/>}>
+            <Unlock/>
+          </Show>
+        </Show>
+        {paste.title || 'Untitled'}
+      </h2>
 
       <p>
         Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
@@ -64,8 +72,8 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         <br />
         Views: {paste.views}
         <Show when={paste.views} keyed> | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time></Show>
-        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}>⎘</a></Show>
-        <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete">🗑</a></Show>
+        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}><Copy /></a></Show>
+        <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete"><Trash /></a></Show>
       </p>
 
       <Show when={paste.isEncrypted && !clearText()}>
@@ -74,7 +82,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
           &#32;
           <input ref={keyInput} type="password" onKeyUp={onDecryptSubmit}/>
           &#32;
-          <button onClick={onDecryptClick}>🗝</button>
+          <button onClick={onDecryptClick}><Key /></button>
         </p>
       </Show>
 

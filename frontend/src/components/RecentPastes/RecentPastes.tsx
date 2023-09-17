@@ -4,6 +4,7 @@ import ApiClient from '../../api/client';
 import {PasteListView} from '../../api/model/PasteListView';
 import AppContext from '../../AppContext';
 import {relativeDiffLabel} from '../../datetime/DateTimeUtil';
+import {Lock, Infinity} from '../../assets/Vectors';
 import styles from './recentPastes.module.css';
 
 const RecentPastes: () => JSX.Element = () => {
@@ -77,8 +78,8 @@ const RecentPastes: () => JSX.Element = () => {
 
           <ol>
             <For each={pastes()}>{item =>
-            <li>
-              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><em>∞</em></Show> <Show when={item.isEncrypted} keyed><img src="/assets/images/padlock.png" alt="lock" /></Show></p>
+            <li class={styles.item}>
+              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><em><Infinity/></em></Show> <Show when={item.isEncrypted} keyed><Lock/></Show></p>
               <p>Created: {relativeDiffLabel(item.dateCreated)} | Size: {item.sizeInBytes} bytes</p>
             </li>
             }
