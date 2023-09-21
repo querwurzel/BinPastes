@@ -46,7 +46,7 @@ public class MessagingClient {
                         .putLongProperty(Message.TIME_VIEWED_PROPERTY, timeViewed.toEpochMilli());
 
                 clientProducer.send(clientMessage);
-                log.debug("Sent tracking message for paste");
+                log.debug("Sent tracking message for paste {}", pasteId);
             } catch (ActiveMQException e) {
                 throw new RuntimeException(e);
             }
@@ -67,10 +67,9 @@ public class MessagingClient {
                 }
 
                 ClientMessage message = clientConsumer.receive();
-                log.debug("Received tracking message for paste");
-
                 var pasteId = message.getStringProperty(Message.PASTE_ID_PROPERTY);
                 var timeViewed = Instant.ofEpochMilli(message.getLongProperty(Message.TIME_VIEWED_PROPERTY));
+                log.debug("Received tracking message for paste {}", pasteId);
 
                 return new Message(pasteId, timeViewed);
             } catch (ActiveMQException e) {

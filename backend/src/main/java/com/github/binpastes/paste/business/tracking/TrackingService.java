@@ -50,7 +50,7 @@ public class TrackingService {
         pasteRepository
                 .findById(pasteId)
                 .flatMap(paste -> pasteRepository.save(paste.trackView(timestamp)))
-                .doOnSuccess(paste -> log.debug("Tracked view on paste {}", paste.getId()))
+                .doOnNext(paste -> log.debug("Tracked view on paste {}", paste.getId()))
                 .doOnError(OptimisticLockingFailureException.class, e -> messagingClient.sendMessage(pasteId, timeViewed))
                 .onErrorResume(OptimisticLockingFailureException.class, e -> Mono.empty())
                 .subscribe();

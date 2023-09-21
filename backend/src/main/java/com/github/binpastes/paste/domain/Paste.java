@@ -152,9 +152,8 @@ public class Paste {
         return this;
     }
 
-    protected Paste setVersion(final long version) {
+    protected void setVersion(final long version) {
         this.version = version;
-        return this;
     }
 
     protected Paste setTitle(final String title) {
@@ -182,24 +181,21 @@ public class Paste {
         return this;
     }
 
-    protected Paste setDateCreated(final LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-        return this;
-    }
-
     protected Paste setDateOfExpiry(final LocalDateTime dateOfExpiry) {
         this.dateOfExpiry = dateOfExpiry;
         return this;
     }
 
-    protected Paste setDateDeleted(final LocalDateTime dateDeleted) {
-        this.dateDeleted = dateDeleted;
-        return this;
+    protected void setDateCreated(final LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
     }
 
-    protected Paste setLastViewed(final LocalDateTime lastViewed) {
+    protected void setDateDeleted(final LocalDateTime dateDeleted) {
+        this.dateDeleted = dateDeleted;
+    }
+
+    protected void setLastViewed(final LocalDateTime lastViewed) {
         this.lastViewed = lastViewed;
-        return this;
     }
 
     protected Paste setViews(final long views) {
