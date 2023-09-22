@@ -9,6 +9,7 @@ My turn on creating a simple pastebin.
 * expiry of notes after some time (or never if desired)
 * adjustable visibility of notes (exposure) 
 * client-side encryption of content
+* dark mode
 * easy setup, single binary
     * zero knowledge required about the build tools, frameworks or programming language I chose
 
