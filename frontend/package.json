@@ -22,7 +22,7 @@
     "pnpm": "^8.7.6",
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
-    "vite-plugin-solid": "^2.7.0"
+    "vite-plugin-solid": "^2.7.2"
   },
   "dependencies": {
     "@solidjs/router": "^0.8.3",
