@@ -17,3 +17,18 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package
+
+      - name: Publish package [on main]
+        if: github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mvn --batch-mode deploy
+
+      - uses: actions/delete-package-versions@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          package-name: 'com.github.binpastes.binpastes'
+          package-type: 'maven'
+          min-versions-to-keep: 10
+          ignore-versions: '1.0.0-SNAPSHOT'
