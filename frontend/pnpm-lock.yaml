@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@types/crypto-js':
-    specifier: ^4.1.2
-    version: 4.1.2
+    specifier: ^4.1.3
+    version: 4.1.3
   pnpm:
     specifier: ^8.7.6
     version: 8.7.6
@@ -633,8 +633,8 @@ packages:
       '@babel/types': 7.21.3
     dev: true
 
-  /@types/crypto-js@4.1.2:
-    resolution: {integrity: sha512-t33RNmTu5ufG/sorROIafiCVJMx3jz95bXUMoPAZcUD14fxMXnuTzqzXZoxpR0tNx2xpw11Dlmem9vGCsrSOfA==}
+  /@types/crypto-js@4.1.3:
+    resolution: {integrity: sha512-YP1sYYayLe7Eg5oXyLLvOLfxBfZ5Fgpz6sVWkpB18wDMywCLPWmqzRz+9gyuOoLF0fzDTTFwlyNbx7koONUwqA==}
     dev: true
 
   /ansi-styles@3.2.1:
