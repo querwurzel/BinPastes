@@ -37,10 +37,6 @@ const RecentPastes: () => JSX.Element = () => {
     startSchedule();
 
     appContext.onPasteCreated((paste) => {
-      if (!paste.isPublic) {
-        return;
-      }
-
       const newItem: PasteListView = {
         id: paste.id,
         title: paste.title,

@@ -21,8 +21,11 @@ const Create: () => JSX.Element = () => {
           .writeText(url)
           .catch(_ => {});
 
-        if (!paste.isOneTime) {
+        if (paste.isPublic) {
           appContext.pushPasteCreated(paste);
+        }
+
+        if (!paste.isOneTime) {
           navigate(path);
         }
 

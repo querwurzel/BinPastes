@@ -1,7 +1,7 @@
 import {PasteView} from './api/model/PasteView';
 import {PasteClone} from './components/CreatePaste/CreatePaste';
 
-interface IAppContext {
+export interface IAppContext {
   pushPasteCloned: (data: PasteClone) => void
   popPasteCloned: () => PasteClone | undefined
   pushPasteCreated: (paste: PasteView) => void
@@ -12,8 +12,8 @@ interface IAppContext {
 
 class AppContextImpl implements IAppContext {
 
-  private readonly creationEventHandler: Array<(paste: PasteView) => void> = [];
-  private readonly deletionEventHandler: Array<(paste: PasteView) => void> = [];
+  private readonly creationEventHandlers: Array<(paste: PasteView) => void> = [];
+  private readonly deletionEventHandlers: Array<(paste: PasteView) => void> = [];
 
   private pasteCloned: PasteClone = null;
   private pasteCreated: PasteView = null;
@@ -30,7 +30,7 @@ class AppContextImpl implements IAppContext {
 
   pushPasteCreated(paste: PasteView) {
     this.pasteCreated = paste;
-    this.creationEventHandler.forEach(listener => listener(paste));
+    this.creationEventHandlers.forEach(listener => listener(paste));
   }
 
   popPasteCreated(): PasteView | null {
@@ -39,16 +39,16 @@ class AppContextImpl implements IAppContext {
     return holder;
   }
 
-  pushPasteDeleted(paste: PasteView) {
-    this.deletionEventHandler.forEach(listener => listener(paste));
+  onPasteCreated(callback: (paste: PasteView) => void) {
+    this.creationEventHandlers.push(callback);
   }
 
-  onPasteCreated(callback: (paste: PasteView) => void) {
-    this.creationEventHandler.push(callback);
+  pushPasteDeleted(paste: PasteView) {
+    this.deletionEventHandlers.forEach(listener => listener(paste));
   }
 
   onPasteDeleted(callback: (paste: PasteView) => void) {
-    this.deletionEventHandler.push(callback);
+    this.deletionEventHandlers.push(callback);
   }
 }
 
