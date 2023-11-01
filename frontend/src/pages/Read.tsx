@@ -14,9 +14,7 @@ const Read: Component = (): JSX.Element => {
 
   const params = useParams<{id: string}>();
 
-  const [paste] = createResource(() => params.id, (id) => {
-    return appContext.popPasteCreated() || ApiClient.findOne(id)
-  });
+  const [paste] = createResource(() => params.id, (id) => appContext.popPasteCreated() || ApiClient.findOne(id));
 
   const clonePaste = () => {
     appContext.pushPasteCloned({
