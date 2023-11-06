@@ -11,35 +11,34 @@ import Search from './pages/Search';
 const NotFound = lazy(() => import("./pages/404"));
 
 const App: () => JSX.Element = () => {
-
   return (
     <>
-        <header class={styles.head}>
-          <Header />
-        </header>
+      <header class={styles.head}>
+        <Header />
+      </header>
 
-        <div class={styles.content}>
+      <div class={styles.content}>
 
-          <main class={styles.left}>
-            <div class={styles.leftContainer}>
-            <Routes>
-              <Route path="/" component={Create}  />
-              <Route path="/paste/search" component={Search} />
-              <Route path="/paste/:id" component={Read} />
-              <Route path="*" component={NotFound} />
-            </Routes>
-            </div>
-          </main>
+        <main class={styles.left}>
+          <div class={styles.leftContainer}>
+          <Routes>
+            <Route path="/" component={Create}  />
+            <Route path="/paste/search" component={Search} />
+            <Route path="/paste/:id" component={Read} />
+            <Route path="*" component={NotFound} />
+          </Routes>
+          </div>
+        </main>
 
-          <aside class={styles.right}>
-            <RecentPastes />
-          </aside>
+        <aside class={styles.right}>
+          <RecentPastes />
+        </aside>
 
-        </div>
+      </div>
 
-        <footer class={styles.footer}>
-          <Footer />
-        </footer>
+      <footer class={styles.footer}>
+        <Footer />
+      </footer>
     </>
   )
 }
