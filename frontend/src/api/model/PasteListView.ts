@@ -1,5 +1,5 @@
 
-export interface PasteListView {
+export type PasteListView = {
   id: string
   title?: string
   sizeInBytes: number
@@ -8,6 +8,6 @@ export interface PasteListView {
   dateOfExpiry?: string
 }
 
-export interface PasteList {
+export type = PasteList {
   pastes: Array<PasteListView>
 }

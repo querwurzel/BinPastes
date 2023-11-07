@@ -5,17 +5,21 @@ import {encrypt} from "../../crypto/CryptoUtil";
 import {Copy} from '../../assets/Vectors';
 import styles from "./createPaste.module.css";
 
-export interface PasteClone {
+export type PasteClone = {
   title?: string
   content: string
 }
 
-interface CreatePasteProps {
+type CreatePasteProps = {
   onCreatePaste: (paste: PasteCreateCmd) => Promise<string>
   initialPaste?: PasteClone
 }
 
-interface FormModel extends Omit<PasteCreateCmd, "isEncrypted"> {
+type FormModel = {
+  title?: string
+  content: string
+  expiry?: 'ONE_HOUR' | 'ONE_DAY' | 'ONE_WEEK' | 'ONE_MONTH' | 'THREE_MONTHS' | 'ONE_YEAR' | 'NEVER'
+  exposure?: 'PUBLIC' | 'UNLISTED' | 'ONCE'
   password: string
 }
 
