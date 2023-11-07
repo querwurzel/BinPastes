@@ -29,7 +29,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
     exposure: null
   });
 
-  const [lastPaste, setLastPaste] = createSignal<string>(null);
+  const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
 
   let creationForm: HTMLFormElement
 
@@ -46,6 +46,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
   }
 
   const resetStore = () => {
+    setLastPasteUrl(null);
     setForm({
       title: null,
       password: null,
@@ -55,7 +56,9 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
     } as FormModel)
   }
 
-  const submitCreateForm = (e: Event) => {
+  const createPaste = (e: Event) => {
+    e.preventDefault();
+
     const data: PasteCreateCmd = {
       title: form.title,
       content: form.content,
@@ -70,22 +73,20 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
 
     onCreatePaste(data)
       .then(url => {
-        setLastPaste(url);
         resetCreateForm();
         resetStore();
+        setLastPasteUrl(url);
       })
-
-    e.preventDefault();
   }
 
   return (
-    <form ref={creationForm} onSubmit={submitCreateForm} onReset={resetStore} autocomplete="off" class={styles.createForm}>
+    <form ref={creationForm} onSubmit={createPaste} onReset={resetStore} autocomplete="off" class={styles.createForm}>
       <fieldset>
         <div>
           <label for="expiry">Expires in: </label>
           <select id="expiry" name="expiry" onChange={updateFormField("expiry")}>
             <option value="ONE_HOUR">1 Hour</option>
-            <option value="ONE_DAY" selected={true}>1 Day</option>
+            <option value="ONE_DAY" selected>1 Day</option>
             <option value="ONE_WEEK">1 Week</option>
             <option value="ONE_MONTH">1 Month</option>
             <option value="THREE_MONTHS">3 Months</option>
@@ -97,7 +98,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         <div>
           <label>Visibility: </label>
           <label for="public">
-            <input type="radio" id="public" name="exposure" value="PUBLIC" checked={true}
+            <input type="radio" id="public" name="exposure" value="PUBLIC" checked
                    onInput={updateFormField("exposure")}/>
             Public
           </label>
@@ -145,8 +146,8 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
       </fieldset>
 
       <fieldset>
-        <Show when={lastPaste()}>
-          <p class={styles.lastPaste}>{lastPaste()}<Copy/></p>
+        <Show when={lastPasteUrl()}>
+          <p class={styles.lastPaste}>{lastPasteUrl()}<Copy/></p>
         </Show>
         <input type="submit" value="Paste"/>
         <input type="reset" value="Reset"/>
