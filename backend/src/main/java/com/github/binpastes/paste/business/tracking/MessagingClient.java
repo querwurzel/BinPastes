@@ -1,16 +1,18 @@
 package com.github.binpastes.paste.business.tracking;
 
 import org.apache.activemq.artemis.api.core.ActiveMQException;
+import org.apache.activemq.artemis.api.core.ActiveMQObjectClosedException;
 import org.apache.activemq.artemis.api.core.SimpleString;
-import org.apache.activemq.artemis.api.core.client.*;
+import org.apache.activemq.artemis.api.core.client.ClientConsumer;
+import org.apache.activemq.artemis.api.core.client.ClientProducer;
+import org.apache.activemq.artemis.api.core.client.ClientSession;
+import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.time.Instant;
-import java.util.concurrent.Executor;
 
 public class MessagingClient {
 
@@ -23,22 +25,21 @@ public class MessagingClient {
     private final ThreadLocal<ClientProducer> clientProducers = new ThreadLocal<>();
     private final ThreadLocal<ClientConsumer> clientConsumers = new ThreadLocal<>();
 
-    public MessagingClient(final ClientSessionFactory clientSessionFactory, Executor consumerThreadPool, Executor producerThreadPool) {
+    public MessagingClient(
+            final ClientSessionFactory clientSessionFactory,
+            final Scheduler consumerThreadPool,
+            final Scheduler producerThreadPool
+    ) {
         this.sessionFactory = clientSessionFactory;
-        this.consumerThreadPool = Schedulers.fromExecutor(consumerThreadPool);
-        this.producerThreadPool = Schedulers.fromExecutor(producerThreadPool);
+        this.consumerThreadPool = consumerThreadPool;
+        this.producerThreadPool = producerThreadPool;
     }
 
     public void sendMessage(String pasteId, Instant timeViewed) {
         Mono.fromRunnable(() -> {
             try {
                 var session = session();
-                var clientProducer = this.clientProducers.get();
-
-                if (clientProducer == null) {
-                    clientProducer = session.createProducer(new SimpleString("binpastes"));
-                    this.clientProducers.set(clientProducer);
-                }
+                var clientProducer = producer();
 
                 var clientMessage = session
                         .createMessage(true)
@@ -57,26 +58,45 @@ public class MessagingClient {
 
     public Mono<Message> receiveMessage() {
         return Mono.fromCallable(() -> {
-            try {
-                var session = session();
-                var clientConsumer = this.clientConsumers.get();
+            var clientConsumer = consumer();
 
-                if (clientConsumer == null) {
-                    clientConsumer = session.createConsumer(new SimpleString("pasteTrackingQueue"));
-                    this.clientConsumers.set(clientConsumer);
-                }
-
-                ClientMessage message = clientConsumer.receive();
-                var pasteId = message.getStringProperty(Message.PASTE_ID_PROPERTY);
-                var timeViewed = Instant.ofEpochMilli(message.getLongProperty(Message.TIME_VIEWED_PROPERTY));
-                log.debug("Received tracking message for paste {}", pasteId);
-
-                return new Message(pasteId, timeViewed);
-            } catch (ActiveMQException e) {
-                throw new RuntimeException(e);
+            var message = clientConsumer.receive();
+            if (message == null) {
+                return null;
             }
+
+            var pasteId = message.getStringProperty(Message.PASTE_ID_PROPERTY);
+            var timeViewed = Instant.ofEpochMilli(message.getLongProperty(Message.TIME_VIEWED_PROPERTY));
+            log.debug("Received tracking message for paste {}", pasteId);
+
+            return new Message(pasteId, timeViewed);
         })
+        .onErrorComplete(ActiveMQObjectClosedException.class)
         .subscribeOn(consumerThreadPool);
+    }
+
+    private ClientProducer producer() throws ActiveMQException {
+        var clientProducer = this.clientProducers.get();
+
+        if (clientProducer == null) {
+            var address = new SimpleString("binpastes");
+            clientProducer = session().createProducer(address);
+            this.clientProducers.set(clientProducer);
+        }
+
+        return clientProducer;
+    }
+
+    private ClientConsumer consumer() throws ActiveMQException {
+        var clientConsumer = this.clientConsumers.get();
+
+        if (clientConsumer == null) {
+            var queue = new SimpleString("pasteTrackingQueue");
+            clientConsumer = session().createConsumer(queue);
+            this.clientConsumers.set(clientConsumer);
+        }
+
+        return clientConsumer;
     }
 
     private ClientSession session() throws ActiveMQException {
