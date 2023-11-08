@@ -2,6 +2,8 @@ package com.github.binpastes.paste.api;
 
 import com.github.binpastes.paste.api.model.CreateCmd;
 import com.github.binpastes.paste.api.model.ListView;
+import com.github.binpastes.paste.api.model.SearchView;
+import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
 import com.github.binpastes.paste.api.model.SingleView;
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.PasteService;
@@ -9,7 +11,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,7 +62,7 @@ class PasteController {
                         response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=300");
                     }
                 })
-                .map(reference -> SingleView.from(reference, remoteAddress(request)))
+                .map(reference -> SingleView.of(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
@@ -69,18 +70,25 @@ class PasteController {
     public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
-                .map(ListItemView::from)
+                .map(ListItemView::of)
                 .collectList()
-                .map(ListView::from);
+                .map(ListView::of);
     }
 
     @GetMapping("/search")
-    public Mono<ListView> searchPastes(@RequestParam("term") @NotBlank @Size(min = 3) @Pattern(regexp = "[\\pL\\pN\\s]+") String term) {
+    public Mono<SearchView> searchPastes(
+            @RequestParam("term")
+            @NotBlank
+            @Pattern(regexp = "[\\pL\\pN\\s]{3,25}")
+            final String term,
+            final ServerHttpResponse response
+    ) {
+        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=300");
         return pasteService
                 .findByFullText(term)
-                .map(ListItemView::from)
+                .map(paste -> SearchItemView.of(paste, term))
                 .collectList()
-                .map(ListView::from);
+                .map(SearchView::of);
     }
 
     @PostMapping
@@ -95,7 +103,7 @@ class PasteController {
                         cmd.pasteExposure(),
                         remoteAddress(request)
                 ))
-                .map((Paste reference) -> SingleView.from(reference, remoteAddress(request)));
+                .map((Paste reference) -> SingleView.of(reference, remoteAddress(request)));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")

@@ -18,7 +18,7 @@ public record SingleView(
         LocalDateTime lastViewed,
         long views
 ) {
-    public static SingleView from(Paste reference, String remoteAddress) {
+    public static SingleView of(final Paste reference, final String remoteAddress) {
         return new SingleView(
                 reference.getId(),
                 reference.getTitle(),

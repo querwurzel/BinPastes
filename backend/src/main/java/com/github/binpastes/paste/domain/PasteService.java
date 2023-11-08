@@ -78,7 +78,7 @@ public class PasteService {
                 .filter(paste -> paste.isErasable(remoteAddress))
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnNext(paste -> log.info("Deleted paste {}", paste.getId()))
+                .doOnNext(paste -> log.info("Deleted paste {} on behalf of {}", paste.getId(), remoteAddress))
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
     }

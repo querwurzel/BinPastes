@@ -8,7 +8,7 @@ import java.util.List;
 public record ListView(
         List<ListItemView> pastes
 ) {
-    public static ListView from(List<ListItemView> pastes) {
+    public static ListView of(final List<ListItemView> pastes) {
         return new ListView(pastes);
     }
 
@@ -20,7 +20,7 @@ public record ListView(
             LocalDateTime dateCreated,
             LocalDateTime dateOfExpiry
     ) {
-        public static ListItemView from(Paste reference) {
+        public static ListItemView of(final Paste reference) {
             return new ListItemView(
                     reference.getId(),
                     reference.getTitle(),
