@@ -34,7 +34,7 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.TITLE,
                 PasteSchema.IS_ENCRYPTED,
-                PasteSchema.DATE_CREATED
+                PasteSchema.CONTENT
         );
 
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
