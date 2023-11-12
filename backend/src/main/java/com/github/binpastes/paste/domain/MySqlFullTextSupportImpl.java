@@ -27,40 +27,27 @@ class MySqlFullTextSupportImpl implements FullTextSearchSupport {
 
     @Override
     public Flux<Paste> searchByFullText(final String text) {
-        /*
-         * Seems not to be supported by dev.miku:r2dbc-mysql
-         * java.lang.IllegalArgumentException: Cannot encode value of type 'class io.r2dbc.spi.Parameters$InParameter'
-         **/
-/*
-        entityTemplate
-                .getDatabaseClient()
-                .sql("SELECT * FROM pastes WHERE (date_of_expiry IS NULL OR date_of_expiry > CURRENT_TIMESTAMP) AND MATCH(title, content) AGAINST(?text IN BOOLEAN MODE)")
-                .bind("text", text + '*'))
-*/
-
-        var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
-
-        var query = String.format("SELECT * FROM %s WHERE %s = ? AND (%s IS NULL OR %s > ?) AND (MATCH(%s) AGAINST(? IN BOOLEAN MODE) OR (MATCH(%s) AGAINST(? IN BOOLEAN MODE) AND %s IS FALSE)) ORDER BY %s DESC",
+        var query = String.format("SELECT * FROM %s WHERE %s = ? AND (%s IS NULL OR %s > ?) AND (MATCH(%s) AGAINST(?) OR (%s IS FALSE AND MATCH(%s) AGAINST(?)))",
                 PasteSchema.TABLE_NAME,
                 PasteSchema.EXPOSURE,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.DATE_OF_EXPIRY,
                 PasteSchema.TITLE,
-                PasteSchema.CONTENT,
                 PasteSchema.IS_ENCRYPTED,
                 PasteSchema.DATE_CREATED
         );
 
+        var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
         return Mono.from(connectionFactory.create())
                 .flatMap(mySqlConnection -> Mono.from(mySqlConnection
-                        .createStatement(query)
-                        .bind(0, PasteExposure.PUBLIC.name())
-                        .bind(1, LocalDateTime.now())
-                        .bind(2, text + '*')
-                        .bind(3, text + '*')
-                        .execute()
+                            .createStatement(query)
+                            .bind(0, PasteExposure.PUBLIC)
+                            .bind(1, LocalDateTime.now())
+                            .bind(2, text)
+                            .bind(3, text)
+                            .execute()
                 ))
-                .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) -> {
+                .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row) -> {
                     var paste = new Paste();
                     paste.setId(row.get(PasteSchema.ID, String.class));
                     paste.setVersion(row.get(PasteSchema.VERSION, Long.class));

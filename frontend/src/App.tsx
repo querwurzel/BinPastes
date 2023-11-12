@@ -5,9 +5,9 @@ import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
 import Create from './pages/Create';
+import Search from './pages/Search';
 
 const Read = lazy(() => import('./pages/Read'));
-const Search = lazy(() => import('./pages/Search'));
 const NotFound = lazy(() => import('./pages/404'));
 
 const App: () => JSX.Element = () => {
@@ -23,8 +23,8 @@ const App: () => JSX.Element = () => {
           <div class={styles.leftContainer}>
           <Routes>
             <Route path="/" component={Create}  />
-            <Route path="/paste/search" component={Search} />
             <Route path="/paste/:id" component={Read} />
+            <Route path="/paste/search" component={Search} />
             <Route path="*" component={NotFound} />
           </Routes>
           </div>

@@ -22,7 +22,7 @@ public record SearchView(
             LocalDateTime dateOfExpiry
     ) {
 
-        private static final short HIGHLIGHT_RANGE = 25;
+        private static final short HIGHLIGHT_RANGE = 30;
 
         public static SearchItemView of(final Paste reference, final String term) {
             return new SearchItemView(

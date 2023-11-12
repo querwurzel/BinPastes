@@ -76,6 +76,8 @@ const RecentPastes: () => JSX.Element = () => {
             <span class={styles.refetch} onClick={manualRefetch}>↻</span>
           </h3>
 
+          <A class={styles.searchLink} activeClass={styles.searchLinkActive} href={'/paste/search'}>Search all pastes</A>
+
           <ol>
             <For each={pastes()}>{item =>
             <li class={styles.item}>

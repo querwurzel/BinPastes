@@ -56,14 +56,15 @@ const findAll = (): Promise<Array<PasteListView>> => {
 
 const searchAll = (term: string): Promise<Array<PasteSearchView>> => {
   const params = new URLSearchParams([['term', term]]);
-  const url = new URL('/api/v1/paste/search?' + params.toString(), apiBaseUrl());
+  const url = new URL('/api/v1/paste/search?' + encodeURI(params.toString()), apiBaseUrl());
 
   return fetch(url)
     .then(value => value.json())
-    .then(value => value.pastes);
+    .then(value => value.pastes)
+    .catch(_ => [])
 }
 
-const deletePaste = (id: string) => {
+const deletePaste = (id: string): Promise<void> => {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url, {

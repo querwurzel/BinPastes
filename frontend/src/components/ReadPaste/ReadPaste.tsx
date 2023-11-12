@@ -69,9 +69,10 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
         Expires: <time>{paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'}</time> |
         Size: {paste.sizeInBytes} bytes
+        <Show when={paste.views} keyed>
         <br />
-        Views: {paste.views}
-        <Show when={paste.views} keyed> | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time></Show>
+        Views: {paste.views} | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time>
+        </Show>
         <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}><Copy /></a></Show>
         <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete"><Trash /></a></Show>
       </p>

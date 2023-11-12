@@ -49,6 +49,8 @@ public class WebServerConfig implements WebFluxConfigurer {
 
         var route = route(RequestPredicates
                         .method(HttpMethod.GET)
+                        .and(path("/robots.txt").negate())
+                        .and(path("/favicon.png").negate())
                         .and(path("/assets/**").negate())
                         .and(path("/api/**").negate()),
                 request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));

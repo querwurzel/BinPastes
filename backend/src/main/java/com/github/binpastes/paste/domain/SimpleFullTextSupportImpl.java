@@ -26,7 +26,7 @@ class SimpleFullTextSupportImpl implements FullTextSearchSupport {
     @Override
     public Flux<Paste> searchByFullText(final String text) {
         var criteria = Criteria
-                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC)
                 .and(Criteria
                         .where(PasteSchema.DATE_OF_EXPIRY).isNull()
                         .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
@@ -47,6 +47,5 @@ class SimpleFullTextSupportImpl implements FullTextSearchSupport {
                                 .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED))
                 )
                 .all();
-
     }
 }
