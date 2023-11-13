@@ -6,6 +6,7 @@ export interface IAppContext {
   popPasteCloned: () => PasteClone | undefined
   pushPasteCreated: (paste: PasteView) => void
   popPasteCreated: () => PasteView | undefined
+  pushPasteDeleted: (paste: PasteView) => void
   onPasteCreated: (callback: (paste: PasteView) => void) => void
   onPasteDeleted: (callback: (paste: PasteView) => void) => void
 }

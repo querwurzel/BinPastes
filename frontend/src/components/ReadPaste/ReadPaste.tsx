@@ -1,4 +1,4 @@
-import {Component, createEffect, createSignal, JSX, lazy, on, Show} from 'solid-js';
+import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
