@@ -8,7 +8,6 @@ import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
@@ -116,11 +115,15 @@ public class Paste {
     }
 
     public boolean isOneTime() {
-        return exposure == PasteExposure.ONCE;
+        return this.exposure == PasteExposure.ONCE;
+    }
+
+    public boolean isPermanent() {
+        return this.dateOfExpiry == null;
     }
 
     public boolean isErasable(String remoteAddress) {
-        if (this.isUnlisted()) {
+        if (this.isUnlisted() || this.isOneTime()) {
             return true;
         }
 
@@ -128,7 +131,7 @@ public class Paste {
             final var createdBySameAuthor = Objects.equals(remoteAddress, this.getRemoteAddress());
 
             if (createdBySameAuthor) {
-                return ChronoUnit.MINUTES.between(this.getDateCreated(), LocalDateTime.now()) <= 60L;
+                return this.getDateCreated().isAfter(LocalDateTime.now().minusHours(1));
             }
         }
 
@@ -214,6 +217,14 @@ public class Paste {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Paste{");
+        sb.append("id='").append(id).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 
     public enum PasteExposure {
