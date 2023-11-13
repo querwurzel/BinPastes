@@ -66,7 +66,7 @@ class PasteControllerTest {
         doReturn(Flux.empty()).when(pasteService).findByFullText(anyString());
 
         webClient.get()
-                .uri("/api/v1/paste/search?term=/{term}", "foobar")
+                .uri("/api/v1/paste/search?term={term}", "foobar")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))

@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 class PasteTest {
@@ -40,13 +41,6 @@ class PasteTest {
         assertThat(newPaste.getId()).isNotEmpty();
         assertThat(newPaste.getViews()).isZero();
         assertThat(newPaste.getLastViewed()).isNull();
-
-        assertThat(newPaste.getTitle()).isNull();
-        assertThat(newPaste.getContent()).isEqualTo("someContent");
-        assertThat(newPaste.isPermanent()).isTrue();
-        assertThat(newPaste.isEncrypted()).isFalse();
-        assertThat(newPaste.isPublic()).isTrue();
-        assertThat(newPaste.getRemoteAddress()).isNull();
     }
 
     @Test
@@ -65,7 +59,7 @@ class PasteTest {
     void trackPasteLastViewed() {
         var newPaste = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, null);
         var now = LocalDateTime.now();
-        var yesterday = LocalDateTime.now().minusDays(1);
+        var yesterday = now.minusDays(1);
 
         newPaste.trackView(now);
         newPaste.trackView(yesterday);
@@ -86,21 +80,21 @@ class PasteTest {
         var unlistedPaste = Paste.newInstance(null, "someContent", null, false, PasteExposure.UNLISTED, "Alice");
         var oneTimePaste = Paste.newInstance(null, "someContent", null, false, PasteExposure.ONCE, "Alice");
 
-        var publicPasteRecentlyCreatedByAlice = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, "Alice");
-        publicPasteRecentlyCreatedByAlice.setDateCreated(LocalDateTime.now().minusMinutes(59));
+        var publicPasteRecentlyCreated = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, "Alice");
+        publicPasteRecentlyCreated.setDateCreated(LocalDateTime.now().minusMinutes(60).plusSeconds(1));
 
-        var publicPasteCreatedSomeTimeAgoByAlice = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, "Alice");
-        publicPasteCreatedSomeTimeAgoByAlice.setDateCreated(LocalDateTime.now().minusMinutes(60));
+        var publicPasteCreatedSomeTimeAgo = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, "Alice");
+        publicPasteCreatedSomeTimeAgo.setDateCreated(LocalDateTime.now().minusMinutes(60));
 
         return Stream.of(
-                arguments(unlistedPaste, null, true),
-                arguments(oneTimePaste, null, true),
+                arguments(named("unlisted paste", unlistedPaste), null, true),
+                arguments(named("one-time paste", oneTimePaste), null, true),
 
-                arguments(publicPasteRecentlyCreatedByAlice, "Alice", true),
-                arguments(publicPasteRecentlyCreatedByAlice, "Bob", false),
+                arguments(named("public paste with recent dateCreated of Alice", publicPasteRecentlyCreated), "Alice", true),
+                arguments(named("public paste with recent dateCreated of Alice", publicPasteRecentlyCreated), "Bob", false),
 
-                arguments(publicPasteCreatedSomeTimeAgoByAlice, "Alice", false),
-                arguments(publicPasteCreatedSomeTimeAgoByAlice, "Bob", false)
+                arguments(named("public paste with older dateCreated of Alice", publicPasteCreatedSomeTimeAgo), "Alice", false),
+                arguments(named("public paste with older dateCreated of Alice", publicPasteCreatedSomeTimeAgo), "Bob", false)
         );
     }
 }

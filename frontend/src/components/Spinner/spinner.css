@@ -5,7 +5,7 @@
   height: 80px;
 }
 .lds-ellipsis div {
-  background: #000;
+  background: var(--color-text);
   position: absolute;
   top: 33px;
   width: 13px;

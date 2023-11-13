@@ -131,7 +131,7 @@ public class Paste {
             final var createdBySameAuthor = Objects.equals(remoteAddress, this.getRemoteAddress());
 
             if (createdBySameAuthor) {
-                return this.getDateCreated().isAfter(LocalDateTime.now().minusHours(1));
+                return LocalDateTime.now().minusHours(1).isBefore(this.getDateCreated());
             }
         }
 
