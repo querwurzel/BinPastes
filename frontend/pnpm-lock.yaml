@@ -6,17 +6,17 @@ settings:
 
 dependencies:
   '@solidjs/router':
-    specifier: ^0.8.4
-    version: 0.8.4(solid-js@1.8.5)
+    specifier: ^0.9.1
+    version: 0.9.1(solid-js@1.8.5)
   crypto-js:
     specifier: ^4.2.0
     version: 4.2.0
   linkify-element:
-    specifier: ^4.1.1
-    version: 4.1.1(linkifyjs@4.1.1)
+    specifier: ^4.1.2
+    version: 4.1.2(linkifyjs@4.1.2)
   linkifyjs:
-    specifier: ^4.1.1
-    version: 4.1.1
+    specifier: ^4.1.2
+    version: 4.1.2
   mvp.css:
     specifier: ^1.14.0
     version: 1.14.0
@@ -29,8 +29,8 @@ devDependencies:
     specifier: ^4.2.1
     version: 4.2.1
   pnpm:
-    specifier: ^8.10.2
-    version: 8.10.2
+    specifier: ^8.10.4
+    version: 8.10.4
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -599,10 +599,10 @@ packages:
       '@jridgewell/sourcemap-codec': 1.4.15
     dev: true
 
-  /@solidjs/router@0.8.4(solid-js@1.8.5):
-    resolution: {integrity: sha512-Gi/WVoVseGMKS1DBdT3pNAMgOzEOp6Q3dpgNd2mW9GUEnVocPmtyBjDvXwN6m7tjSGsqqfqJFXk7bm1hxabSRw==}
+  /@solidjs/router@0.9.1(solid-js@1.8.5):
+    resolution: {integrity: sha512-kRY75piOQsyoH75E/RP6lr7uVGFCjeeCCCJx7Z2D1Vc6+I1yFQjLCvE+6agXGwqDoWi6vbETP1g7gmp/L1mNLg==}
     peerDependencies:
-      solid-js: ^1.5.3
+      solid-js: ^1.8.4
     dependencies:
       solid-js: 1.8.5
     dev: false
@@ -818,16 +818,16 @@ packages:
     hasBin: true
     dev: true
 
-  /linkify-element@4.1.1(linkifyjs@4.1.1):
-    resolution: {integrity: sha512-G//YNU6WXu1uo/oneLfGE6UPlz5cdk4M43l+WHPezdWUQ/B703g9CtvxtLgfNFU8a/9+c9XjI+d+vfQTiH+KHg==}
+  /linkify-element@4.1.2(linkifyjs@4.1.2):
+    resolution: {integrity: sha512-Pg/A44SXkF7Hwwss5WMX8pbve/u4Co2a5uChXzSTFD1bOSlzdxJMIdh0VuHN6Cvk6oplA2ImBHOtrBUsBn2l2Q==}
     peerDependencies:
       linkifyjs: ^4.0.0
     dependencies:
-      linkifyjs: 4.1.1
+      linkifyjs: 4.1.2
     dev: false
 
-  /linkifyjs@4.1.1:
-    resolution: {integrity: sha512-zFN/CTVmbcVef+WaDXT63dNzzkfRBKT1j464NJQkV7iSgJU0sLBus9W0HBwnXK13/hf168pbrx/V/bjEHOXNHA==}
+  /linkifyjs@4.1.2:
+    resolution: {integrity: sha512-1elJrH8MwUgr77Rgmx4JgB/nBgISYVoGossH6pAfCeHG+07TblTn6RWKx0MKozEMJU6NCFYHRih9M8ZtV3YZ+Q==}
     dev: false
 
   /lru-cache@5.1.1:
@@ -865,8 +865,8 @@ packages:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: true
 
-  /pnpm@8.10.2:
-    resolution: {integrity: sha512-B4IJPVumx62UYggbwe8HdQFqS0EJ7KHh/tzqbxEBQ69fUJk9s2xCfU+oxivjkgoyJNsS2nGdJGyhndnxgEjDPA==}
+  /pnpm@8.10.4:
+    resolution: {integrity: sha512-KH7bZKf5dYOIhK80/tKuRqbwbD9Khkd59TP0OES/Wr8yJqBKQnhQSrEYYRpxDW4XFLUnKhoxLy5vJTz1h7mlVA==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
