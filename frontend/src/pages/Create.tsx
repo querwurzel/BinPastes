@@ -7,8 +7,6 @@ import CreatePaste from '../components/CreatePaste/CreatePaste';
 
 const Create: () => JSX.Element = () => {
 
-  const appContext = AppContext;
-
   const navigate = useNavigate();
 
   const onCreatePaste = (cmd: PasteCreateCmd): Promise<string> => {
@@ -22,7 +20,7 @@ const Create: () => JSX.Element = () => {
           .catch(_ => {});
 
         if (paste.isPublic) {
-          appContext.pushPasteCreated(paste);
+          AppContext.pushPasteCreated(paste);
         }
 
         if (!paste.isOneTime) {
@@ -34,7 +32,7 @@ const Create: () => JSX.Element = () => {
   }
 
   return (
-    <CreatePaste initialPaste={appContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
+    <CreatePaste initialPaste={AppContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
   )
 }
 

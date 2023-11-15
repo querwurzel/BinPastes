@@ -3,11 +3,9 @@ import {PasteListView} from './model/PasteListView';
 import {PasteView} from './model/PasteView';
 import {PasteSearchView} from './model/PasteSearchView';
 
-const HOST_DEVELOPMENT = 'localhost:3000';
-
 const apiBaseUrl = () => {
   switch (window.location.host) {
-    case HOST_DEVELOPMENT:
+    case 'localhost:3000': // development
       return 'http://localhost:8080';
     default:
       return window.location.origin;
