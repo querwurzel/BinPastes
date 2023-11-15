@@ -139,15 +139,16 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
                  onInput={updateFormField("password")}/>
         </div>
         <hr/>
-        <div>
+        <div class={styles.content}>
           <textarea minLength="5"
                     maxLength="4096"
                     required
                     autofocus
                     rows="20"
-                    cols="75"
+                    cols="50"
                     placeholder="Paste here"
                     onInput={updateFormField("content")}>{form.content}</textarea>
+          <span>{form.content?.length || 0} / 4096</span>
         </div>
       </fieldset>
 
