@@ -1,4 +1,4 @@
-import {Component, createEffect, createSignal, JSX, on, onMount, Show} from 'solid-js';
+import {Component, createEffect, createSignal, For, JSX, on, onMount, Show} from 'solid-js';
 import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
@@ -17,7 +17,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   const [clearText, setClearText] = createSignal<string>();
 
   let keyInput: HTMLInputElement;
-  let content: HTMLPreElement;
+  let contentElement: HTMLPreElement;
 
   createEffect(on(clearText, () => linkifyContent()));
 
@@ -26,7 +26,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   })
 
   function linkifyContent() {
-    linkifyElement(content, {
+    linkifyElement(contentElement, {
       target: {
         url: '_blank',
         email: null,
@@ -76,16 +76,21 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   function selectContent() {
       if (window.getSelection && document.createRange) {
           let range = document.createRange();
-          range.selectNodeContents(content);
+          range.selectNodeContents(contentElement);
 
           let selection = window.getSelection();
           selection.removeAllRanges();
           selection.addRange(range);
       } else if (document.body.createTextRange) {
           let range = document.body.createTextRange();
-          range.moveToElementText(content);
+          range.moveToElementText(contentElement);
           range.select();
       }
+  }
+
+  function content() {
+    const text = clearText() || paste.content;
+    return text.split(/\r?\n|\r|\n/g);
   }
 
   return (
@@ -126,9 +131,12 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         <h3 class={styles.onetime}><strong>For your eyes only! This paste has just been burnt after reading.</strong></h3>
       </Show>
 
-      <Show when={clearText()} fallback={<pre ref={content}>{paste.content}</pre>}>
-        <pre ref={content}>{clearText()}</pre>
-      </Show>
+      <pre ref={contentElement}>
+      <For each={content()}>{line =>
+        <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}</span></span>
+      }
+      </For>
+      </pre>
 
     </div>
   )
