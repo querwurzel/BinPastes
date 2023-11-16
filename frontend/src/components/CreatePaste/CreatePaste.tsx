@@ -51,7 +51,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
       return;
     }
 
-    if ((e.ctrlKey && e.code === 'Enter') ^ (e.metaKey && e.code === 'Enter')) {
+    if (e.code === 'Enter' && ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey)) { // XOR
       creationForm.requestSubmit();
     }
   }
