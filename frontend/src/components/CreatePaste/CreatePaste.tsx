@@ -138,7 +138,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
           </label>
           <label for="once">
             <input type="radio" id="once" name="exposure" value="ONCE" onInput={updateFormField("exposure")}/>
-            Once (One-Time)
+            Once (One&#8209;Time)
           </label>
         </div>
         <hr/>
