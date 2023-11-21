@@ -48,14 +48,14 @@ public class PasteService {
     }
 
     private Mono<Paste> trackAccess(Paste paste) {
-        trackingService.trackView(paste.getId());
-
         if (paste.isOneTime()) {
             return pasteRepository
                     .save(paste.markAsExpired())
-                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
+                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()))
+                    .onErrorComplete();
         }
 
+        trackingService.trackView(paste.getId());
         return Mono.just(paste);
     }
 
@@ -66,7 +66,7 @@ public class PasteService {
     public Flux<Paste> findByFullText(String text) {
         return pasteRepository
                 .searchAllLegitByFullText(text)
-                // TODO remove when fulltext search is finalised
+                // TODO remove when fulltext search is 'good enough'
                 .collectList()
                 .doOnSuccess(pastes -> log.info("Found {} pastes searching for: {}", pastes.size(), text))
                 .flatMapMany(Flux::fromIterable);
