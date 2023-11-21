@@ -14,24 +14,35 @@ import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1/paste")
+@RequestMapping({"/api/v1/paste", "/api/v1/paste/"})
 class PasteController {
 
     private static final Logger log = LoggerFactory.getLogger(PasteController.class);
@@ -49,21 +60,24 @@ class PasteController {
                 .find(pasteId)
                 .doOnNext(paste -> {
                     if (paste.isOneTime()) {
-                        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "no-store");
-                    } else {
-                        if (!paste.isPermanent()) {
-                            var in5min = LocalDateTime.now().plusMinutes(5);
-                            if (in5min.isAfter(paste.getDateOfExpiry())) {
-                                response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=" + Duration.between(LocalDateTime.now(), paste.getDateOfExpiry()).toSeconds());
-                                return;
-                            }
-                        }
-
-                        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=300");
+                        response.getHeaders().setCacheControl(CacheControl.noStore());
+                        return;
                     }
+
+                    if (paste.isPermanent() || isAfter(paste.getDateOfExpiry(), 5, ChronoUnit.MINUTES)) {
+                        response.getHeaders().setCacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES));
+                        return;
+                    }
+
+                    response.getHeaders().setCacheControl(
+                            CacheControl.maxAge(Duration.between(LocalDateTime.now(), paste.getDateOfExpiry())));
                 })
                 .map(reference -> SingleView.of(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    }
+
+    private static boolean isAfter(LocalDateTime dateTime, long amount, ChronoUnit unit) {
+        return LocalDateTime.now().plus(amount, unit).isBefore(dateTime);
     }
 
     @GetMapping
@@ -83,7 +97,7 @@ class PasteController {
             final String term,
             final ServerHttpResponse response
     ) {
-        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=60");
+        response.getHeaders().setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS));
         return pasteService
                 .findByFullText(term)
                 .map(paste -> SearchItemView.of(paste, term))
@@ -129,5 +143,4 @@ class PasteController {
 
         return request.getRemoteAddress().getAddress().getHostAddress();
     }
-
 }
