@@ -18,7 +18,11 @@ jobs:
           java-version: '17'
 
       - name: Build with Maven
-        run: mvn clean package
+        run: mvn clean verify
+
+      - name: Publish Test Report
+        if: failure()
+        uses: scacap/action-surefire-report@v1
 
   release:
     runs-on: ubuntu-latest

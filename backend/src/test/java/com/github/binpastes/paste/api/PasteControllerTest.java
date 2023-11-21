@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.CacheControl;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
@@ -45,7 +44,7 @@ class PasteControllerTest {
                 .uri("/api/v1/paste/" + somePasteId)
                 .exchange()
                 .expectStatus().isNotFound()
-                .expectHeader().doesNotExist(HttpHeaders.CACHE_CONTROL);
+                .expectHeader().cacheControl(CacheControl.empty());
     }
 
     @Test
@@ -69,7 +68,7 @@ class PasteControllerTest {
                 .uri("/api/v1/paste/search?term={term}", "foobar")
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
+                .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
                 .expectBody().jsonPath("pastes", emptyList());
     }
 
@@ -92,20 +91,14 @@ class PasteControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(payload, String.class)
                 .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody().consumeWith(System.out::println);
+                .expectStatus().isBadRequest();
     }
 
     private static Stream<Arguments> invalidPayloads() {
         return Stream.of(
                 arguments(named("body is null", Mono.empty())),
                 arguments(named("body blank", Mono.just(""))),
-                arguments(named("title too long", Mono.just("""
-                        {
-                            "title": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-                            "content": "validContent"
-                        }
-                """))),
+                arguments(named("title too long", Mono.just("{\"content\": \"validContent\", \"title\": " + "X".repeat(256 + 1) + "\"}"))),
                 arguments(named("content blank", Mono.just("""
                         {
                             "content": "            ",
