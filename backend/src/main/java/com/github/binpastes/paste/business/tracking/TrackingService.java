@@ -1,6 +1,5 @@
 package com.github.binpastes.paste.business.tracking;
 
-import com.github.binpastes.paste.business.tracking.MessagingClient.Message;
 import com.github.binpastes.paste.domain.PasteRepository;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class TrackingService {
     private void run() {
         this.messagingClient
                 .receiveMessage()
-                .doOnNext(this::receiveView)
+                .doOnNext(message -> receiveView(message.pasteId(), message.timeViewed()))
                 .repeat()
                 .subscribe();
     }
@@ -54,9 +53,5 @@ public class TrackingService {
                 .doOnError(OptimisticLockingFailureException.class, e -> messagingClient.sendMessage(pasteId, timeViewed))
                 .onErrorResume(OptimisticLockingFailureException.class, e -> Mono.empty())
                 .subscribe();
-    }
-
-    private void receiveView(Message message) {
-        this.receiveView(message.pasteId(), message.timeViewed());
     }
 }

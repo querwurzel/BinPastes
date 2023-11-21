@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
+import static java.util.Objects.isNull;
 
 @Table(PasteSchema.TABLE_NAME)
 public class Paste {
@@ -119,19 +120,19 @@ public class Paste {
     }
 
     public boolean isPermanent() {
-        return this.dateOfExpiry == null;
+        return isNull(this.dateOfExpiry);
     }
 
     public boolean isErasable(String remoteAddress) {
-        if (this.isUnlisted() || this.isOneTime()) {
+        if (isUnlisted() || isOneTime()) {
             return true;
         }
 
-        if (this.isPublic()) {
-            final var createdBySameAuthor = Objects.equals(remoteAddress, this.getRemoteAddress());
+        if (isPublic()) {
+            final var createdBySameAuthor = Objects.equals(remoteAddress, getRemoteAddress());
 
             if (createdBySameAuthor) {
-                return LocalDateTime.now().minusHours(1).isBefore(this.getDateCreated());
+                return LocalDateTime.now().minusHours(1).isBefore(getDateCreated());
             }
         }
 
@@ -139,15 +140,19 @@ public class Paste {
     }
 
     public Paste trackView(LocalDateTime lastViewed) {
-        if (this.getLastViewed() == null || this.getLastViewed().isBefore(lastViewed)) {
+        if (isNull(getLastViewed()) || getLastViewed().isBefore(lastViewed)) {
             setLastViewed(lastViewed);
         }
 
-        return this.setViews(this.getViews() + 1);
+        return setViews(this.getViews() + 1);
     }
 
     public Paste markAsExpired() {
-        return this.setDateOfExpiry(LocalDateTime.now());
+        if (isNull(getDateOfExpiry())) {
+            return setDateOfExpiry(LocalDateTime.now());
+        }
+
+        throw new IllegalStateException("Paste is already expired");
     }
 
     protected Paste setId(final String id) {
@@ -209,7 +214,7 @@ public class Paste {
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (isNull(o) || getClass() != o.getClass()) return false;
         Paste paste = (Paste) o;
         return Objects.equals(id, paste.id);
     }
