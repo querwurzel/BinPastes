@@ -39,9 +39,7 @@ public final class CreateCmd {
     }
 
     public String content() {
-        return StringUtils.hasText(content)
-                ? content
-                : null;
+        return content;
     }
 
     public boolean isEncrypted() {
