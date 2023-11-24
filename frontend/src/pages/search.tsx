@@ -18,7 +18,7 @@ const Search: () => JSX.Element = () => {
     return (searchTerm.q && searchTerm.q.length >= 3) ? searchTerm.q : null;
   }
 
-  function onSearchEnter(term: string) {
+  function onSearchPastes(term: string) {
     setSearchTerm({q: term})
   }
 
@@ -32,7 +32,7 @@ const Search: () => JSX.Element = () => {
         </Match>
         <Match when={pastes.latest}>
 
-          <SearchPastes term={effectiveTerm()} pastes={pastes()} onSearchEnter={onSearchEnter} />
+          <SearchPastes term={effectiveTerm()} pastes={pastes()} onSearchPastes={onSearchPastes} />
 
         </Match>
       </Switch>

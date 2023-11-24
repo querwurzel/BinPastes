@@ -7,10 +7,10 @@ import styles from "./searchPastes.module.css";
 type SearchPastesProps = {
   term: string
   pastes: Array<PasteSearchView>
-  onSearchEnter: (term: string) => void
+  onSearchPastes: (term: string) => void
 }
 
-const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter}): JSX.Element => {
+const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchPastes}): JSX.Element => {
 
   let searchInput: HTMLInputElement;
 
@@ -18,7 +18,7 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter
     e.preventDefault();
 
     if (searchInput.value?.length >= 3) {
-      onSearchEnter(searchInput.value);
+      onSearchPastes(searchInput.value);
     }
   }
 

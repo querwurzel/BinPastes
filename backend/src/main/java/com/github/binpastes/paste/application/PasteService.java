@@ -50,14 +50,15 @@ public class PasteService {
     }
 
     private Mono<Paste> trackAccess(Paste paste) {
+        trackingService.trackView(paste.getId());
+
         if (paste.isOneTime()) {
             return pasteRepository
                     .save(paste.markAsExpired())
-                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()))
-                    .onErrorComplete();
+                    .retry()
+                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
         }
 
-        trackingService.trackView(paste.getId());
         return Mono.just(paste);
     }
 
