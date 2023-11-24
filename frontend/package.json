@@ -15,7 +15,7 @@
   },
   "engine-strict": true,
   "engines": {
-    "node": "18"
+    "node": "20"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.1",
