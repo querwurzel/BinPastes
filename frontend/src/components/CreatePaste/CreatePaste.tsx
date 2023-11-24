@@ -64,7 +64,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
           [fieldName]: inputElement.value
         });
     }
-  };
+  }
 
   function resetCreatePaste() {
     setForm({
@@ -106,7 +106,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         resetCreateForm();
         setLastPasteUrl(url);
       })
-      .catch(e => submitInput.style.backgroundColor = 'red');
+      .catch(_ => submitInput.style.backgroundColor = 'red');
   }
 
   return (

@@ -6,7 +6,7 @@ import Spinner from '../components/Spinner/Spinner';
 
 const Search: () => JSX.Element = () => {
 
-  const [searchTerm, setSearchTerm] = useSearchParams<{q: string}>();
+  const [searchTerm, setSearchTerm] = useSearchParams();
 
   const [pastes] = createResource(
     effectiveTerm,
@@ -18,7 +18,7 @@ const Search: () => JSX.Element = () => {
     return (searchTerm.q && searchTerm.q.length >= 3) ? searchTerm.q : null;
   }
 
-  function onSearchEnter(term: String) {
+  function onSearchEnter(term: string) {
     setSearchTerm({q: term})
   }
 

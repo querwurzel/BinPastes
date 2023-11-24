@@ -7,47 +7,45 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
-public record CreateCmd(
-        @Size(max = 255)
-        String title,
-        @NotNull
-        @NotBlank
-        @Size(min = 5, max = 4096)
-        String content,
-        Boolean isEncrypted,
-        ExpirationRange expiry,
-        Exposure exposure
-) {
+public final class CreateCmd {
+    @Size(max = 255)
+    private final String title;
+    @NotNull
+    @NotBlank
+    @Size(min = 5, max = 4096)
+    private final String content;
+    private final Boolean isEncrypted;
+    private final ExpirationRange expiry;
+    private final Exposure exposure;
 
-    @Override
+    public CreateCmd(
+            final String title,
+            final String content,
+            final Boolean isEncrypted,
+            final ExpirationRange expiry,
+            final Exposure exposure
+    ) {
+        this.title = title;
+        this.content = content;
+        this.isEncrypted = isEncrypted;
+        this.expiry = expiry;
+        this.exposure = exposure;
+    }
+
     public String title() {
         return StringUtils.hasText(title)
                 ? title.strip()
                 : null;
     }
 
-    @Override
     public String content() {
         return StringUtils.hasText(content)
                 ? content
                 : null;
     }
 
-    @Override
-    public Boolean isEncrypted() {
+    public boolean isEncrypted() {
         return isEncrypted != null && isEncrypted;
-    }
-
-    @Override
-    @Deprecated
-    public Exposure exposure() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @Deprecated
-    public ExpirationRange expiry() {
-        throw new UnsupportedOperationException();
     }
 
     public LocalDateTime dateOfExpiry() {
@@ -114,5 +112,4 @@ public record CreateCmd(
 
         public abstract LocalDateTime toTimestamp();
     }
-
 }
