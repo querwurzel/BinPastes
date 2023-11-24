@@ -48,7 +48,7 @@ class PublicPastesIT {
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - public paste is cached until expiry")
+    @DisplayName("GET /{pasteId} - public paste is cached only until expiry")
     void getExpiringPublicPaste() {
         var paste = givenPaste(Paste.newInstance(
                 "someTitle",
