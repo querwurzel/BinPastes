@@ -1,6 +1,6 @@
 package com.github.binpastes.paste.api;
 
-import com.github.binpastes.paste.domain.PasteService;
+import com.github.binpastes.paste.application.PasteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

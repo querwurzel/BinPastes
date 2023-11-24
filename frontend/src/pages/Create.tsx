@@ -9,7 +9,7 @@ const Create: () => JSX.Element = () => {
 
   const navigate = useNavigate();
 
-  const onCreatePaste = (cmd: PasteCreateCmd): Promise<string> => {
+  function onCreatePaste(cmd: PasteCreateCmd): Promise<string> {
     return ApiClient.createPaste(cmd)
       .then(paste => {
         const path = '/paste/' + paste.id;

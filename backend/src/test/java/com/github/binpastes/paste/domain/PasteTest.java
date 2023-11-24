@@ -58,13 +58,13 @@ class PasteTest {
     @DisplayName("track paste - updates lastViewed timestamp to most recent one")
     void trackPasteLastViewed() {
         var newPaste = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, null);
-        var now = LocalDateTime.now();
-        var yesterday = now.minusDays(1);
+        var today = LocalDateTime.now();
+        var yesterday = today.minusDays(1);
 
-        newPaste.trackView(now);
+        newPaste.trackView(today);
         newPaste.trackView(yesterday);
 
-        assertThat(newPaste.getLastViewed()).isEqualTo(now);
+        assertThat(newPaste.getLastViewed()).isEqualTo(today);
         assertThat(newPaste.getViews()).isEqualTo(2);
     }
 

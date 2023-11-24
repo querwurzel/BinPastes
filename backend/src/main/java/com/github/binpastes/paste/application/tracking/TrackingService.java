@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.business.tracking;
+package com.github.binpastes.paste.application.tracking;
 
 import com.github.binpastes.paste.domain.PasteRepository;
 import jakarta.annotation.PostConstruct;
