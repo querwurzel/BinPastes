@@ -86,8 +86,8 @@ class PublicPastesIT {
     }
 
     @Test
-    @DisplayName("POST / - public paste is created on minimal input")
-    void createPublicPaste() {
+    @DisplayName("POST / - public paste is created with minimal input")
+    void createPublicPasteMinimalRequest() {
             webClient.post()
                 .uri("/api/v1/paste")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -117,6 +117,47 @@ class PublicPastesIT {
                               "isErasable": true,
                               "isEncrypted": false,
                               "isOneTime": false,
+                              "lastViewed": null,
+                              "views": 0
+                            }
+                """, false);
+    }
+
+    @Test
+    @DisplayName("POST / - public paste is created using all options")
+    void createPublicPasteMaximalRequest() {
+        webClient.post()
+                .uri("/api/v1/paste")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just("""
+                        {
+                            "title": "  someTitle  ",
+                            "content": "someContent",
+                            "exposure": "PUBLIC",
+                            "isEncrypted": true,
+                            "expiry": "NEVER"
+                        }
+                        """), String.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader().cacheControl(CacheControl.empty())
+                .expectBody()
+                .jsonPath("$.id").<String>value(id ->
+                        assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                )
+                .jsonPath("$.dateCreated").<String>value(dateCreated ->
+                        assertThat(parse(dateCreated)).isBefore(now())
+                )
+                .json("""
+                            {
+                              "title": "someTitle",
+                              "content": "someContent",
+                              "sizeInBytes": 11,
+                              "isPublic": true,
+                              "isErasable": true,
+                              "isEncrypted": true,
+                              "isOneTime": false,
+                              "dateOfExpiry": null,
                               "lastViewed": null,
                               "views": 0
                             }
