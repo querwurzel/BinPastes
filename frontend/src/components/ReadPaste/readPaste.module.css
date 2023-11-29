@@ -43,6 +43,7 @@
   content: counter(line) '.';
 }
 
+.read h2,
 .read pre .line {
   white-space: pre-wrap;
   word-wrap: break-word;
