@@ -5,7 +5,9 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import reactor.util.retry.Retry;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -47,7 +49,8 @@ public class TrackingService {
         pasteRepository
                 .findById(pasteId)
                 .flatMap(paste -> pasteRepository.save(paste.trackView(timestamp)))
-                .retry()
+                .retryWhen(Retry.indefinitely()
+                        .filter(ex -> ex instanceof OptimisticLockingFailureException))
                 .doOnNext(paste -> log.debug("Tracked view on paste {}", paste.getId()))
                 .subscribe();
     }
