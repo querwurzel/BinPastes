@@ -38,7 +38,7 @@
     <maven.compiler.release>17</maven.compiler.release>
 
     <!-- maven plugin versions -->
-    <maven-frontend-plugin.version>1.14.2</maven-frontend-plugin.version>
+    <maven-frontend-plugin.version>1.15.0</maven-frontend-plugin.version>
     <maven-wrapper-plugin.version>3.2.0</maven-wrapper-plugin.version>
     <jacoco-maven-plugin.version>0.8.11</jacoco-maven-plugin.version>
 
