@@ -6,6 +6,7 @@ import {PasteSearchView} from './model/PasteSearchView';
 const apiBaseUrl = () => {
   switch (window.location.host) {
     case 'localhost:3000': // development
+    case 'localhost:4173': // development
       return 'http://localhost:8080';
     default:
       return window.location.origin;
