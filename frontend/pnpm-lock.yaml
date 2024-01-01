@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@solidjs/router':
-    specifier: ^0.10.4
-    version: 0.10.4(solid-js@1.8.7)
+    specifier: ^0.10.5
+    version: 0.10.5(solid-js@1.8.7)
   crypto-js:
     specifier: ^4.2.0
     version: 4.2.0
@@ -29,8 +29,8 @@ devDependencies:
     specifier: ^4.2.1
     version: 4.2.1
   pnpm:
-    specifier: ^8.12.1
-    version: 8.12.1
+    specifier: ^8.13.1
+    version: 8.13.1
   typescript:
     specifier: ^5.3.3
     version: 5.3.3
@@ -703,8 +703,8 @@ packages:
     dev: true
     optional: true
 
-  /@solidjs/router@0.10.4(solid-js@1.8.7):
-    resolution: {integrity: sha512-hptb3eEld8Suu+xpCyUJMIqp4F+vDclsz58bxmLGAP47ckixnAcYyf/WBk0xzpszQiryNO2O0d4xucZGdLgI0g==}
+  /@solidjs/router@0.10.5(solid-js@1.8.7):
+    resolution: {integrity: sha512-gxDeiyc97j8/UqzuuasZsQYA7jpmlwjkfpcay11Q2xfzoKR50eBM1AaxAPtf0MlBAdPsdPV3h/k8t5/XQCuebA==}
     peerDependencies:
       solid-js: ^1.8.6
     dependencies:
@@ -969,8 +969,8 @@ packages:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
     dev: true
 
-  /pnpm@8.12.1:
-    resolution: {integrity: sha512-ZwXqGWattlhwU+bP5v3cN3+BBmIo2vc2xEkAEvRPL/G/DHE7uPMUX84OPvZpx8FfGaWawVeDiVHyNMF7gcplXQ==}
+  /pnpm@8.13.1:
+    resolution: {integrity: sha512-dYvrxpictkYsUTgSmEAZOxDCWN3NsKtD7g753Yd4S8IY1uQctb7qw2K4zjPx+LCAJbWZkzwLzoIFCpo2uEdNQw==}
     engines: {node: '>=16.14'}
     hasBin: true
     dev: true
