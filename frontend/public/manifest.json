@@ -1,0 +1,15 @@
+{
+  "name": "BinPastes",
+  "short_name": "BinPastes",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff2d999",
+  "description": "A simple pastebin",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ]
+}
