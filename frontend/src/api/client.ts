@@ -3,7 +3,7 @@ import {PasteListView} from './model/PasteListView';
 import {PasteView} from './model/PasteView';
 import {PasteSearchView} from './model/PasteSearchView';
 
-const apiBaseUrl = () => {
+function apiBaseUrl() {
   switch (window.location.host) {
     case 'localhost:3000': // development
     case 'localhost:4173': // development
@@ -13,7 +13,7 @@ const apiBaseUrl = () => {
   }
 }
 
-const createPaste = (cmd: PasteCreateCmd): Promise<PasteView> => {
+function createPaste(cmd: PasteCreateCmd): Promise<PasteView> {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url, {
@@ -32,7 +32,7 @@ const createPaste = (cmd: PasteCreateCmd): Promise<PasteView> => {
     });
 }
 
-const findOne = (id: string): Promise<PasteView> => {
+function findOne(id: string): Promise<PasteView> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url)
@@ -45,7 +45,7 @@ const findOne = (id: string): Promise<PasteView> => {
     })
 }
 
-const findAll = (): Promise<Array<PasteListView>> => {
+function findAll(): Promise<Array<PasteListView>> {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url)
@@ -53,7 +53,7 @@ const findAll = (): Promise<Array<PasteListView>> => {
     .then(value => value.pastes);
 }
 
-const searchAll = (term: string): Promise<Array<PasteSearchView>> => {
+function searchAll(term: string): Promise<Array<PasteSearchView>> {
   const params = new URLSearchParams([['term', term]]);
   const url = new URL('/api/v1/paste/search?' + encodeURI(params.toString()), apiBaseUrl());
 
@@ -63,7 +63,7 @@ const searchAll = (term: string): Promise<Array<PasteSearchView>> => {
     .catch(_ => [])
 }
 
-const deletePaste = (id: string): Promise<void> => {
+function deletePaste(id: string): Promise<void> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url, {

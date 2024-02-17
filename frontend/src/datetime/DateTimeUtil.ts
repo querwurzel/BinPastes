@@ -1,5 +1,5 @@
 
-export const toDateTimeString = (date: string | Date): string => {
+function toDateTimeString(date: string | Date): string {
   if (!date) {
     return null;
   }
@@ -8,7 +8,7 @@ export const toDateTimeString = (date: string | Date): string => {
   return toTimeString(instant) + ' / ' + toDateString(instant);
 }
 
-export const toDateString = (date: string | Date): string => {
+function toDateString(date: string | Date): string {
   if (!date) {
     return null;
   }
@@ -17,7 +17,7 @@ export const toDateString = (date: string | Date): string => {
   return instant.toLocaleDateString(navigator.language || 'en', {day: '2-digit', month: 'long', year: 'numeric'});
 }
 
-export const toTimeString = (date: string | Date): string => {
+function toTimeString(date: string | Date): string {
   if (!date) {
     return null;
   }
@@ -26,7 +26,7 @@ export const toTimeString = (date: string | Date): string => {
   return instant.toLocaleTimeString(navigator.language || 'en', {hour: '2-digit', minute: '2-digit'});
 }
 
-export const relativeDiffLabel = (date: string | Date): string => {
+function relativeDiffLabel(date: string | Date): string {
   if (!date) {
     return null;
   }
@@ -75,10 +75,17 @@ export const relativeDiffLabel = (date: string | Date): string => {
   }
 };
 
-const toDate = (date: string | Date): Date => {
+function toDate(date: string | Date): Date {
   if (date instanceof Date) {
     return date;
   }
 
   return new Date(Date.parse(date));
+}
+
+export {
+  toDateTimeString,
+  toDateString,
+  toTimeString,
+  relativeDiffLabel
 }

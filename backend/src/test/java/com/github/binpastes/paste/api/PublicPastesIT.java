@@ -18,9 +18,11 @@ import reactor.core.publisher.Mono;
 
 import java.util.concurrent.TimeUnit;
 
+import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.waitAtMost;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -176,11 +178,11 @@ class PublicPastesIT {
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
-        webClient.get()
+        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
                 .uri("/api/v1/paste/" + paste.getId())
                 .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isNotFound());
     }
 
     private Paste givenPublicPaste() {

@@ -15,10 +15,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.waitAtMost;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -146,10 +148,10 @@ class OneTimePastesIT {
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
-        webClient.get()
+        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
                 .uri("/api/v1/paste/" + oneTimePaste.getId())
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isNotFound());
     }
 
     private Paste givenOneTimePaste() {
