@@ -143,7 +143,13 @@ public class Paste {
             setLastViewed(lastViewed);
         }
 
-        return setViews(this.getViews() + 1);
+        setViews(getViews() + 1);
+
+        if (isOneTime()) {
+            markAsExpired();
+        }
+
+        return this;
     }
 
     public Paste markAsExpired() {
@@ -152,7 +158,7 @@ public class Paste {
             return setDateOfExpiry(now);
         }
 
-        throw new IllegalStateException("Paste is already expired");
+        throw new IllegalStateException("Paste has already expired: " + dateOfExpiry);
     }
 
     protected Paste setId(final String id) {

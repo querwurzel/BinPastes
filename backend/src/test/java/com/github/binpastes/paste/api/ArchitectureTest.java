@@ -4,7 +4,9 @@ import com.github.binpastes.paste.domain.Paste;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import org.junit.jupiter.api.Test;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noMethods;
@@ -24,7 +26,9 @@ class ArchitectureTest {
         var rule = noMethods()
                 .that()
                 .areDeclaredInClassesThat()
-                .resideInAPackage("com.github.binpastes.paste.api")
+                .areAnnotatedWith(RestController.class)
+                .or()
+                .areAnnotatedWith(Controller.class)
                 .should()
                 .haveRawReturnType(Paste.class);
 
@@ -41,9 +45,12 @@ class ArchitectureTest {
 
         var rule = noClasses()
                 .that()
-                .resideInAPackage("com.github.binpastes.paste.api")
+                .areAnnotatedWith(RestController.class)
+                .or()
+                .areAnnotatedWith(Controller.class)
                 .should()
-                .dependOnClassesThat().areAnnotatedWith(Repository.class);
+                .dependOnClassesThat()
+                .areAnnotatedWith(Repository.class);
 
         rule.check(importedClasses);
     }

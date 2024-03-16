@@ -155,7 +155,7 @@ class OneTimePastesIT {
     }
 
     private Paste givenOneTimePaste() {
-        return givenPaste(
+        return persistedPaste(
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
@@ -167,7 +167,7 @@ class OneTimePastesIT {
         );
     }
 
-    private Paste givenPaste(Paste paste) {
+    private Paste persistedPaste(Paste paste) {
         return pasteRepository.save(paste).block();
     }
 }

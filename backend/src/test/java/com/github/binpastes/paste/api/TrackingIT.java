@@ -69,7 +69,7 @@ class TrackingIT {
     }
 
     @Test
-    @DisplayName("tracking - concurrent tracking events result in exact result")
+    @DisplayName("tracking - concurrent tracking events result in exact view count")
     void trackConcurrentPasteViews() {
         var intialPaste = givenPublicPaste();
 

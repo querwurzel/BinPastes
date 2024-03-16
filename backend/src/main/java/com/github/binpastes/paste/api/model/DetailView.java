@@ -4,7 +4,7 @@ import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
 
-public record DetailQuery(
+public record DetailView(
         String id,
         String title,
         String content,
@@ -18,8 +18,8 @@ public record DetailQuery(
         LocalDateTime lastViewed,
         long views
 ) {
-    public static DetailQuery of(final Paste reference, final String remoteAddress) {
-        return new DetailQuery(
+    public static DetailView of(final Paste reference, final String remoteAddress) {
+        return new DetailView(
                 reference.getId(),
                 reference.getTitle(),
                 reference.getContent(),
