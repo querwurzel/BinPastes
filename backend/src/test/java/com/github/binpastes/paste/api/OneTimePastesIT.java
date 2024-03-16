@@ -15,6 +15,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
+
 import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
@@ -64,6 +67,31 @@ class OneTimePastesIT {
                 .uri("/api/v1/paste/" + oneTimePaste.getId())
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    @DisplayName("GET /{pasteId} - one-time paste is read-once even under load")
+    void getOneTimePasteConcurrently() {
+        var oneTimePaste = givenOneTimePaste();
+        var okCount = new AtomicInteger();
+
+        Runnable call = () -> {
+            try {
+                webClient.get()
+                        .uri("/api/v1/paste/" + oneTimePaste.getId())
+                        .exchange()
+                        .expectStatus().isNotFound();
+            } catch (AssertionError e) {
+                okCount.incrementAndGet();
+            }
+        };
+
+        Stream.generate(() -> call)
+                .parallel()
+                .limit(100)
+                .forEach(Runnable::run);
+
+        assertThat(okCount.get()).isOne();
     }
 
     @Test

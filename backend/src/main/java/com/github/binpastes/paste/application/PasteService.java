@@ -58,7 +58,8 @@ public class PasteService {
             return result
                     .map(p -> p.trackView(LocalDateTime.now()))
                     .flatMap(pasteRepository::save)
-                    .doOnSuccess(burntPaste -> log.info("OneTime paste {} viewed and burnt", burntPaste.getId()));
+                    .doOnSuccess(burntPaste -> log.info("OneTime paste {} viewed and burnt", burntPaste.getId()))
+                    .onErrorResume(OptimisticLockingFailureException.class, throwable -> Mono.empty());
         }
 
         trackingService.trackView(paste.getId());
