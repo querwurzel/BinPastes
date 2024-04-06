@@ -1,5 +1,5 @@
 import {JSX} from 'solid-js';
-import './vectors.module.css';
+import './vectors.css';
 
 export const Lock: () => JSX.Element = () => {
   return (
