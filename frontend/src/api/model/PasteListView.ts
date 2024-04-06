@@ -2,8 +2,8 @@
 export type PasteListView = {
   id: string
   title?: string
-  sizeInBytes: number
   isEncrypted: boolean
+  sizeInBytes: number
   dateCreated: string
   dateOfExpiry?: string
 }

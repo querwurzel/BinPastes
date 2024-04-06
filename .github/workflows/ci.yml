@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Build with Maven
         run: mvn clean verify
@@ -39,7 +39,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17'
+          java-version: '21'
 
       - name: Publish package [on main]
         env:
@@ -48,7 +48,7 @@ jobs:
           mvn versions:set -DnewVersion=1.0.${{ github.run_number }}
           mvn deploy -DskipTests -Denv=mysql
 
-      - uses: actions/delete-package-versions@v4
+      - uses: actions/delete-package-versions@v5
         with:
           package-name: 'com.github.binpastes.backend'
           package-type: 'maven'
