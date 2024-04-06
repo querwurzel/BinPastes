@@ -10,6 +10,12 @@
       "src": "favicon.png",
       "sizes": "96x96",
       "type": "image/png"
+    },
+    {
+      "src": "favicon144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
