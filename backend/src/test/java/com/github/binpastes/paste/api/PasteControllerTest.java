@@ -58,24 +58,12 @@ class PasteControllerTest {
                 .uri("/api/v1/paste")
                 .exchange()
                 .expectStatus().isOk()
+                .expectHeader().cacheControl(CacheControl.empty())
                 .expectBody().jsonPath("pastes", emptyList());
     }
 
     @Test
-    @DisplayName("GET /search - set cache header")
-    void searchPastes() {
-        doReturn(Flux.empty()).when(pasteService).findByFullText(anyString());
-
-        webClient.get()
-                .uri("/api/v1/paste/search?term={term}", "foobar")
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
-                .expectBody().jsonPath("pastes", emptyList());
-    }
-
-    @Test
-    @DisplayName("GET /search - decode term parameter")
+    @DisplayName("GET /search - term parameter and cache header")
     void searchPastesDecodesParameter() {
         doReturn(Flux.empty()).when(pasteService).findByFullText(anyString());
 
@@ -121,7 +109,12 @@ class PasteControllerTest {
                             "content": "validContent",
                         }
                 """))),
-                arguments(named("title too long", Mono.just("{\"content\": \"validContent\", \"title\": " + "X".repeat(256 + 1) + "\"}"))),
+                arguments(named("title too long", Mono.just("""
+                        {
+                            "title": "%s",
+                            "content": "validContent",
+                        }
+                """.formatted("X".repeat(256 + 1))))),
                 arguments(named("content blank", Mono.just("""
                         {
                             "content": "            ",
@@ -132,7 +125,11 @@ class PasteControllerTest {
                             "content": "1234",
                         }
                 """))),
-                arguments(named("content too long", Mono.just("{\"content\": \"" + "X".repeat(4096 + 1) + "\"}")))
+                arguments(named("content too long", Mono.just("""
+                        {
+                            "content": "%s",
+                        }
+                """.formatted("X".repeat(4096 + 1)))))
         );
     }
 }
