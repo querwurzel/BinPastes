@@ -3,6 +3,7 @@
   position: relative;
   width: 80px;
   height: 80px;
+  margin: 0 2rem;
 }
 .lds-ellipsis div {
   background: var(--color-text);

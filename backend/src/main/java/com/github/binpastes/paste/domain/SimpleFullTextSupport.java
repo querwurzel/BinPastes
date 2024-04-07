@@ -1,6 +1,7 @@
 package com.github.binpastes.paste.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
@@ -14,12 +15,13 @@ import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
 @Component
-class SimpleFullTextSupportImpl implements FullTextSearchSupport {
+@Order
+class SimpleFullTextSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
 
     @Autowired
-    public SimpleFullTextSupportImpl(final R2dbcEntityTemplate entityTemplate) {
+    public SimpleFullTextSupport(final R2dbcEntityTemplate entityTemplate) {
         this.entityTemplate = entityTemplate;
     }
 

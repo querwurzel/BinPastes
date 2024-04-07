@@ -1,14 +1,18 @@
 package com.github.binpastes.paste.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
@@ -16,11 +20,14 @@ import static org.springframework.data.relational.core.query.Query.query;
 
 class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
+    private static final Logger log = LoggerFactory.getLogger(PasteRepository.class);
+
     private final R2dbcEntityTemplate entityTemplate;
 
-    private final FullTextSearchSupport fullTextSearchSupport;
+    private final List<FullTextSearchSupport> fullTextSearchSupport;
 
-    public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, FullTextSearchSupport fullTextSearchSupport) {
+    public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, List<FullTextSearchSupport> fullTextSearchSupport) {
+        Assert.isTrue(fullTextSearchSupport.size() <= 2, "Expected at most two FullTextSearchSupport implementations"); // ugly, but works for now
         this.entityTemplate = entityManager;
         this.fullTextSearchSupport = fullTextSearchSupport;
     }
@@ -72,7 +79,15 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     @Override
     public Flux<Paste> searchAllLegitByFullText(String text) {
-        return fullTextSearchSupport.searchByFullText(text);
-    }
+        var flux = fullTextSearchSupport.getFirst().searchByFullText(text);
 
+        return fullTextSearchSupport.size() == 1
+                ? flux
+                : flux.switchIfEmpty(subscriber -> {
+                    log.warn("Fulltext search found nothing for: {}", text);
+                    fullTextSearchSupport.getLast()
+                            .searchByFullText(text)
+                            .subscribe(subscriber);
+                });
+    }
 }
