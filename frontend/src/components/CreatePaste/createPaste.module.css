@@ -63,14 +63,12 @@
 .createForm label,
 .createForm input[type=radio],
 .createForm select {
-    display: inline-block;
     width: initial;
     margin: 0;
 }
 
 .createForm input[type=text],
 .createForm input[type=password] {
-    display: inline-block;
     width: 15rem;
     margin: 0;
 }
@@ -111,4 +109,11 @@
     padding: .5rem;
     width: 100%;
     height: 20em;
+}
+
+@media screen and (max-width:750px) {
+    .createForm input[type=text],
+    .createForm input[type=password] {
+        width: auto;
+    }
 }
