@@ -8,8 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.CacheControl;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,14 +34,15 @@ class SearchPastesIT {
 
     @Test
     @DisplayName("GET /search - paste is found if text matches")
-    void findIfMatch() {
-        givenPublicPaste();
+    void findMatch() {
+        var paste = givenPublicPaste();
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", "ipsum")
+                .uri("/api/v1/paste/search?term={term}", paste.getTitle())
                 .exchange()
                 .expectStatus().isOk()
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)))
                 .expectBody().jsonPath("$.pastes.length()", 1);
     }
 
@@ -52,6 +56,7 @@ class SearchPastesIT {
                 .uri("/api/v1/paste/search?term={term}", "foobar")
                 .exchange()
                 .expectStatus().isOk()
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)))
                 .expectBody().jsonPath("$.pastes.length()", 0);
     }
 
@@ -63,7 +68,7 @@ class SearchPastesIT {
                         null,
                         false,
                         Paste.PasteExposure.PUBLIC,
-                        "someAuthor"
+                        "someRemoteAddress"
                 )
         );
     }

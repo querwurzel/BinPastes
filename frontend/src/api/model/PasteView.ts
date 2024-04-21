@@ -8,6 +8,7 @@ export type PasteView = {
   isErasable: boolean
   isEncrypted: boolean
   isOneTime: boolean
+  isPermanent: boolean
   dateCreated: string
   dateOfExpiry?: string
   lastViewed?: string

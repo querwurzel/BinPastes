@@ -17,4 +17,4 @@ render((): JSX.Element => (
     <Route path="/paste/search" component={Search} />
     <Route path="*" component={NotFound} />
   </Router>
-), document.getElementById('root'));
+), document.body);

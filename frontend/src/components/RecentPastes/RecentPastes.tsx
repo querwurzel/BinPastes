@@ -11,7 +11,7 @@ const RecentPastes: () => JSX.Element = () => {
 
   const [pastes, { mutate, refetch }] = createResource(ApiClient.findAll);
 
-  let refetchSchedule;
+  let intervalHandle;
 
   onMount(() => {
     startSchedule();
@@ -44,11 +44,11 @@ const RecentPastes: () => JSX.Element = () => {
   }
 
   function startSchedule() {
-    refetchSchedule = window.setInterval(refetch, 60_000);
+    intervalHandle = window.setInterval(refetch, 60_000);
   }
 
   function stopSchedule() {
-    window.clearInterval(refetchSchedule);
+    window.clearInterval(intervalHandle);
   }
 
   function restartSchedule() {
@@ -66,7 +66,7 @@ const RecentPastes: () => JSX.Element = () => {
         <Match when={pastes.latest}>
           <h3>
             <strong>
-              <Show when={pastes()?.length} keyed fallback={"Nothing pasted yet"}>
+              <Show when={pastes()?.length} fallback={"Nothing pasted yet"}>
               Last {pastes()?.length} pastes
               </Show>
             </strong>
@@ -79,8 +79,8 @@ const RecentPastes: () => JSX.Element = () => {
           <ol>
             <For each={pastes()}>{item =>
             <li class={styles.item}>
-              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><span title="Permanent"><Infinity/></span></Show> <Show when={item.isEncrypted} keyed><span title="Encrypted"><Lock/></span></Show></p>
-              <p>Created: <time title={toDateTimeString(item.dateCreated)}>{relativeDiffLabel(item.dateCreated)}</time> | Size: {item.sizeInBytes} bytes</p>
+              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isPermanent}><span title="Permanent"><Infinity/></span></Show> <Show when={item.isEncrypted} keyed><span title="Encrypted"><Lock/></span></Show></p>
+              <p>Created: <time title={toDateTimeString(item.dateCreated)}>{relativeDiffLabel(item.dateCreated)}</time> | Size: {item.sizeInBytes}&nbsp;bytes</p>
             </li>
             }
             </For>

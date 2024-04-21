@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.util.retry.Retry;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
@@ -85,11 +86,11 @@ public class PasteService {
                 .filter(paste -> paste.isErasable(remoteAddress))
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .retryWhen(Retry.indefinitely()
+                .retryWhen(Retry
+                        .backoff(5, Duration.ofMillis(500))
                         .filter(ex -> ex instanceof OptimisticLockingFailureException))
                 .doOnNext(paste -> log.info("Deleted paste {} on behalf of {}", paste.getId(), remoteAddress))
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
     }
-
 }

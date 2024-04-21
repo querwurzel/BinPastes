@@ -17,6 +17,7 @@ public record ListView(
             String title,
             int sizeInBytes,
             boolean isEncrypted,
+            boolean isPermanent,
             LocalDateTime dateCreated,
             LocalDateTime dateOfExpiry
     ) {
@@ -26,6 +27,7 @@ public record ListView(
                     reference.getTitle(),
                     reference.getContent().getBytes().length,
                     reference.isEncrypted(),
+                    reference.isPermanent(),
                     reference.getDateCreated(),
                     reference.getDateOfExpiry()
             );

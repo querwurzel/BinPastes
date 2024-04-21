@@ -1,6 +1,5 @@
-package com.github.binpastes.paste.application;
+package com.github.binpastes.paste.domain;
 
-import com.github.binpastes.paste.domain.PasteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

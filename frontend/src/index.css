@@ -3,10 +3,17 @@
 :root {
     --box-shadow: none;
     --color-bg: #fff2d999;
+    --color-bg2: #fff2d9;
     --color-secondary: #118bee;
     --line-height: 1.2;
     --width-card: inherit;
     --width-card-medium: inherit;
     --width-card-wide: inherit;
     --width-content: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root[color-mode="user"] {
+        --color-bg2: #4449;
+    }
 }

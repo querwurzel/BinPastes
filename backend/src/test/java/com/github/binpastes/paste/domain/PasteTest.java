@@ -34,7 +34,7 @@ class PasteTest {
     }
 
     @Test
-    @DisplayName("new paste - sets defaults")
+    @DisplayName("new paste - default values are set")
     void newInstanceDefaults() {
         var newPaste = Paste.newInstance(null, "someContent", null, false, PasteExposure.PUBLIC, null);
 
@@ -100,7 +100,7 @@ class PasteTest {
     }
 
     @ParameterizedTest
-    @DisplayName("erase paste - allowed only under certain conditions")
+    @DisplayName("paste is erasable - only under certain conditions")
     @MethodSource("pastesToErase")
     void isErasable(Paste paste, String requestedBy, boolean erasable) {
         assertThat(paste.isErasable(requestedBy))
