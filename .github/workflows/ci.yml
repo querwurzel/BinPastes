@@ -21,7 +21,7 @@ jobs:
           java-version: '21'
 
       - name: Build with Maven
-        run: mvn clean verify
+        run: ./mvnw clean verify
 
       - name: Publish Test Report
         if: success() || failure()
@@ -45,8 +45,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn versions:set -DnewVersion=1.0.${{ github.run_number }}
-          mvn deploy -DskipTests -Denv=mysql
+          ./mvnw versions:set -DnewVersion=1.0.${{ github.run_number }}
+          ./mvnw deploy -DskipTests -Denv=mysql
 
       - uses: actions/delete-package-versions@v5
         with:
