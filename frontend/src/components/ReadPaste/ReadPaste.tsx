@@ -1,12 +1,12 @@
+import {Component, createEffect, createSignal, JSX, lazy, on, Show} from 'solid-js';
 import linkifyElement from 'linkify-element';
-import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
 import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
 import {Lock, Unlock, Key, Trash, Copy} from '../../assets/Vectors';
 import styles from './readPaste.module.css';
 
-interface ReadPasteProps {
+type ReadPasteProps = {
   paste: PasteView
   onClonePaste: () => void
   onDeletePaste: () => void

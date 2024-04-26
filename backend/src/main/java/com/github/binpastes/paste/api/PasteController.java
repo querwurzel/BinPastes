@@ -18,19 +18,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
@@ -55,6 +49,16 @@ class PasteController {
                 .doOnNext(paste -> {
                     if (paste.isOneTime()) {
                         response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "no-store");
+                    } else {
+                        if (paste.getDateOfExpiry() != null ) {
+                            var in5min = LocalDateTime.now().plusMinutes(5);
+                            if (in5min.isAfter(paste.getDateOfExpiry())) {
+                                response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=" + Duration.between(LocalDateTime.now(), paste.getDateOfExpiry()).toSeconds());
+                                return;
+                            }
+                        }
+
+                        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=300");
                     }
                 })
                 .map(reference -> SingleView.from(reference, remoteAddress(request)))

@@ -1,5 +1,5 @@
 
-export interface PasteView {
+export type PasteView = {
   id: string
   title?: string
   content: string

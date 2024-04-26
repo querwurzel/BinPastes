@@ -5,10 +5,10 @@ import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
 import Create from './pages/Create';
-import Read from './pages/Read';
-import Search from './pages/Search';
 
-const NotFound = lazy(() => import("./pages/404"));
+const Read = lazy(() => import('./pages/Read'));
+const Search = lazy(() => import('./pages/Search'));
+const NotFound = lazy(() => import('./pages/404'));
 
 const App: () => JSX.Element = () => {
   return (
