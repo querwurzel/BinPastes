@@ -17,6 +17,33 @@
 }
 
 .read pre {
+  display: flex;
+  flex-direction: column;
+  counter-reset: line;
+}
+
+.read pre span {
+  display: inline-block;
+  line-height: 1.5rem;
+}
+
+.read pre .row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.read pre .count {
+  counter-increment: line;
+  min-width: 2rem;
+  border-right: 1px solid grey;
+}
+
+.read pre .count:before {
+  content: counter(line) '.';
+}
+
+.read pre .line {
   white-space: pre-wrap;
   word-wrap: break-word;
   word-break: break-all;
