@@ -29,8 +29,8 @@ import java.time.LocalDateTime;
 
 import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
-@RestController
 @Validated
+@RestController
 @RequestMapping("/api/v1/paste")
 class PasteController {
 
@@ -79,11 +79,11 @@ class PasteController {
     public Mono<SearchView> searchPastes(
             @RequestParam("term")
             @NotBlank
-            @Pattern(regexp = "[\\pL\\pN\\s]{3,25}")
+            @Pattern(regexp = "[\\pL\\pN\\p{P}\\s]{3,25}")
             final String term,
             final ServerHttpResponse response
     ) {
-        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=300");
+        response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=60");
         return pasteService
                 .findByFullText(term)
                 .map(paste -> SearchItemView.of(paste, term))

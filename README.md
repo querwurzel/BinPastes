@@ -24,7 +24,7 @@ Apache License 2.0 ([Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0))
 * JDK 17+
 * MySQL 8+
 
-Just put the [JDK](https://adoptium.net/temurin/releases/) somewhere on your file system.
+Just put the [JDK](https://adoptium.net/temurin/releases/?os=any&arch=any&package=jdk&version=17) somewhere on your file system.
 The `bin` folder contains the `java` binary.
 
 ### How to configure

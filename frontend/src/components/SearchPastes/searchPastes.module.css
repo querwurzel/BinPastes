@@ -1,0 +1,61 @@
+
+.searchForm {
+    border: none;
+    padding: 0;
+}
+
+.searchForm fieldset {
+    border: 1px dotted #a5a5a5;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
+
+.searchForm input[type=search] {
+    display: inline-block;
+    width: 20rem;
+    margin: 0;
+}
+
+.searchForm input[type=submit],
+.searchForm input[type=reset] {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    color: var(--color-text);
+    margin: .5rem;
+    cursor: pointer;
+}
+
+
+
+
+.searchResults {
+    margin-top: 0;
+    padding-top: 0;
+    border-left: 1px dotted #a5a5a5;
+}
+
+.searchResults ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+}
+
+.searchResults .item {
+    list-style: none;
+    padding-left: 1rem;
+    border-top: 1px dotted #a5a5a5;
+}
+
+.searchResults .item p {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
+}
+
+.searchResults .item p {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
+}

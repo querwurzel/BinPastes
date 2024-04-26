@@ -14,7 +14,6 @@
     list-style: none;
     margin: 0;
     padding: 0;
-
 }
 
 .recentPastes .item {
@@ -49,4 +48,13 @@
         border-left: none;
         border-bottom: 1px dotted #a5a5a5;
     }
+}
+
+.searchLink {
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+}
+
+.searchLinkActive {
+    display: none;
 }

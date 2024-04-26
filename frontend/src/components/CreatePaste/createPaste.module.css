@@ -65,7 +65,7 @@
 .createForm input[type=submit],
 .createForm input[type=reset] {
     display: inline-block;
-    width: initial;
+    color: var(--color-text);
     margin: .5rem;
 }
 

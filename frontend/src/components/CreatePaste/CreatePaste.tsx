@@ -36,6 +36,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
   const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
 
   let creationForm: HTMLFormElement
+  let submitInput: HTMLInputElement
 
   const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
     const inputElement = event.currentTarget as HTMLInputElement;
@@ -81,6 +82,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         resetStore();
         setLastPasteUrl(url);
       })
+      .catch(e => submitInput.style.backgroundColor = 'red');
   }
 
   return (
@@ -140,8 +142,8 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         <div>
           <textarea minLength="5"
                     maxLength="4096"
-                    required={true}
-                    autofocus={true}
+                    required
+                    autofocus
                     rows="20"
                     cols="75"
                     placeholder="Paste here"
@@ -153,7 +155,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         <Show when={lastPasteUrl()}>
           <p class={styles.lastPaste}>{lastPasteUrl()}<Copy/></p>
         </Show>
-        <input type="submit" value="Paste"/>
+        <input ref={submitInput} type="submit" value="Paste"/>
         <input type="reset" value="Reset"/>
       </fieldset>
 
