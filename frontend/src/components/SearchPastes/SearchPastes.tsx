@@ -1,13 +1,13 @@
-import {Component, JSX, Show} from 'solid-js';
+import {Component, JSX, Show, For} from 'solid-js';
 import {A} from '@solidjs/router';
 import {PasteSearchView} from '../../api/model/PasteSearchView';
 import {toDateTimeString} from '../../datetime/DateTimeUtil';
 import styles from "./searchPastes.module.css";
 
 type SearchPastesProps = {
-  term: String
+  term: string
   pastes: Array<PasteSearchView>
-  onSearchEnter: (term: String) => void
+  onSearchEnter: (term: string) => void
 }
 
 const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter}): JSX.Element => {
@@ -35,7 +35,7 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter
     <>
       <form autocomplete="off" class={styles.searchForm} onSubmit={submitOnClick}>
         <fieldset>
-          <input onKeyUp={submitOnEnter} value={term} type="search" required minlength="3" maxlength="25" placeholder="Search for pastes" autofocus />
+          <input ref={searchInput} onKeyUp={submitOnEnter} value={term} type="search" required minlength="3" maxlength="25" placeholder="Search for pastes" autofocus />
           <input type="submit" value="Search"/>
           <input type="reset" value="Reset"/>
         </fieldset>
