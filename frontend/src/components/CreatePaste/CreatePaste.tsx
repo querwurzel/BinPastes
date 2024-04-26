@@ -2,6 +2,7 @@ import {Component, createSignal, JSX, Show} from "solid-js";
 import {createStore} from "solid-js/store";
 import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
+import {Copy} from '../../assets/Vectors';
 import styles from "./createPaste.module.css";
 
 export interface PasteClone {
@@ -145,7 +146,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}
 
       <fieldset>
         <Show when={lastPaste()}>
-          <p class={styles.lastPaste}><span>{lastPaste()}</span> ⎘</p>
+          <p class={styles.lastPaste}>{lastPaste()}<Copy/></p>
         </Show>
         <input type="submit" value="Paste"/>
         <input type="reset" value="Reset"/>

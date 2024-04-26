@@ -17,10 +17,22 @@
 
 }
 
-.recentPastes li {
+.recentPastes .item {
     list-style: none;
     padding-left: 1rem;
     border-top: 1px dotted #a5a5a5;
+}
+
+.recentPastes .item p {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
+}
+
+.recentPastes .item p {
+    display: inline-flex;
+    align-items: start;
+    gap: 3px;
 }
 
 .refresh {
@@ -30,16 +42,6 @@
 
 .refresh:active {
     filter: brightness(var(--hover-brightness));
-}
-
-.item {
-    display: inline-flex;
-    align-items: start;
-    gap: 3px;
-}
-
-.item img {
-    width: 15px;
 }
 
 @media screen and (max-width:750px) {

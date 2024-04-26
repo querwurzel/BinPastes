@@ -3,14 +3,15 @@
     margin: .5rem;
     user-select: none;
     color: green;
-}
-
-.lastPaste span {
     user-select: all;
     cursor: pointer;
 }
 
-.lastPaste span::selection {
+.lastPaste svg {
+    padding-left: 5px;
+}
+
+.lastPaste::selection {
     color: white;
     background-color: green;
 }
