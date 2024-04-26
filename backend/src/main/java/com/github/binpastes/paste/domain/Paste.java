@@ -39,7 +39,6 @@ public class Paste {
     @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Column(PasteSchema.DATE_DELETED)
     private LocalDateTime dateDeleted;
-    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     @Column(PasteSchema.REMOTE_ADDRESS)
     private String remoteAddress;
 

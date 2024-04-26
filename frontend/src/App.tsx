@@ -4,10 +4,10 @@ import styles from './App.module.css';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
-import Create from './pages/Create';
-import Search from './pages/Search';
+import Create from './pages/create';
+import Search from './pages/search';
 
-const Read = lazy(() => import('./pages/Read'));
+const Read = lazy(() => import('./pages/read'));
 const NotFound = lazy(() => import('./pages/404'));
 
 const App: () => JSX.Element = () => {
