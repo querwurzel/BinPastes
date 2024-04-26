@@ -39,24 +39,24 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchPaste
       </form>
 
       <Show when={term}>
-      <Show when={pastes.length} keyed fallback={<p>Nothing found</p>}>
-
-      <ol class={styles.searchResults}>
-        <For each={pastes}>{item =>
-        <li class={styles.item}>
-          <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A></p>
-          <p>
-            Created: <time>{toDateTimeString(item.dateCreated)}</time> |
-            Expires: <time>{item.dateOfExpiry ? toDateTimeString(item.dateOfExpiry) : 'Never'}</time> |
-            Size: {item.sizeInBytes} bytes
-          </p>
-          <pre><i>“{item.highlight} [..]”</i></pre>
-        </li>
-        }
-        </For>
-      </ol>
-
-      </Show>
+      <div class={styles.searchResults}>
+        <Show when={pastes.length} keyed fallback={<span>Nothing found</span>}>
+        <ol>
+          <For each={pastes}>{item =>
+          <li class={styles.item}>
+            <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A></p>
+            <p>
+              Created: <time>{toDateTimeString(item.dateCreated)}</time> |
+              Expires: <time>{item.dateOfExpiry ? toDateTimeString(item.dateOfExpiry) : 'Never'}</time> |
+              Size: {item.sizeInBytes} bytes
+            </p>
+            <pre><i>“{item.highlight} [..]”</i></pre>
+          </li>
+          }
+          </For>
+        </ol>
+        </Show>
+      </div>
       </Show>
     </>
   )
