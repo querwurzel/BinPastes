@@ -67,7 +67,11 @@ const RecentPastes: () => JSX.Element = () => {
         </Match>
         <Match when={pastes.latest}>
           <h3>
-            <strong>Last {pastes()?.length} pastes</strong>
+            <strong>
+              <Show when={pastes()?.length} keyed fallback={"Nothing pasted yet"}>
+              Last {pastes()?.length} pastes
+              </Show>
+            </strong>
             &nbsp;
             <span class={styles.refresh} onClick={refresh}>↻</span>
           </h3>
@@ -75,7 +79,7 @@ const RecentPastes: () => JSX.Element = () => {
           <ol>
             <For each={pastes()}>{item =>
             <li class={styles.item}>
-              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><em><Infinity/></em></Show> <Show when={item.isEncrypted} keyed><Lock/></Show></p>
+              <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><span title="Permanent"><Infinity/></span></Show> <Show when={item.isEncrypted} keyed><span title="Encrypted"><Lock/></span></Show></p>
               <p>Created: <time title={toDateTimeString(item.dateCreated)}>{relativeDiffLabel(item.dateCreated)}</time> | Size: {item.sizeInBytes} bytes</p>
             </li>
             }
