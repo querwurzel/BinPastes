@@ -39,13 +39,13 @@ public record SearchView(
             final int idx = content.indexOf(term);
 
             if (idx == -1) {
-                return content.substring(0, Math.min(2 * HIGHLIGHT_RANGE, content.length()));
+                return content.substring(0, Math.min(2 * HIGHLIGHT_RANGE, content.length())).trim();
             }
 
             return content.substring(
                     Math.max(0, idx - HIGHLIGHT_RANGE),
                     Math.min(content.length(), idx + term.length() + HIGHLIGHT_RANGE)
-            );
+            ).trim();
         }
     }
 }

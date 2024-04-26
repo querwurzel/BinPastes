@@ -51,7 +51,7 @@ class PasteController {
                     if (paste.isOneTime()) {
                         response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "no-store");
                     } else {
-                        if (paste.getDateOfExpiry() != null ) {
+                        if (!paste.isPermanent()) {
                             var in5min = LocalDateTime.now().plusMinutes(5);
                             if (in5min.isAfter(paste.getDateOfExpiry())) {
                                 response.getHeaders().add(HttpHeaders.CACHE_CONTROL, "max-age=" + Duration.between(LocalDateTime.now(), paste.getDateOfExpiry()).toSeconds());
