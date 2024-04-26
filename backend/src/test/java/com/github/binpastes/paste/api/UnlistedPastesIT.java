@@ -19,10 +19,12 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.waitAtMost;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
@@ -156,13 +158,11 @@ class UnlistedPastesIT {
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
-        TimeUnit.MILLISECONDS.sleep(500);
-
-        webClient.get()
+        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
                 .uri("/api/v1/paste/" + unlistedPaste.getId())
                 .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isNotFound());
     }
 
     private Paste givenUnlistedPaste() {

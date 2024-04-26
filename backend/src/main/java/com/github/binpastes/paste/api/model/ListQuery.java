@@ -5,14 +5,14 @@ import com.github.binpastes.paste.domain.Paste;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record ListView(
-        List<ListItemView> pastes
+public record ListQuery(
+        List<ListItemQuery> pastes
 ) {
-    public static ListView of(final List<ListItemView> pastes) {
-        return new ListView(pastes);
+    public static ListQuery of(final List<ListItemQuery> pastes) {
+        return new ListQuery(pastes);
     }
 
-    public record ListItemView (
+    public record ListItemQuery(
             String id,
             String title,
             int sizeInBytes,
@@ -20,8 +20,8 @@ public record ListView(
             LocalDateTime dateCreated,
             LocalDateTime dateOfExpiry
     ) {
-        public static ListItemView of(final Paste reference) {
-            return new ListItemView(
+        public static ListItemQuery of(final Paste reference) {
+            return new ListItemQuery(
                     reference.getId(),
                     reference.getTitle(),
                     reference.getContent().getBytes().length,

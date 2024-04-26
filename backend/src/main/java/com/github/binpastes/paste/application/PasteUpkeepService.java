@@ -1,5 +1,6 @@
-package com.github.binpastes.paste.domain;
+package com.github.binpastes.paste.application;
 
+import com.github.binpastes.paste.domain.PasteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +10,14 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 
 @Component
-class PasteCleanupService {
+class PasteUpkeepService {
 
-    private static final Logger log = LoggerFactory.getLogger(PasteCleanupService.class);
+    private static final Logger log = LoggerFactory.getLogger(PasteUpkeepService.class);
 
     private final PasteRepository pasteRepository;
 
     @Autowired
-    public PasteCleanupService(final PasteRepository pasteRepository) {
+    public PasteUpkeepService(final PasteRepository pasteRepository) {
         this.pasteRepository = pasteRepository;
     }
 

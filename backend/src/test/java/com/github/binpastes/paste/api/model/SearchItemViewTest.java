@@ -1,6 +1,6 @@
 package com.github.binpastes.paste.api.model;
 
-import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
+import com.github.binpastes.paste.api.model.SearchQuery.SearchItemView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

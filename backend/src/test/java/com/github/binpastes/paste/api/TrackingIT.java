@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.waitAtMost;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
@@ -70,7 +69,7 @@ class TrackingIT {
     }
 
     @Test
-    @DisplayName("tracking - deal with concurrent tracking events")
+    @DisplayName("tracking - concurrent tracking events result in exact result")
     void trackConcurrentPasteViews() {
         var intialPaste = givenPublicPaste();
 
@@ -86,12 +85,12 @@ class TrackingIT {
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
 
-        await().atMost(Duration.ofMinutes(1)).pollInterval(Duration.ofSeconds(1)).until(
+        waitAtMost(Duration.ofSeconds(60)).pollInterval(Duration.ofSeconds(1)).until(
                 () -> pasteRepository.findById(intialPaste.getId()).block().getViews(),
                 equalTo(500L)
         );
 
-        Mockito.verify(pasteRepository, atLeast(500 + 100 /* contention */)).save(eq(intialPaste));
+        Mockito.verify(pasteRepository, atLeast(500 + 100 /* minimum contention */)).save(eq(intialPaste));
     }
 
     @Test
