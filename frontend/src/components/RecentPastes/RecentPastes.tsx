@@ -27,7 +27,7 @@ const RecentPastes: () => JSX.Element = () => {
         isEncrypted: paste.isEncrypted,
         sizeInBytes: paste.sizeInBytes
       };
-      mutate(prev => prev.concat([newItem]));
+      mutate(prev => [newItem].concat(prev));
     });
 
     AppContext.onPasteDeleted((paste) => {

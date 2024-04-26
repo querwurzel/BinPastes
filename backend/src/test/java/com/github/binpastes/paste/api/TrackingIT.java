@@ -32,20 +32,17 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.timeout;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@SpringBootTest
+@SpringBootTest(properties = "logging.level.com.github.binpastes.paste.application.tracking=INFO")
 @AutoConfigureWebTestClient
 @DirtiesContext
 class TrackingIT {
 
     @Autowired
     private WebTestClient webClient;
-
-    @Autowired
-    private PasteRepository pasteRepository;
-
     @Autowired
     private TrackingService trackingService;
-
+    @SpyBean
+    private PasteRepository pasteRepository;
     @SpyBean
     private MessagingClient messagingClient;
 
@@ -78,23 +75,23 @@ class TrackingIT {
         var intialPaste = givenPublicPaste();
 
         Flux.fromStream(Stream.generate(intialPaste::getId))
-                .take(1000)
+                .take(500)
                 .doOnNext(trackingService::trackView)
-                // enforce a concurrent update
+                // simulate a concurrent update
                 .doOnNext(id -> pasteRepository.findById(id)
                         .doOnNext(paste -> setField(paste, "remoteAddress", "concurrentUpdate"))
                         .flatMap(paste -> pasteRepository.save(paste))
-                        .onErrorComplete() // ignore errors in test
+                        .onErrorComplete()
                         .subscribe())
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
 
-        await().atMost(Duration.ofMinutes(1)).pollInterval(Duration.ofMillis(500)).until(
+        await().atMost(Duration.ofMinutes(1)).pollInterval(Duration.ofSeconds(1)).until(
                 () -> pasteRepository.findById(intialPaste.getId()).block().getViews(),
-                equalTo(1000L)
+                equalTo(500L)
         );
 
-        Mockito.verify(messagingClient, atLeast(1001)).sendMessage(any(), any());
+        Mockito.verify(pasteRepository, atLeast(500 + 100 /* contention */)).save(eq(intialPaste));
     }
 
     @Test

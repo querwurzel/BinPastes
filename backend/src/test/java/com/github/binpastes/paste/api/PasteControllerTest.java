@@ -97,7 +97,13 @@ class PasteControllerTest {
     private static Stream<Arguments> invalidPayloads() {
         return Stream.of(
                 arguments(named("body is null", Mono.empty())),
-                arguments(named("body blank", Mono.just(""))),
+                arguments(named("body is blank", Mono.just(""))),
+                arguments(named("title blank", Mono.just("""
+                        {
+                            "title": "              ",
+                            "content": "validContent",
+                        }
+                """))),
                 arguments(named("title too long", Mono.just("{\"content\": \"validContent\", \"title\": " + "X".repeat(256 + 1) + "\"}"))),
                 arguments(named("content blank", Mono.just("""
                         {

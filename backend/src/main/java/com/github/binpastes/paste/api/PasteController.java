@@ -5,8 +5,8 @@ import com.github.binpastes.paste.api.model.ListView;
 import com.github.binpastes.paste.api.model.SearchView;
 import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
 import com.github.binpastes.paste.api.model.SingleView;
-import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.application.PasteService;
+import com.github.binpastes.paste.domain.Paste;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -19,23 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.binpastes.paste.api.model.ListView.ListItemView;
@@ -64,20 +54,17 @@ class PasteController {
                         return;
                     }
 
-                    if (paste.isPermanent() || isAfter(paste.getDateOfExpiry(), 5, ChronoUnit.MINUTES)) {
-                        response.getHeaders().setCacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES));
-                        return;
+                    var now = LocalDateTime.now();
+                    if (paste.isPermanent() || paste.getDateOfExpiry().plusMinutes(5).isAfter(now)) {
+                        response.getHeaders().setCacheControl(
+                                CacheControl.maxAge(5, TimeUnit.MINUTES));
+                    } else {
+                        response.getHeaders().setCacheControl(
+                                CacheControl.maxAge(Duration.between(now, paste.getDateOfExpiry())));
                     }
-
-                    response.getHeaders().setCacheControl(
-                            CacheControl.maxAge(Duration.between(LocalDateTime.now(), paste.getDateOfExpiry())));
                 })
                 .map(reference -> SingleView.of(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
-    }
-
-    private static boolean isAfter(LocalDateTime dateTime, long amount, ChronoUnit unit) {
-        return LocalDateTime.now().plus(amount, unit).isBefore(dateTime);
     }
 
     @GetMapping

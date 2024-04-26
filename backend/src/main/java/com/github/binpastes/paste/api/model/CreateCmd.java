@@ -3,11 +3,11 @@ package com.github.binpastes.paste.api.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
 public final class CreateCmd {
+    @NotBlank
     @Size(max = 255)
     private final String title;
     @NotNull
@@ -33,15 +33,13 @@ public final class CreateCmd {
     }
 
     public String title() {
-        return StringUtils.hasText(title)
-                ? title.strip()
-                : null;
+        return title == null
+                ? null
+                : title.strip();
     }
 
     public String content() {
-        return StringUtils.hasText(content)
-                ? content
-                : null;
+        return content;
     }
 
     public boolean isEncrypted() {
