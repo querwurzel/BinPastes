@@ -22,7 +22,9 @@ import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @WebFluxTest
 class PasteControllerTest {
@@ -33,7 +35,7 @@ class PasteControllerTest {
     @MockBean
     private PasteService pasteService;
 
-    private static final String somePasteId = "4711471147114711471147114711471147114711";
+    private static final String samplePasteId = "47116941fd49eda1b6c8abec63dbf8afe2fad088";
 
     @Test
     @DisplayName("GET /{pasteId} - 404 on unknown paste, no caching")
@@ -41,7 +43,7 @@ class PasteControllerTest {
         doReturn(Mono.empty()).when(pasteService).find(anyString());
 
         webClient.get()
-                .uri("/api/v1/paste/" + somePasteId)
+                .uri("/api/v1/paste/" + samplePasteId)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().cacheControl(CacheControl.empty());
@@ -73,10 +75,25 @@ class PasteControllerTest {
     }
 
     @Test
+    @DisplayName("GET /search - decode term parameter")
+    void searchPastesDecodesParameter() {
+        doReturn(Flux.empty()).when(pasteService).findByFullText(anyString());
+
+        webClient.get()
+                .uri("/api/v1/paste/search?term={term}", "%3A-)")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
+                .expectBody().jsonPath("pastes", emptyList());
+
+        verify(pasteService).findByFullText(eq(":-)"));
+    }
+
+    @Test
     @DisplayName("DELETE /{pasteId} - always return 204")
     void deletePaste() {
         webClient.delete()
-                .uri("/api/v1/paste/" + somePasteId)
+                .uri("/api/v1/paste/" + samplePasteId)
                 .exchange()
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();

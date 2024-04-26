@@ -1,7 +1,6 @@
 package com.github.binpastes.paste.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Component;
@@ -13,15 +12,14 @@ import java.time.LocalDateTime;
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
-@Primary
 @Profile("mysql")
 @Component
-class MySqlFullTextSupportImpl implements FullTextSearchSupport {
+class MySqlFullTextSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
 
     @Autowired
-    public MySqlFullTextSupportImpl(final R2dbcEntityTemplate entityTemplate) {
+    public MySqlFullTextSupport(final R2dbcEntityTemplate entityTemplate) {
         this.entityTemplate = entityTemplate;
     }
 

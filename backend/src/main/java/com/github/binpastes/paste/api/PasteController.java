@@ -1,10 +1,10 @@
 package com.github.binpastes.paste.api;
 
 import com.github.binpastes.paste.api.model.CreateCmd;
+import com.github.binpastes.paste.api.model.DetailView;
 import com.github.binpastes.paste.api.model.ListView;
 import com.github.binpastes.paste.api.model.SearchView;
 import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
-import com.github.binpastes.paste.api.model.DetailView;
 import com.github.binpastes.paste.application.PasteService;
 import com.github.binpastes.paste.domain.Paste;
 import jakarta.validation.ConstraintViolationException;
@@ -24,6 +24,8 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -91,7 +93,7 @@ class PasteController {
     ) {
         response.getHeaders().setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS));
         return pasteService
-                .findByFullText(term)
+                .findByFullText(URLDecoder.decode(term, Charset.defaultCharset()))
                 .map(paste -> SearchItemView.of(paste, term))
                 .collectList()
                 .map(SearchView::of);
