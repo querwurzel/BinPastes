@@ -3,7 +3,7 @@ import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
 import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
-import {Lock, Unlock, Key, Trash, Copy} from '../../assets/Vectors';
+import {Lock, Unlock, Key, Trash, CopyToClipboard, Clone} from '../../assets/Vectors';
 import styles from './readPaste.module.css';
 
 type ReadPasteProps = {
@@ -57,6 +57,13 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
     onClonePaste();
   }
 
+  function onCopyClick(e: Event) {
+    e.preventDefault();
+    navigator.clipboard
+      .writeText(content())
+      .catch(_ => {});
+  }
+
   function onDeleteClick(e: Event) {
     e.preventDefault();
 
@@ -98,8 +105,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   }
 
   function content() {
-    const text = clearText() || paste.content;
-    return text.split(/\r?\n|\r|\n/g);
+    return clearText() || paste.content;
   }
 
   return (
@@ -114,7 +120,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         {paste.title || 'Untitled'}
       </h2>
 
-      <p>
+      <p class={styles.meta}>
         Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
         Expires: <time>{paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'}</time> |
         Size: {paste.sizeInBytes} bytes
@@ -122,7 +128,8 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         <br />
         Views: {paste.views} | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time>
         </Show>
-        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}><Copy /></a></Show>
+        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone"><Clone /></a></Show>
+        <Show when={!paste.isOneTime} keyed> | <a onClick={onCopyClick} href="#" title="Copy" class={styles.clipboard}><CopyToClipboard /></a></Show>
         <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete"><Trash /></a></Show>
       </p>
 
@@ -141,9 +148,9 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       </Show>
 
       <pre ref={contentElement}>
-      <Show when={content().length > 1} keyed fallback={<span class={styles.line}>{content()}</span>}>
-      <For each={content()}>{line =>
-        <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}</span></span>
+      <Show when={content().split(/\n/g).length > 1} keyed fallback={<span class={styles.line}>{content()}</span>}>
+      <For each={content().split(/\n/g)}>{line =>
+        <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}<br /></span></span>
       }
       </For>
       </Show>

@@ -50,8 +50,16 @@
   word-break: break-all;
 }
 
-.read .clone {
-  font-size: 1.5rem;
+.read .meta {
+  line-height: 1.5rem;
+}
+
+.read .meta svg:hover {
+    fill: var(--color-link);
+}
+
+.read .meta svg:active {
+    fill: var(--color-text);
 }
 
 .read .onetime {
