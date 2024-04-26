@@ -1,5 +1,6 @@
 package com.github.binpastes.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ public class WebServerConfig implements WebFluxConfigurer {
 
     private final Environment environment;
 
+    @Autowired
     public WebServerConfig(final Environment environment) {
         this.environment = environment;
     }
@@ -39,7 +41,7 @@ public class WebServerConfig implements WebFluxConfigurer {
     }
 
     /**
-     * This gives control back to the SPA (index.html) for paths that are not served by the backend.
+     * This gives back control to the SPA (index.html) for paths/routes that are not served by the backend.
      * The list of paths needs to in sync with all routes in the SPA.
      */
     @Bean

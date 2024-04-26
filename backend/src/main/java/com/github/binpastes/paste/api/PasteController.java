@@ -17,7 +17,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,15 +26,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
-@Controller
+@RestController
 @Validated
 @RequestMapping("/api/v1/paste")
 class PasteController {
@@ -50,7 +49,6 @@ class PasteController {
     }
 
     @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
-    @ResponseBody
     public Mono<SingleView> findPaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request, ServerHttpResponse response) {
         return pasteService
                 .find(pasteId)
@@ -64,7 +62,6 @@ class PasteController {
     }
 
     @GetMapping
-    @ResponseBody
     public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
@@ -74,7 +71,6 @@ class PasteController {
     }
 
     @GetMapping("/search")
-    @ResponseBody
     public Mono<ListView> searchPastes(@RequestParam("term") @NotBlank @Size(min = 3) @Pattern(regexp = "[\\pL\\pN\\s]+") String term) {
         return pasteService
                 .findByFullText(term)
@@ -84,7 +80,6 @@ class PasteController {
     }
 
     @PostMapping
-    @ResponseBody
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<SingleView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
         return createCmd
