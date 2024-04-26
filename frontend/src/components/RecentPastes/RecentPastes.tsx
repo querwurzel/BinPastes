@@ -11,10 +11,14 @@ const RecentPastes: () => JSX.Element = () => {
 
   const [pastes, { mutate, refetch }] = createResource(ApiClient.findAll);
 
+  let refetchSchedule;
+
   onMount(() => {
     startSchedule();
 
     AppContext.onPasteCreated((paste) => {
+      restartSchedule();
+
       const newItem: PasteListView = {
         id: paste.id,
         title: paste.title,
@@ -23,9 +27,7 @@ const RecentPastes: () => JSX.Element = () => {
         isEncrypted: paste.isEncrypted,
         sizeInBytes: paste.sizeInBytes
       };
-
-      restartSchedule();
-      mutate(prev => [newItem].concat(prev))
+      mutate(prev => prev.concat([newItem]));
     });
 
     AppContext.onPasteDeleted((paste) => {
@@ -35,8 +37,6 @@ const RecentPastes: () => JSX.Element = () => {
   })
 
   onCleanup(() => stopSchedule());
-
-  let refetchSchedule;
 
   function manualRefetch() {
     restartSchedule();

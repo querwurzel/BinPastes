@@ -35,6 +35,9 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
 
   const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
 
+  let creationForm: HTMLFormElement
+  let submitInput: HTMLInputElement
+
   onMount(() => {
     window.addEventListener("keydown", globalSubmitPaste);
   })
@@ -42,9 +45,6 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
   onCleanup(() => {
     window.removeEventListener("keydown", globalSubmitPaste);
   })
-
-  let creationForm: HTMLFormElement
-  let submitInput: HTMLInputElement
 
   function globalSubmitPaste(e: KeyboardEvent) {
     if (e.altKey || e.shiftKey) {

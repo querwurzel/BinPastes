@@ -1,7 +1,7 @@
 package com.github.binpastes.paste.api;
 
-import com.github.binpastes.paste.business.tracking.MessagingClient;
-import com.github.binpastes.paste.business.tracking.TrackingService;
+import com.github.binpastes.paste.application.tracking.MessagingClient;
+import com.github.binpastes.paste.application.tracking.TrackingService;
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
 import com.github.binpastes.paste.domain.PasteRepository;

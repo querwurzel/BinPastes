@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.business.tracking;
+package com.github.binpastes.paste.application.tracking;
 
 import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.apache.activemq.artemis.api.core.ActiveMQObjectClosedException;

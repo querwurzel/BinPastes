@@ -157,8 +157,8 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:git:https://github.com/querwurzel/binpastes.git</connection>
-    <developerConnection>scm:git:https://github.com/querwurzel/binpastes.git</developerConnection>
+    <connection>scm:git:https://github.com/querwurzel/BinPastes.git</connection>
+    <developerConnection>scm:git:https://github.com/querwurzel/BinPastes.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
 

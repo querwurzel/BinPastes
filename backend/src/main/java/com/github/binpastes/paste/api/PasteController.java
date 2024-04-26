@@ -6,7 +6,7 @@ import com.github.binpastes.paste.api.model.SearchView;
 import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
 import com.github.binpastes.paste.api.model.SingleView;
 import com.github.binpastes.paste.domain.Paste;
-import com.github.binpastes.paste.domain.PasteService;
+import com.github.binpastes.paste.application.PasteService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
