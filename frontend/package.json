@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.2",
-    "pnpm": "^8.7.5",
+    "pnpm": "^8.7.6",
     "typescript": "^5.2.2",
     "vite": "^4.4.9",
     "vite-plugin-solid": "^2.7.0"
@@ -30,6 +30,6 @@
     "linkify-element": "^4.1.1",
     "linkifyjs": "^4.1.1",
     "mvp.css": "^1.14.0",
-    "solid-js": "^1.7.11"
+    "solid-js": "^1.7.12"
   }
 }
