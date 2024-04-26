@@ -1,4 +1,4 @@
-import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
+import {Component, createEffect, createSignal, JSX, on, onMount, Show} from 'solid-js';
 import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
@@ -19,7 +19,13 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   let keyInput: HTMLInputElement;
   let content: HTMLPreElement;
 
-  const linkifyContent = () => {
+  createEffect(on(clearText, () => linkifyContent()));
+
+  onMount(() => {
+    window.onkeydown = globalSelectContent;
+  })
+
+  function linkifyContent() {
     linkifyElement(content, {
       target: {
         url: '_blank',
@@ -27,22 +33,27 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       }
     });
   }
-  const decryptContent = (content: string, key: string) => {
+
+  function decryptContent(content: string, key: string) {
     setClearText(decrypt(content, key));
   }
-  const onDecryptClick = () => {
+
+  function onDecryptClick() {
     decryptContent(paste.content, keyInput.value);
   }
-  const onDecryptSubmit = (e: KeyboardEvent) => {
+
+  function onDecryptSubmit(e: KeyboardEvent) {
     if (e instanceof KeyboardEvent && e.key === "Enter") {
       decryptContent(paste.content, keyInput.value);
     }
   }
-  const onCloneClick = (e: Event) => {
+
+  function onCloneClick(e: Event) {
     e.preventDefault();
     onClonePaste();
   }
-  const onDeleteClick = (e: Event) => {
+
+  function onDeleteClick(e: Event) {
     e.preventDefault();
 
     const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
@@ -51,7 +62,31 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
     }
   }
 
-  createEffect(on(clearText, () => linkifyContent()));
+  function globalSelectContent(e: KeyboardEvent) {
+    if (e.altKey || e.shiftKey || e.ctrlKey) {
+      return;
+    }
+
+    if (e.metaKey && e.code === 'KeyA') {
+      selectContent();
+      e.preventDefault();
+    }
+  }
+
+  function selectContent() {
+      if (window.getSelection && document.createRange) {
+          let range = document.createRange();
+          range.selectNodeContents(content);
+
+          let selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+      } else if (document.body.createTextRange) {
+          let range = document.body.createTextRange();
+          range.moveToElementText(content);
+          range.select();
+      }
+  }
 
   return (
     <div class={styles.read}>
