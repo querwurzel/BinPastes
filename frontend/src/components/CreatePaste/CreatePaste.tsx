@@ -20,7 +20,7 @@ type FormModel = {
   content: string
   expiry?: 'ONE_HOUR' | 'ONE_DAY' | 'ONE_WEEK' | 'ONE_MONTH' | 'THREE_MONTHS' | 'ONE_YEAR' | 'NEVER'
   exposure?: 'PUBLIC' | 'UNLISTED' | 'ONCE'
-  password: string
+  password?: string
 }
 
 const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste}): JSX.Element => {
@@ -28,9 +28,9 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
   const [form, setForm] = createStore<FormModel>({
     title: initialPaste?.title || null,
     content: initialPaste?.content || null,
-    password: null,
     expiry: null,
-    exposure: null
+    exposure: null,
+    password: null,
   });
 
   const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
@@ -51,7 +51,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
   }
 
   const resetStore = () => {
-    setLastPasteUrl(null);
+    setLastPasteUrl();
     setForm({
       title: null,
       password: null,
