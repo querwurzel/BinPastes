@@ -3,7 +3,7 @@ import {createResource, For, JSX, Match, onCleanup, onMount, Show, Switch} from 
 import ApiClient from '../../api/client';
 import {PasteListView} from '../../api/model/PasteListView';
 import AppContext from '../../AppContext';
-import {relativeDiffLabel} from '../../datetime/DateTimeUtil';
+import {relativeDiffLabel, toDateTimeString} from '../../datetime/DateTimeUtil';
 import {Lock, Infinity} from '../../assets/Vectors';
 import styles from './recentPastes.module.css';
 
