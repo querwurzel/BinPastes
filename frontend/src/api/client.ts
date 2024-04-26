@@ -1,6 +1,7 @@
 import {PasteCreateCmd} from './model/PasteCreateCmd';
 import {PasteListView} from './model/PasteListView';
 import {PasteView} from './model/PasteView';
+import {PasteSearchView} from './model/PasteSearchView';
 
 const HOST_DEVELOPMENT = 'localhost:3000';
 
@@ -53,7 +54,7 @@ const findAll = (): Promise<Array<PasteListView>> => {
     .then(value => value.pastes);
 }
 
-const searchAll = (term: string): Promise<Array<PasteListView>> => {
+const searchAll = (term: string): Promise<Array<PasteSearchView>> => {
   const params = new URLSearchParams([['term', term]]);
   const url = new URL('/api/v1/paste/search?' + params.toString(), apiBaseUrl());
 

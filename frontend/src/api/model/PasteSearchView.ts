@@ -1,9 +1,9 @@
 
-export type PasteListView = {
+export type PasteSearchView = {
   id: string
   title?: string
+  highlight: string
   sizeInBytes: number
-  isEncrypted: boolean
   dateCreated: string
   dateOfExpiry?: string
 }
