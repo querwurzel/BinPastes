@@ -12,14 +12,29 @@ const RecentPastes: () => JSX.Element = () => {
 
   const appContext = AppContext;
 
-  let refreshTimer = window.setInterval(refetch, 60_000)
+  let refreshTimer;
 
-  const restartJob = () => {
-    window.clearInterval(refreshTimer);
+  function refresh() {
+    restartSchedule();
+    refetch();
+  }
+
+  function startSchedule() {
     refreshTimer = window.setInterval(refetch, 60_000);
   }
 
+  function stopSchedule() {
+    window.clearInterval(refreshTimer);
+  }
+
+  function restartSchedule() {
+    stopSchedule();
+    startSchedule();
+  }
+
   onMount(() => {
+    startSchedule();
+
     appContext.onPasteCreated((paste) => {
       if (!paste.isPublic) {
         return;
@@ -34,12 +49,17 @@ const RecentPastes: () => JSX.Element = () => {
         sizeInBytes: paste.sizeInBytes
       };
 
-      restartJob();
+      restartSchedule();
       mutate(prev => [newItem].concat(prev))
-    })
+    });
+
+    appContext.onPasteDeleted((paste) => {
+      mutate(prev => prev.filter(item => item.id !== paste.id));
+      restartSchedule();
+    });
   })
 
-  onCleanup(() => window.clearInterval(refreshTimer));
+  onCleanup(() => stopSchedule());
 
   return (
     <div class={styles.recentPastes}>
@@ -52,7 +72,7 @@ const RecentPastes: () => JSX.Element = () => {
           <h3>
             <strong>Last {pastes()?.length} pastes</strong>
             &nbsp;
-            <span class={styles.refresh} onClick={refetch}>↻</span>
+            <span class={styles.refresh} onClick={refresh}>↻</span>
           </h3>
 
           <ol>

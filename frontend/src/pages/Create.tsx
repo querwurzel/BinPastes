@@ -22,7 +22,7 @@ const Create: () => JSX.Element = () => {
           .catch(_ => {});
 
         if (!paste.isOneTime) {
-          appContext.pushCreatedPaste(paste);
+          appContext.pushPasteCreated(paste);
           navigate(path);
         }
 
@@ -31,7 +31,7 @@ const Create: () => JSX.Element = () => {
   }
 
   return (
-    <CreatePaste initialValues={appContext.popClonedPaste()} onCreatePaste={onCreatePaste} />
+    <CreatePaste initialValues={appContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
   )
 }
 

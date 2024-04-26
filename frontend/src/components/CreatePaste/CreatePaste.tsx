@@ -4,14 +4,14 @@ import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
 import styles from "./createPaste.module.css";
 
-export interface CloneModel {
+export interface PasteClone {
   title?: string
   content: string
 }
 
 interface CreatePasteProps {
   onCreatePaste: (paste: PasteCreateCmd) => Promise<string>
-  initialValues?: CloneModel
+  initialValues?: PasteClone
 }
 
 interface FormModel extends Omit<PasteCreateCmd, "isEncrypted"> {

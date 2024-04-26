@@ -1,45 +1,54 @@
 import {PasteView} from './api/model/PasteView';
-import {CloneModel} from './components/CreatePaste/CreatePaste';
+import {PasteClone} from './components/CreatePaste/CreatePaste';
 
 interface IAppContext {
-  pushClonedPaste: (data: CloneModel) => void
-  popClonedPaste: () => CloneModel | undefined
-  pushCreatedPaste: (paste: PasteView) => void
-  popCreatedPaste: () => PasteView | undefined
+  pushPasteCloned: (data: PasteClone) => void
+  popPasteCloned: () => PasteClone | undefined
+  pushPasteCreated: (paste: PasteView) => void
+  popPasteCreated: () => PasteView | undefined
   onPasteCreated: (callback: (paste: PasteView) => void) => void
+  onPasteDeleted: (callback: (paste: PasteView) => void) => void
 }
 
 class AppContextImpl implements IAppContext {
 
-  private readonly listeners: Array<(paste: PasteView) => void> = [];
+  private readonly creationEventHandler: Array<(paste: PasteView) => void> = [];
+  private readonly deletionEventHandler: Array<(paste: PasteView) => void> = [];
 
-  private clone: CloneModel = null;
-
+  private pasteCloned: PasteClone = null;
   private pasteCreated: PasteView = null;
 
-  pushClonedPaste(data: CloneModel) {
-    this.clone = data;
+  pushPasteCloned(data: PasteClone) {
+    this.pasteCloned = data;
   }
 
-  popClonedPaste(): CloneModel | undefined {
-    const holder = this.clone;
-    this.clone = null;
+  popPasteCloned(): PasteClone | null {
+    const holder = this.pasteCloned;
+    this.pasteCloned = null;
     return holder;
   }
 
-  pushCreatedPaste(paste: PasteView) {
+  pushPasteCreated(paste: PasteView) {
     this.pasteCreated = paste;
-    this.listeners.forEach(listener => listener(paste));
+    this.creationEventHandler.forEach(listener => listener(paste));
   }
 
-  onPasteCreated(callback: (paste: PasteView) => void) {
-    this.listeners.push(callback);
-  }
-
-  popCreatedPaste(): PasteView | undefined {
+  popPasteCreated(): PasteView | null {
     const holder = this.pasteCreated;
     this.pasteCreated = null;
     return holder;
+  }
+
+  pushPasteDeleted(paste: PasteView) {
+    this.deletionEventHandler.forEach(listener => listener(paste));
+  }
+
+  onPasteCreated(callback: (paste: PasteView) => void) {
+    this.creationEventHandler.push(callback);
+  }
+
+  onPasteDeleted(callback: (paste: PasteView) => void) {
+    this.deletionEventHandler.push(callback);
   }
 }
 
