@@ -1,5 +1,6 @@
 package com.github.binpastes.paste.api.model;
 
+import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -7,7 +8,8 @@ import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 public final class CreateCmd {
-    @NotBlank
+
+    @NullOrNotBlank
     @Size(max = 255)
     private final String title;
     @NotNull

@@ -11,12 +11,15 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
+import static java.time.LocalDateTime.now;
+import static java.time.LocalDateTime.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -53,7 +56,7 @@ class PublicPastesIT {
         var paste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(5).minusSeconds(1), // under 5min remaining
+                now().plusMinutes(5).minusSeconds(1), // under 5min remaining
                 false,
                 PasteExposure.PUBLIC,
                 "1.1.1.1"
@@ -80,6 +83,44 @@ class PublicPastesIT {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("$.pastes.length()", 1);
+    }
+
+    @Test
+    @DisplayName("POST / - public paste is created on minimal input")
+    void createPublicPaste() {
+            webClient.post()
+                .uri("/api/v1/paste")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just("""
+                        {
+                            "content": "validContent"
+                        }
+                        """), String.class)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectHeader().cacheControl(CacheControl.empty())
+                .expectBody()
+                    .jsonPath("$.id").<String>value(id ->
+                            assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                    )
+                    .jsonPath("$.dateCreated").<String>value(dateCreated ->
+                            assertThat(parse(dateCreated)).isBefore(now())
+                    )
+                    .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
+                            assertThat(parse(dateOfExpiry)).isBefore(now().plusDays(1))
+                    ).json("""
+                            {
+                              "title": null,
+                              "content": "validContent",
+                              "sizeInBytes": 12,
+                              "isPublic": true,
+                              "isErasable": true,
+                              "isEncrypted": false,
+                              "isOneTime": false,
+                              "lastViewed": null,
+                              "views": 0
+                            }
+                """, false);
     }
 
     @Test
