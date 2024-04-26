@@ -121,11 +121,11 @@ class PasteTest {
                 arguments(named("unlisted paste", unlistedPaste), null, true),
                 arguments(named("one-time paste", oneTimePaste), null, true),
 
-                arguments(named("public paste with recent dateCreated of Alice", publicPasteRecentlyCreated), "Alice", true),
-                arguments(named("public paste with recent dateCreated of Alice", publicPasteRecentlyCreated), "Bob", false),
+                arguments(named("public paste with recent dateCreated", publicPasteRecentlyCreated), "Alice", true),
+                arguments(named("public paste with recent dateCreated requested by foreigner", publicPasteRecentlyCreated), "Bob", false),
 
-                arguments(named("public paste with older dateCreated of Alice", publicPasteCreatedSomeTimeAgo), "Alice", false),
-                arguments(named("public paste with older dateCreated of Alice", publicPasteCreatedSomeTimeAgo), "Bob", false)
+                arguments(named("public paste with older dateCreated", publicPasteCreatedSomeTimeAgo), "Alice", false),
+                arguments(named("public paste with older dateCreated requested by foreigner", publicPasteCreatedSomeTimeAgo), "Bob", false)
         );
     }
 }
