@@ -69,6 +69,37 @@ class PasteTest {
     }
 
     @ParameterizedTest
+    @DisplayName("markAsExpired - sets date of expiry to current timestamp")
+    @MethodSource("datesOfExpiry")
+    void markAsExpired(LocalDateTime dateOfExpiry, boolean exceptionExpected) {
+        var paste = Paste.newInstance(
+                "someTitle",
+                "someContent",
+                dateOfExpiry,
+                false,
+                PasteExposure.PUBLIC,
+                null);
+
+        if (exceptionExpected) {
+            assertThrows(IllegalStateException.class, paste::markAsExpired);
+            assertThat(paste.getDateOfExpiry()).isEqualTo(dateOfExpiry);
+        } else {
+            paste.markAsExpired();
+
+            assertThat(paste.getDateOfExpiry().withSecond(0).withNano(0))
+                    .isEqualTo(LocalDateTime.now().withSecond(0).withNano(0));
+        }
+    }
+
+    private static Stream<Arguments> datesOfExpiry() {
+        return Stream.of(
+                arguments(named("permanent paste that never expires", null), false),
+                arguments(named("paste expires in the future", LocalDateTime.now().plusDays(1)), false),
+                arguments(named("paste already expired", LocalDateTime.now().minusDays(1)), true)
+        );
+    }
+
+    @ParameterizedTest
     @DisplayName("erase paste - allowed only under certain conditions")
     @MethodSource("pastesToErase")
     void isErasable(Paste paste, String requestedBy, boolean erasable) {

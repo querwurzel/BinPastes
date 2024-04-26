@@ -169,11 +169,6 @@ class PublicPastesIT {
     void deletePublicPaste() {
         var paste = givenPublicPaste();
 
-        webClient.get()
-                .uri("/api/v1/paste/" + paste.getId())
-                .exchange()
-                .expectStatus().isOk();
-
         webClient.delete()
                 .uri("/api/v1/paste/" + paste.getId())
                 .header("X-Forwarded-For", "someAuthor")
@@ -183,6 +178,7 @@ class PublicPastesIT {
 
         webClient.get()
                 .uri("/api/v1/paste/" + paste.getId())
+                .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
                 .expectStatus().isNotFound();
     }

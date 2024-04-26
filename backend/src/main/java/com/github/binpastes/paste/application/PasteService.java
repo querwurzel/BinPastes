@@ -6,10 +6,12 @@ import com.github.binpastes.paste.domain.PasteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import reactor.util.retry.Retry;
 
 import java.time.LocalDateTime;
 
@@ -55,7 +57,8 @@ public class PasteService {
         if (paste.isOneTime()) {
             return pasteRepository
                     .save(paste.markAsExpired())
-                    .retry()
+                    .retryWhen(Retry.indefinitely()
+                            .filter(ex -> ex instanceof OptimisticLockingFailureException))
                     .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
         }
 
@@ -81,6 +84,8 @@ public class PasteService {
                 .filter(paste -> paste.isErasable(remoteAddress))
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
+                .retryWhen(Retry.indefinitely()
+                        .filter(ex -> ex instanceof OptimisticLockingFailureException))
                 .doOnNext(paste -> log.info("Deleted paste {} on behalf of {}", paste.getId(), remoteAddress))
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();

@@ -147,13 +147,8 @@ class UnlistedPastesIT {
 
     @Test
     @DisplayName("DELETE /{pasteId} - unlisted paste might always be deleted")
-    void deleteUnlistedPaste() {
+    void deleteUnlistedPaste() throws InterruptedException {
         var unlistedPaste = givenUnlistedPaste();
-
-        webClient.get()
-                .uri("/api/v1/paste/" + unlistedPaste.getId())
-                .exchange()
-                .expectStatus().isOk();
 
         webClient.delete()
                 .uri("/api/v1/paste/" + unlistedPaste.getId())
@@ -161,8 +156,11 @@ class UnlistedPastesIT {
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
+        TimeUnit.MILLISECONDS.sleep(500);
+
         webClient.get()
                 .uri("/api/v1/paste/" + unlistedPaste.getId())
+                .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
                 .expectStatus().isNotFound();
     }

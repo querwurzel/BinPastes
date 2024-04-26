@@ -147,8 +147,9 @@ public class Paste {
     }
 
     public Paste markAsExpired() {
-        if (isNull(getDateOfExpiry())) {
-            return setDateOfExpiry(LocalDateTime.now());
+        var now = LocalDateTime.now();
+        if (isNull(getDateOfExpiry()) || now.isBefore(getDateOfExpiry())) {
+            return setDateOfExpiry(now);
         }
 
         throw new IllegalStateException("Paste is already expired");
