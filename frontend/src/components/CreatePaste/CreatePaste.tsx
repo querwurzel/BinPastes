@@ -12,18 +12,18 @@ export interface PasteClone {
 
 interface CreatePasteProps {
   onCreatePaste: (paste: PasteCreateCmd) => Promise<string>
-  initialValues?: PasteClone
+  initialPaste?: PasteClone
 }
 
 interface FormModel extends Omit<PasteCreateCmd, "isEncrypted"> {
   password: string
 }
 
-const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialValues}): JSX.Element => {
+const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste}): JSX.Element => {
 
   const [form, setForm] = createStore<FormModel>({
-    title: initialValues?.title || null,
-    content: initialValues?.content || null,
+    title: initialPaste?.title || null,
+    content: initialPaste?.content || null,
     password: null,
     expiry: null,
     exposure: null

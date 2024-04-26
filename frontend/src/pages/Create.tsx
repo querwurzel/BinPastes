@@ -34,7 +34,7 @@ const Create: () => JSX.Element = () => {
   }
 
   return (
-    <CreatePaste initialValues={appContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
+    <CreatePaste initialPaste={appContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
   )
 }
 
