@@ -34,7 +34,7 @@ class MessagingConfig {
         return new MessagingClient(clientSessionFactory, consumerThreadPool, producerThreadPool);
     }
 
-    @Bean(destroyMethod = "stop")
+    @Bean(initMethod = "start", destroyMethod = "stop")
     public EmbeddedActiveMQ activeMqServer() throws Exception {
         org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
 
@@ -52,6 +52,7 @@ class MessagingConfig {
         AddressSettings addressSettings = new AddressSettings()
                 .setDefaultAddressRoutingType(RoutingType.ANYCAST)
                 .setDefaultQueueRoutingType(RoutingType.ANYCAST)
+                .setEnableIngressTimestamp(false)
                 .setExpiryDelay(TimeUnit.DAYS.toMillis(7));
 
         config.addAddressConfiguration(addr);
@@ -82,30 +83,8 @@ class MessagingConfig {
         var embeddedActiveMQ = new EmbeddedActiveMQ();
         embeddedActiveMQ.setConfiguration(config);
 
-        return embeddedActiveMQ.start();
+        return embeddedActiveMQ;
     }
-/*
-    @Bean
-    ConnectionFactory activeMqConnectionFactory() throws Exception {
-
-        JGroupsFileBroadcastEndpointFactory jGroupsFileBroadcastEndpointFactory = new JGroupsFileBroadcastEndpointFactory();
-        jGroupsFileBroadcastEndpointFactory.setChannelName("binpastesChannel");
-
-        DiscoveryGroupConfiguration discoveryGroupConfiguration = new DiscoveryGroupConfiguration();
-        discoveryGroupConfiguration.setName("binpastesGroup");
-        discoveryGroupConfiguration.setBroadcastEndpointFactory(jGroupsFileBroadcastEndpointFactory);
-
-        new TransportConfiguration();
-
-        ServerLocator serverLocator = new ServerLocatorImpl(false, discoveryGroupConfiguration);
-
-        ServerLocator serverLocator1 = ActiveMQClient.createServerLocator("vm://0");
-
-        ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory("vm://0", null, null);
-        //activeMQConnectionFactory.setUs
-
-        return activeMQConnectionFactory;
-    }*/
 
     @Bean(initMethod = "init", destroyMethod = "dispose")
     public Scheduler consumerThreadPool() {
