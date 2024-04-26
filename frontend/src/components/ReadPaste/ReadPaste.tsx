@@ -71,7 +71,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       return;
     }
 
-    if ((e.ctrlKey && e.code === 'KeyA') ^ (e.metaKey && e.code === 'KeyA')) {
+    if (e.code === 'KeyA' && ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey)) { // XOR
       selectContent();
       e.preventDefault();
     }
@@ -79,13 +79,18 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
 
   function selectContent() {
       if (window.getSelection && document.createRange) {
-          let range = document.createRange();
-          range.selectNodeContents(contentElement);
+        let range = document.createRange();
+        range.selectNodeContents(contentElement);
 
-          let selection = window.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(range);
-      } else if (document.body.createTextRange) {
+        let selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        return;
+      }
+
+      // @ts-ignore
+      if (document.body.createTextRange) {
+          // @ts-ignore
           let range = document.body.createTextRange();
           range.moveToElementText(contentElement);
           range.select();
