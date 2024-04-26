@@ -1,4 +1,4 @@
-import {Component, createEffect, createSignal, For, JSX, on, onMount, Show} from 'solid-js';
+import {Component, createEffect, createSignal, For, JSX, on, onMount, onCleanup, Show} from 'solid-js';
 import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
@@ -22,7 +22,11 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   createEffect(on(clearText, () => linkifyContent()));
 
   onMount(() => {
-    window.onkeydown = globalSelectContent;
+    window.addEventListener("keydown", globalSelectContent);
+  })
+
+  onCleanup(() => {
+    window.removeEventListener("keydown", globalSelectContent);
   })
 
   function linkifyContent() {
@@ -63,11 +67,11 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   }
 
   function globalSelectContent(e: KeyboardEvent) {
-    if (e.altKey || e.shiftKey || e.ctrlKey) {
+    if (e.altKey || e.shiftKey) {
       return;
     }
 
-    if (e.metaKey && e.code === 'KeyA') {
+    if ((e.ctrlKey && e.code === 'KeyA') || (e.metaKey && e.code === 'KeyA')) {
       selectContent();
       e.preventDefault();
     }
@@ -132,10 +136,12 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       </Show>
 
       <pre ref={contentElement}>
+      <Show when={content().length > 1} keyed fallback={<span class={styles.line}>{content()}</span>}>
       <For each={content()}>{line =>
         <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}</span></span>
       }
       </For>
+      </Show>
       </pre>
 
     </div>
