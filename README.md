@@ -1,5 +1,5 @@
 # BinPastes
-[![Java CI](https://github.com/querwurzel/BinPastes/actions/workflows/main.yml/badge.svg)](https://github.com/querwurzel/BinPastes/actions/workflows/main.yml)
+[![CI](https://github.com/querwurzel/BinPastes/actions/workflows/ci.yml/badge.svg)](https://github.com/querwurzel/BinPastes/actions/workflows/ci.yml)
 
 My turn on creating a simple pastebin.
 
