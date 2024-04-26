@@ -1,7 +1,6 @@
 
 .lastPaste {
     margin: .5rem;
-    user-select: none;
     color: green;
     user-select: all;
     cursor: pointer;
@@ -47,6 +46,20 @@
     align-items: center;
 }
 
+.createForm .content {
+    flex-direction: column;
+    gap: 10px;
+    text-align: end;
+}
+
+.createForm .content span {
+    text-align: right;
+    display: inline-block;
+    width: 100%;
+    padding-right: 2rem;
+    font-size: .7rem;
+}
+
 .createForm label,
 .createForm input[type=radio],
 .createForm select {
@@ -58,7 +71,7 @@
 .createForm input[type=text],
 .createForm input[type=password] {
     display: inline-block;
-    width: 20rem;
+    width: 15rem;
     margin: 0;
 }
 
@@ -69,11 +82,9 @@
     margin: .5rem;
 }
 
-
 .createForm input[type=radio] {
     margin-right: .3rem;
 }
-
 
 .createForm label,
 .createForm button,
