@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
+import org.springframework.web.reactive.config.CorsRegistry;
 import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import org.springframework.web.reactive.function.server.RequestPredicates;
@@ -19,6 +21,22 @@ import static org.springframework.web.reactive.function.server.ServerResponse.ok
 
 @Configuration
 public class WebServerConfig implements WebFluxConfigurer {
+
+    private final Environment environment;
+
+    public WebServerConfig(final Environment environment) {
+        this.environment = environment;
+    }
+
+    @Override
+    public void addCorsMappings(final CorsRegistry registry) {
+        if (this.environment.matchesProfiles("dev")) {
+            registry.addMapping("/**")
+                    .allowedOrigins("*")
+                    .allowedMethods("*")
+                    .allowedHeaders("*");
+        }
+    }
 
     /**
      * This gives control back to the SPA (index.html) for paths that are not served by the backend.
