@@ -42,8 +42,8 @@ const RecentPastes: () => JSX.Element = () => {
 
       const newItem: PasteListView = {
         id: paste.id,
-        dateCreated: paste.dateCreated,
         title: paste.title,
+        dateCreated: paste.dateCreated,
         dateOfExpiry: paste.dateOfExpiry,
         isEncrypted: paste.isEncrypted,
         sizeInBytes: paste.sizeInBytes
@@ -78,7 +78,7 @@ const RecentPastes: () => JSX.Element = () => {
           <ol>
             <For each={pastes()}>{item =>
             <li>
-              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={item.isEncrypted} keyed><img src="/assets/images/padlock.png" alt="lock" /></Show></p>
+              <p class={styles.item}><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><em>∞</em></Show> <Show when={item.isEncrypted} keyed><img src="/assets/images/padlock.png" alt="lock" /></Show></p>
               <p>Created: {relativeDiffLabel(item.dateCreated)} | Size: {item.sizeInBytes} bytes</p>
             </li>
             }

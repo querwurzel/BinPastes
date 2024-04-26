@@ -28,12 +28,13 @@ The `bin` folder contains the `java` binary.
 
 ### How to configure
 
-For productive use with __MySQL__ configure:
+For productive use with __MySQL__ copy `application-mysql.properties` and configure it according to your infrastructure. Make sure to place it next to the `binpastes.jar` binary before run.
 
 - [application-mysql.properties](https://github.com/querwurzel/BinPastes/blob/main/backend/src/main/resources/application-mysql.properties)
-  - username
-  - password
-  - database (default: `binpastes`)
+  - mysql.host
+  - mysql.database (default: `binpastes`)
+  - mysql.username
+  - mysql.password
 
 ### How to build
 

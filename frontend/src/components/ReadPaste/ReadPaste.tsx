@@ -2,7 +2,7 @@ import linkifyElement from 'linkify-element';
 import {Component, createEffect, createSignal, JSX, on, Show} from 'solid-js';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
-import {toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
+import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
 import styles from './readPaste.module.css';
 
 interface ReadPasteProps {
@@ -60,9 +60,10 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       <p>
         Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
         Expires: <time>{paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'}</time> |
-        Size: {paste.sizeInBytes} bytes |
-        Views: {paste.views} |
-        Last viewed: <time>{paste.lastViewed ? toDateTimeString(paste.lastViewed) : '-'}</time>
+        Size: {paste.sizeInBytes} bytes
+        <br />
+        Views: {paste.views}
+        <Show when={paste.views} keyed> | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time></Show>
         <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone" class={styles.clone}>⎘</a></Show>
         <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete">🗑</a></Show>
       </p>
