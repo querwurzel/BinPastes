@@ -4,7 +4,7 @@ import {PasteListView} from '../../api/model/PasteListView';
 
 const SearchPastes: () => JSX.Element = () => {
 
-  const [search, setSearch] = createSignal<string>(null);
+  const [search, setSearch] = createSignal<string>();
 
   const [results, { refetch }] = createResource(() => search(), () => searchTerm());
 

@@ -38,20 +38,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          mvn deploy -DskipTests -Drevision=1.0.${{ github.run_number }} -Denv=mysql
+          mvn versions:set -DnewVersion=1.0.${{ github.run_number }}
+          mvn deploy -DskipTests -Denv=mysql
 
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'com.github.binpastes.app'
-          package-type: 'maven'
-          min-versions-to-keep: 10
-      - uses: actions/delete-package-versions@v4
-        with:
-          package-name: 'com.github.binpastes.frontend'
-          package-type: 'maven'
-          min-versions-to-keep: 10
       - uses: actions/delete-package-versions@v4
         with:
           package-name: 'com.github.binpastes.backend'
           package-type: 'maven'
-          min-versions-to-keep: 10
+          min-versions-to-keep: 3

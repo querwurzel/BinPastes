@@ -12,7 +12,7 @@
 
   <groupId>com.github.binpastes</groupId>
   <artifactId>app</artifactId>
-  <version>${revision}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>BinPastes</name>
 
@@ -31,7 +31,6 @@
   <properties>
     <!-- maven property definition -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <revision>1.0.0-SNAPSHOT</revision>
 
     <!-- java version properties -->
     <maven.compiler.target>17</maven.compiler.target>
@@ -89,6 +88,13 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
           <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>

@@ -35,12 +35,12 @@
     gap: 3px;
 }
 
-.refresh {
+.refetch {
     cursor: pointer;
     color: var(--color-link);
 }
 
-.refresh:active {
+.refetch:active {
     filter: brightness(var(--hover-brightness));
 }
 

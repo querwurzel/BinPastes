@@ -13,19 +13,19 @@ const RecentPastes: () => JSX.Element = () => {
 
   const appContext = AppContext;
 
-  let refreshTimer;
+  let refetchSchedule;
 
-  function refresh() {
+  function manualRefetch() {
     restartSchedule();
     refetch();
   }
 
   function startSchedule() {
-    refreshTimer = window.setInterval(refetch, 60_000);
+    refetchSchedule = window.setInterval(refetch, 60_000);
   }
 
   function stopSchedule() {
-    window.clearInterval(refreshTimer);
+    window.clearInterval(refetchSchedule);
   }
 
   function restartSchedule() {
@@ -51,8 +51,8 @@ const RecentPastes: () => JSX.Element = () => {
     });
 
     appContext.onPasteDeleted((paste) => {
-      mutate(prev => prev.filter(item => item.id !== paste.id));
       restartSchedule();
+      mutate(prev => prev.filter(item => item.id !== paste.id));
     });
   })
 
@@ -73,7 +73,7 @@ const RecentPastes: () => JSX.Element = () => {
               </Show>
             </strong>
             &nbsp;
-            <span class={styles.refresh} onClick={refresh}>↻</span>
+            <span class={styles.refetch} onClick={manualRefetch}>↻</span>
           </h3>
 
           <ol>

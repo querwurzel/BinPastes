@@ -14,7 +14,7 @@ interface ReadPasteProps {
 
 const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePaste}): JSX.Element => {
 
-  const [clearText, setClearText] = createSignal<string>(null);
+  const [clearText, setClearText] = createSignal<string>();
 
   let keyInput: HTMLInputElement;
   let content: HTMLPreElement;
@@ -87,7 +87,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       </Show>
 
       <Show when={paste.isOneTime}>
-        <h3 class={styles.onetime}><strong>For your eyes only! This paste will burn after reading.</strong></h3>
+        <h3 class={styles.onetime}><strong>For your eyes only! This paste has just been burnt after reading.</strong></h3>
       </Show>
 
       <Show when={clearText()} fallback={<pre ref={content}>{paste.content}</pre>}>
