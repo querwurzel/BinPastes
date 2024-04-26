@@ -14,9 +14,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Configuration
 class MessagingConfig {
@@ -25,16 +28,15 @@ class MessagingConfig {
     @DependsOn("flywayInitializer")
     public MessagingClient messagingClient(
             ClientSessionFactory clientSessionFactory,
-            Executor consumerThreadPool,
-            Executor producerThreadPool
+            Scheduler consumerThreadPool,
+            Scheduler producerThreadPool
     ) {
         return new MessagingClient(clientSessionFactory, consumerThreadPool, producerThreadPool);
     }
 
     @Bean(destroyMethod = "stop")
     public EmbeddedActiveMQ activeMqServer() throws Exception {
-
-        org.apache.activemq.artemis.core.config.Configuration  config = new ConfigurationImpl();
+        org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
 
         CoreAddressConfiguration addr = new CoreAddressConfiguration();
         addr
@@ -42,7 +44,8 @@ class MessagingConfig {
                 .addQueueConfig(new QueueConfiguration()
                         .setName(new SimpleString("pasteTrackingQueue"))
                         .setAddress(new SimpleString("binpastes"))
-                        .setDelayBeforeDispatch(3000L)
+                        .setMaxConsumers(1)
+                        .setDelayBeforeDispatch(SECONDS.toMillis(3))
                         .setDurable(true))
                 .addRoutingType(RoutingType.ANYCAST);
 
@@ -54,12 +57,13 @@ class MessagingConfig {
         config.addAddressConfiguration(addr);
         config.addAddressSetting("binpastes", addressSettings);
 
-        config.setMessageExpiryScanPeriod(30000);
+        config.setMessageExpiryScanPeriod(SECONDS.toMillis(3));
 
         config.setName("binpastesMQ");
         config.addAcceptorConfiguration("in-vm", "vm://0");
 
-
+        config.setGracefulShutdownEnabled(true);
+        config.setGracefulShutdownTimeout(SECONDS.toMillis(1));
         config.setJournalPoolFiles(3);
         config.setSecurityEnabled(false);
         config.setJMXManagementEnabled(true);
@@ -103,24 +107,26 @@ class MessagingConfig {
         return activeMQConnectionFactory;
     }*/
 
-    @Bean(destroyMethod = "shutdown")
-    public ThreadPoolTaskExecutor consumerThreadPool() {
+    @Bean(initMethod = "init", destroyMethod = "dispose")
+    public Scheduler consumerThreadPool() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
         pool.setCorePoolSize(1);
         pool.setMaxPoolSize(1);
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("artemis-consumer-");
-        return pool;
+        pool.setThreadNamePrefix("activemq-consumer-");
+        pool.initialize();
+        return Schedulers.fromExecutor(pool);
     }
 
-    @Bean(destroyMethod = "shutdown")
-    public ThreadPoolTaskExecutor producerThreadPool() {
+    @Bean(initMethod = "init", destroyMethod = "dispose")
+    public Scheduler producerThreadPool() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
         pool.setCorePoolSize(Runtime.getRuntime().availableProcessors());
         pool.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("artemis-producer-");
-        return pool;
+        pool.setThreadNamePrefix("activemq-producer-");
+        pool.initialize();
+        return Schedulers.fromExecutor(pool);
     }
 
     @Bean(destroyMethod = "close")
