@@ -139,7 +139,8 @@ public class Paste {
     }
 
     public Paste trackView(LocalDateTime lastViewed) {
-        if (isNull(getLastViewed()) || getLastViewed().isBefore(lastViewed)) {
+        var currentLastViewed = getLastViewed();
+        if (isNull(currentLastViewed) || currentLastViewed.isBefore(lastViewed)) {
             setLastViewed(lastViewed);
         }
 
@@ -154,7 +155,8 @@ public class Paste {
 
     public Paste markAsExpired() {
         var now = LocalDateTime.now();
-        if (isNull(getDateOfExpiry()) || now.isBefore(getDateOfExpiry())) {
+        var dateOfExpiry = getDateOfExpiry();
+        if (isNull(dateOfExpiry) || now.isBefore(dateOfExpiry)) {
             return setDateOfExpiry(now);
         }
 

@@ -14,11 +14,13 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -58,7 +60,7 @@ class TrackingIT {
         assertThat(paste.getViews()).isZero();
 
         webClient.get()
-                .uri("/api/v1/paste/" + paste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk();
 
@@ -72,25 +74,29 @@ class TrackingIT {
     @DisplayName("tracking - concurrent tracking events result in exact view count")
     void trackConcurrentPasteViews() {
         var intialPaste = givenPublicPaste();
+        var random = new Random();
+        var concurrency = 500;
 
         Flux.fromStream(Stream.generate(intialPaste::getId))
-                .take(500)
+                .take(concurrency)
                 .doOnNext(trackingService::trackView)
                 // simulate a concurrent update
                 .doOnNext(id -> pasteRepository.findById(id)
-                        .doOnNext(paste -> setField(paste, "remoteAddress", "concurrentUpdate"))
+                        .doOnNext(paste -> setField(paste, "remoteAddress", String.valueOf(random.nextInt())))
                         .flatMap(paste -> pasteRepository.save(paste))
-                        .onErrorComplete()
+                        .retry()
                         .subscribe())
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
 
-        waitAtMost(Duration.ofSeconds(60)).pollInterval(Duration.ofSeconds(1)).until(
+        waitAtMost(Duration.ofMinutes(1)).pollInterval(Duration.ofSeconds(1)).until(
                 () -> pasteRepository.findById(intialPaste.getId()).block().getViews(),
-                equalTo(500L)
+                equalTo((long) concurrency)
         );
 
-        Mockito.verify(pasteRepository, atLeast(500 + 100 /* minimum contention */)).save(eq(intialPaste));
+        Mockito
+                .verify(pasteRepository, atLeast((int) (concurrency * 1.5) /* experienced minimum contention */))
+                .save(eq(intialPaste));
     }
 
     @Test
@@ -110,7 +116,7 @@ class TrackingIT {
                         null,
                         false,
                         PasteExposure.PUBLIC,
-                        "someAuthor"
+                        "someRemoteAddress"
                 )
         );
     }

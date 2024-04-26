@@ -18,25 +18,23 @@ const Search: () => JSX.Element = () => {
     return (searchTerm.q && searchTerm.q.length >= 3) ? searchTerm.q : null;
   }
 
-  function onSearchPastes(term: string) {
+  function updateSearchTerm(term: string) {
     setSearchTerm({q: term})
   }
 
   return (
-    <>
-      <Switch>
-        <Match when={pastes.loading}>
+    <Switch>
+      <Match when={pastes.loading}>
 
-          <Spinner />
+        <Spinner />
 
-        </Match>
-        <Match when={pastes.latest}>
+      </Match>
+      <Match when={pastes.latest}>
 
-          <SearchPastes term={effectiveTerm()} pastes={pastes()} onSearchPastes={onSearchPastes} />
+        <SearchPastes term={effectiveTerm()} pastes={pastes()} onSearchPastes={updateSearchTerm} />
 
-        </Match>
-      </Switch>
-    </>
+      </Match>
+    </Switch>
   )
 }
 

@@ -128,6 +128,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
         <br />
         Views: {paste.views} | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time>
         </Show>
+        <br />
         <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone"><Clone /></a></Show>
         <Show when={!paste.isOneTime} keyed> | <a onClick={onCopyClick} href="#" title="Copy" class={styles.clipboard}><CopyToClipboard /></a></Show>
         <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete"><Trash /></a></Show>
