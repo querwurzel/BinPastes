@@ -16,10 +16,10 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
 
   const [clearText, setClearText] = createSignal<string>();
 
+  createEffect(on(clearText, () => linkifyContent()));
+
   let keyInput: HTMLInputElement;
   let contentElement: HTMLPreElement;
-
-  createEffect(on(clearText, () => linkifyContent()));
 
   onMount(() => {
     window.addEventListener("keydown", globalSelectContent);
@@ -71,7 +71,7 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
       return;
     }
 
-    if ((e.ctrlKey && e.code === 'KeyA') || (e.metaKey && e.code === 'KeyA')) {
+    if ((e.ctrlKey && e.code === 'KeyA') ^ (e.metaKey && e.code === 'KeyA')) {
       selectContent();
       e.preventDefault();
     }

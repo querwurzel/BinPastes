@@ -14,20 +14,17 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter
 
   let searchInput: HTMLInputElement;
 
-  const submitOnClick = (e: Event) => {
+  function submitOnClick(e: Event) {
     e.preventDefault();
+
     if (searchInput.value?.length >= 3) {
       onSearchEnter(searchInput.value);
     }
   }
 
-  const submitOnEnter = (e: Event) => {
-    e.preventDefault();
-
-    if (searchInput.value?.length >= 3) {
-      if (e instanceof KeyboardEvent && e.key === "Enter") {
-        onSearchEnter(searchInput.value);
-      }
+  function submitOnEnter(e: Event) {
+    if (e instanceof KeyboardEvent && e.key === "Enter") {
+      submitOnClick(e);
     }
   }
 
@@ -35,7 +32,7 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchEnter
     <>
       <form autocomplete="off" class={styles.searchForm} onSubmit={submitOnClick}>
         <fieldset>
-          <input ref={searchInput} onKeyUp={submitOnEnter} value={term} type="search" required minlength="3" maxlength="25" placeholder="Search for pastes" autofocus />
+          <input ref={searchInput} onKeyUp={submitOnEnter} name="term" value={term} type="search" required minlength="3" maxlength="25" placeholder="Search for pastes" autofocus />
           <input type="submit" value="Search"/>
           <input type="reset" value="Reset"/>
         </fieldset>

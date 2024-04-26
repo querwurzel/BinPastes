@@ -1,4 +1,4 @@
-import {Component, createSignal, JSX, Show} from "solid-js";
+import {Component, createSignal, JSX, Show, onMount, onCleanup} from "solid-js";
 import {createStore} from "solid-js/store";
 import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
@@ -35,34 +35,59 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
 
   const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
 
+  onMount(() => {
+    window.addEventListener("keydown", globalSubmitPaste);
+  })
+
+  onCleanup(() => {
+    window.removeEventListener("keydown", globalSubmitPaste);
+  })
+
   let creationForm: HTMLFormElement
   let submitInput: HTMLInputElement
 
-  const updateFormField = (fieldName: keyof FormModel) => (event: Event) => {
-    const inputElement = event.currentTarget as HTMLInputElement;
+  function globalSubmitPaste(e: KeyboardEvent) {
+    if (e.altKey || e.shiftKey) {
+      return;
+    }
 
-    setForm({
-      [fieldName]: inputElement.value
-    });
+    if ((e.ctrlKey && e.code === 'Enter') ^ (e.metaKey && e.code === 'Enter')) {
+      creationForm.requestSubmit();
+    }
+  }
+
+  function updateFormField(fieldName: keyof FormModel): (event: Event) => void {
+    return (event: Event) => {
+        const inputElement = event.currentTarget as HTMLInputElement;
+
+        setForm({
+          [fieldName]: inputElement.value
+        });
+    }
   };
 
-  const resetCreateForm = () => {
+  function resetCreatePaste() {
+    setForm({
+          title: null,
+          password: null,
+          content: null,
+          expiry: null,
+          exposure: null
+        } as FormModel)
+    setLastPasteUrl();
+    submitInput.style.backgroundColor = null;
+  }
+
+  function resetCreateForm() {
     creationForm?.reset();
   }
 
-  const resetStore = () => {
-    setLastPasteUrl();
-    setForm({
-      title: null,
-      password: null,
-      content: null,
-      expiry: null,
-      exposure: null
-    } as FormModel)
-  }
-
-  const createPaste = (e: Event) => {
+  function createPaste(e: Event) {
     e.preventDefault();
+
+    if (form.content?.length < 5) {
+      return;
+    }
 
     const data: PasteCreateCmd = {
       title: form.title,
@@ -79,14 +104,13 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
     onCreatePaste(data)
       .then(url => {
         resetCreateForm();
-        resetStore();
         setLastPasteUrl(url);
       })
       .catch(e => submitInput.style.backgroundColor = 'red');
   }
 
   return (
-    <form ref={creationForm} onSubmit={createPaste} onReset={resetStore} autocomplete="off" class={styles.createForm}>
+    <form ref={creationForm} onSubmit={createPaste} onReset={resetCreatePaste} autocomplete="off" class={styles.createForm}>
       <fieldset>
         <div>
           <label for="expiry">Expires in: </label>
@@ -140,13 +164,14 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
         </div>
         <hr/>
         <div class={styles.content}>
-          <textarea minLength="5"
-                    maxLength="4096"
+          <textarea minlength="5"
+                    maxlength="4096"
                     required
                     autofocus
                     rows="20"
                     cols="50"
                     placeholder="Paste here"
+                    name="content"
                     onInput={updateFormField("content")}>{form.content}</textarea>
           <span>{form.content?.length || 0} / 4096</span>
         </div>

@@ -11,7 +11,30 @@ const RecentPastes: () => JSX.Element = () => {
 
   const [pastes, { mutate, refetch }] = createResource(ApiClient.findAll);
 
-  const appContext = AppContext;
+  onMount(() => {
+    startSchedule();
+
+    AppContext.onPasteCreated((paste) => {
+      const newItem: PasteListView = {
+        id: paste.id,
+        title: paste.title,
+        dateCreated: paste.dateCreated,
+        dateOfExpiry: paste.dateOfExpiry,
+        isEncrypted: paste.isEncrypted,
+        sizeInBytes: paste.sizeInBytes
+      };
+
+      restartSchedule();
+      mutate(prev => [newItem].concat(prev))
+    });
+
+    AppContext.onPasteDeleted((paste) => {
+      restartSchedule();
+      mutate(prev => prev.filter(item => item.id !== paste.id));
+    });
+  })
+
+  onCleanup(() => stopSchedule());
 
   let refetchSchedule;
 
@@ -32,31 +55,6 @@ const RecentPastes: () => JSX.Element = () => {
     stopSchedule();
     startSchedule();
   }
-
-  onMount(() => {
-    startSchedule();
-
-    appContext.onPasteCreated((paste) => {
-      const newItem: PasteListView = {
-        id: paste.id,
-        title: paste.title,
-        dateCreated: paste.dateCreated,
-        dateOfExpiry: paste.dateOfExpiry,
-        isEncrypted: paste.isEncrypted,
-        sizeInBytes: paste.sizeInBytes
-      };
-
-      restartSchedule();
-      mutate(prev => [newItem].concat(prev))
-    });
-
-    appContext.onPasteDeleted((paste) => {
-      restartSchedule();
-      mutate(prev => prev.filter(item => item.id !== paste.id));
-    });
-  })
-
-  onCleanup(() => stopSchedule());
 
   return (
     <div class={styles.recentPastes}>

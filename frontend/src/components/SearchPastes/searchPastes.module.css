@@ -14,7 +14,7 @@
 .searchForm input[type=search] {
     display: inline-block;
     width: 20rem;
-    margin: 0;
+    margin: .5rem;
 }
 
 .searchForm input[type=submit],

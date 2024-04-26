@@ -8,16 +8,14 @@ const NotFound = lazy(() => import('./404'));
 
 const Read: Component = (): JSX.Element => {
 
-  const appContext = AppContext;
-
   const navigate = useNavigate();
 
   const params = useParams<{id: string}>();
 
-  const [paste] = createResource(() => params.id, (id) => appContext.popPasteCreated() || ApiClient.findOne(id));
+  const [paste] = createResource(() => params.id, (id) => AppContext.popPasteCreated() || ApiClient.findOne(id));
 
   const clonePaste = () => {
-    appContext.pushPasteCloned({
+    AppContext.pushPasteCloned({
       title: paste().title,
       content: paste().content
     })
@@ -27,7 +25,7 @@ const Read: Component = (): JSX.Element => {
   const deletePaste = () => {
     ApiClient.deletePaste(paste().id)
       .then(_ => {
-        appContext.pushPasteDeleted(paste());
+        AppContext.pushPasteDeleted(paste());
         navigate('/')
       })
       .catch(() => {})
