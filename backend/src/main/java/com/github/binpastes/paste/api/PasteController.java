@@ -87,14 +87,15 @@ class PasteController {
     public Mono<SearchView> searchPastes(
             @RequestParam("term")
             @NotBlank
-            @Pattern(regexp = "[\\pL\\pN\\p{P}\\s]{3,25}")
+            @Pattern(regexp = "[\\p{L}\\p{N}\\p{P}\\s]{3,50}")
             final String term,
             final ServerHttpResponse response
     ) {
-        response.getHeaders().setCacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS));
+        var decodedTerm = URLDecoder.decode(term, Charset.defaultCharset());
+        response.getHeaders().setCacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES));
         return pasteService
-                .findByFullText(URLDecoder.decode(term, Charset.defaultCharset()))
-                .map(paste -> SearchItemView.of(paste, term))
+                .findByFullText(decodedTerm)
+                .map(paste -> SearchItemView.of(paste, decodedTerm))
                 .collectList()
                 .map(SearchView::of);
     }
@@ -123,7 +124,7 @@ class PasteController {
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private void handleValidationException(RuntimeException e) {
-        log.info("Received invalid request: {}", e.getClass().getSimpleName());
+        log.info("Received invalid request [{}]: {}", e.getClass().getSimpleName(), e.getMessage());
     }
 
     private static String remoteAddress(ServerHttpRequest request) {

@@ -3,6 +3,7 @@ package com.github.binpastes.paste.api;
 import com.github.binpastes.paste.domain.Paste;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
+import com.tngtech.archunit.core.importer.ImportOption.Predefined;
 import org.junit.jupiter.api.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
@@ -19,9 +20,9 @@ class ArchitectureTest {
     void domainClassNeverRendered() {
         var importedClasses = new ClassFileImporter()
                 .withImportOption(DO_NOT_INCLUDE_MAVEN_TESTS)
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPackages("com.github.binpastes.paste.api");
+                .withImportOption(Predefined.DO_NOT_INCLUDE_JARS)
+                .withImportOption(Predefined.DO_NOT_INCLUDE_TESTS)
+                .importPackagesOf(PasteController.class);
 
         var rule = noMethods()
                 .that()
@@ -39,9 +40,9 @@ class ArchitectureTest {
     void injectionsMindArchitecturalBorders() {
         var importedClasses = new ClassFileImporter()
                 .withImportOption(DO_NOT_INCLUDE_MAVEN_TESTS)
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_JARS)
-                .withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
-                .importPackages("com.github.binpastes.paste.api");
+                .withImportOption(Predefined.DO_NOT_INCLUDE_JARS)
+                .withImportOption(Predefined.DO_NOT_INCLUDE_TESTS)
+                .importPackagesOf(PasteController.class);
 
         var rule = noClasses()
                 .that()
