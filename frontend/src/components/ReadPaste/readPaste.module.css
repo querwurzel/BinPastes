@@ -1,0 +1,41 @@
+
+.read h2,
+.read h3,
+.read pre,
+.read p {
+  margin: 1rem;
+  padding: 0;
+}
+
+.read pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.read {
+  border: 1px dotted #a5a5a5;
+  border-radius: 10px;
+}
+
+.clone {
+  font-size: 1.5rem;
+}
+
+.onetime {
+  color: red;
+}
+
+.decrypt input {
+  display: inline-block;
+}
+
+.decrypt button {
+  margin: 0;
+  padding: .5rem;
+  display: inline-block;
+}
+
+.decrypt button:active {
+  background: grey;
+}

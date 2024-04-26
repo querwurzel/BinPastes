@@ -1,0 +1,102 @@
+
+.lastPaste {
+    margin: .5rem;
+    user-select: none;
+    color: green;
+}
+
+.lastPaste span {
+    user-select: all;
+    cursor: pointer;
+}
+
+.lastPaste span::selection {
+    color: white;
+    background-color: green;
+}
+
+@media (prefers-color-scheme: dark) {
+    .lastPaste {
+        color: greenyellow;
+    }
+}
+
+.createForm {
+    border: none;
+    padding: 0;
+}
+
+.createForm fieldset {
+    border: 1px dotted #a5a5a5;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+}
+
+.createForm hr {
+    margin: 0;
+    border-top: 1px dotted #a5a5a5;
+    background-color: transparent;
+}
+
+.createForm div {
+    margin: 1rem .5rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.createForm label,
+.createForm input[type=radio],
+.createForm select {
+    display: inline-block;
+    width: initial;
+    margin: 0;
+}
+
+.createForm input[type=text],
+.createForm input[type=password] {
+    display: inline-block;
+    width: 20rem;
+    margin: 0;
+}
+
+.createForm input[type=submit],
+.createForm input[type=reset] {
+    display: inline-block;
+    width: initial;
+    margin: .5rem;
+}
+
+
+.createForm input[type=radio] {
+    margin-right: .3rem;
+}
+
+
+.createForm label,
+.createForm button,
+.createForm select,
+.createForm input[type=submit],
+.createForm input[type=reset],
+.createForm input[type=radio] {
+    cursor: pointer;
+}
+
+.createForm label {
+    font-weight: normal;
+}
+
+.createForm label:first-child {
+    font-weight: bold;
+    cursor: initial;
+}
+
+.createForm textarea {
+    font-family: monospace;
+    box-sizing: border-box;
+    margin: 0;
+    padding: .5rem;
+    width: 100%;
+    height: 20em;
+}
