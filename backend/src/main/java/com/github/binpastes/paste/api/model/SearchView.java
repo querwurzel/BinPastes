@@ -5,12 +5,12 @@ import com.github.binpastes.paste.domain.Paste;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record SearchQuery(
+public record SearchView(
         List<SearchItemView> pastes
 ) {
 
-    public static SearchQuery of(List<SearchItemView> pastes) {
-        return new SearchQuery(pastes);
+    public static SearchView of(List<SearchItemView> pastes) {
+        return new SearchView(pastes);
     }
 
     public record SearchItemView(

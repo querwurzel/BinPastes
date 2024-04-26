@@ -52,17 +52,17 @@ public class PasteService {
     }
 
     private Mono<Paste> trackAccess(Paste paste) {
-        trackingService.trackView(paste.getId());
+        var result = Mono.just(paste);
 
         if (paste.isOneTime()) {
-            return pasteRepository
-                    .save(paste.markAsExpired())
-                    .retryWhen(Retry.indefinitely()
-                            .filter(ex -> ex instanceof OptimisticLockingFailureException))
-                    .doOnSuccess(deletedPaste -> log.info("OneTime paste {} viewed and burnt", deletedPaste.getId()));
+            return result
+                    .map(p -> p.trackView(LocalDateTime.now()))
+                    .flatMap(pasteRepository::save)
+                    .doOnSuccess(burntPaste -> log.info("OneTime paste {} viewed and burnt", burntPaste.getId()));
         }
 
-        return Mono.just(paste);
+        trackingService.trackView(paste.getId());
+        return result;
     }
 
     public Flux<Paste> findAll() {

@@ -1,10 +1,10 @@
 package com.github.binpastes.paste.api;
 
 import com.github.binpastes.paste.api.model.CreateCmd;
-import com.github.binpastes.paste.api.model.ListQuery;
-import com.github.binpastes.paste.api.model.SearchQuery;
-import com.github.binpastes.paste.api.model.SearchQuery.SearchItemView;
-import com.github.binpastes.paste.api.model.DetailQuery;
+import com.github.binpastes.paste.api.model.ListView;
+import com.github.binpastes.paste.api.model.SearchView;
+import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
+import com.github.binpastes.paste.api.model.DetailView;
 import com.github.binpastes.paste.application.PasteService;
 import com.github.binpastes.paste.domain.Paste;
 import jakarta.validation.ConstraintViolationException;
@@ -28,7 +28,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static com.github.binpastes.paste.api.model.ListQuery.ListItemQuery;
+import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
 @Validated
 @RestController
@@ -45,7 +45,12 @@ class PasteController {
     }
 
     @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
-    public Mono<DetailQuery> findPaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request, ServerHttpResponse response) {
+    public Mono<DetailView> findPaste(
+            @PathVariable("pasteId")
+            String pasteId,
+            ServerHttpRequest request,
+            ServerHttpResponse response
+    ) {
         return pasteService
                 .find(pasteId)
                 .doOnNext(paste -> {
@@ -63,21 +68,21 @@ class PasteController {
                                 CacheControl.maxAge(Duration.between(now, paste.getDateOfExpiry())));
                     }
                 })
-                .map(reference -> DetailQuery.of(reference, remoteAddress(request)))
+                .map(reference -> DetailView.of(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @GetMapping
-    public Mono<ListQuery> findPastes() {
+    public Mono<ListView> findPastes() {
         return pasteService
                 .findAll()
-                .map(ListItemQuery::of)
+                .map(ListItemView::of)
                 .collectList()
-                .map(ListQuery::of);
+                .map(ListView::of);
     }
 
     @GetMapping("/search")
-    public Mono<SearchQuery> searchPastes(
+    public Mono<SearchView> searchPastes(
             @RequestParam("term")
             @NotBlank
             @Pattern(regexp = "[\\pL\\pN\\p{P}\\s]{3,25}")
@@ -89,12 +94,12 @@ class PasteController {
                 .findByFullText(term)
                 .map(paste -> SearchItemView.of(paste, term))
                 .collectList()
-                .map(SearchQuery::of);
+                .map(SearchView::of);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<DetailQuery> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
+    public Mono<DetailView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
         return createCmd
                 .flatMap(cmd -> pasteService.create(
                         cmd.title(),
@@ -104,7 +109,7 @@ class PasteController {
                         cmd.pasteExposure(),
                         remoteAddress(request)
                 ))
-                .map((Paste reference) -> DetailQuery.of(reference, remoteAddress(request)));
+                .map((Paste reference) -> DetailView.of(reference, remoteAddress(request)));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
