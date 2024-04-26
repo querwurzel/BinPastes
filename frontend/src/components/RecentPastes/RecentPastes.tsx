@@ -80,7 +80,7 @@ const RecentPastes: () => JSX.Element = () => {
             <For each={pastes()}>{item =>
             <li class={styles.item}>
               <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A> <Show when={!item.dateOfExpiry} keyed><em><Infinity/></em></Show> <Show when={item.isEncrypted} keyed><Lock/></Show></p>
-              <p>Created: {relativeDiffLabel(item.dateCreated)} | Size: {item.sizeInBytes} bytes</p>
+              <p>Created: <time title={toDateTimeString(item.dateCreated)}>{relativeDiffLabel(item.dateCreated)}</time> | Size: {item.sizeInBytes} bytes</p>
             </li>
             }
             </For>
