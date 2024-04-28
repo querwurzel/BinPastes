@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 import java.time.Instant;
+import java.util.Objects;
 
 public class MessagingClient {
 
@@ -37,42 +38,36 @@ public class MessagingClient {
 
     public void sendMessage(String pasteId, Instant timeViewed) {
         Mono.fromRunnable(() -> {
-            try {
-                var session = session();
-                var clientProducer = producer();
+                    try {
+                        var session = session();
+                        var clientProducer = producer();
+                        var clientMessage = session
+                                .createMessage(true)
+                                .putStringProperty(Message.PASTE_ID_PROPERTY, pasteId)
+                                .putLongProperty(Message.TIME_VIEWED_PROPERTY, timeViewed.toEpochMilli());
 
-                var clientMessage = session
-                        .createMessage(true)
-                        .putStringProperty(Message.PASTE_ID_PROPERTY, pasteId)
-                        .putLongProperty(Message.TIME_VIEWED_PROPERTY, timeViewed.toEpochMilli());
-
-                clientProducer.send(clientMessage);
-                log.debug("Sent tracking message for paste {}", pasteId);
-            } catch (ActiveMQException e) {
-                throw new RuntimeException(e);
-            }
-        })
-        .subscribeOn(producerThreadPool)
-        .subscribe();
+                        clientProducer.send(clientMessage);
+                        log.debug("Sent tracking message for paste {}", pasteId);
+                    } catch (ActiveMQException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .subscribeOn(producerThreadPool)
+                .subscribe();
     }
 
     public Mono<Message> receiveMessage() {
-        return Mono.fromCallable(() -> {
-            var clientConsumer = consumer();
+        return Mono.fromCallable(() -> consumer().receive())
+                .filter(Objects::nonNull)
+                .map(clientMessage -> {
+                    var pasteId = clientMessage.getStringProperty(Message.PASTE_ID_PROPERTY);
+                    var timeViewed = Instant.ofEpochMilli(clientMessage.getLongProperty(Message.TIME_VIEWED_PROPERTY));
+                    log.debug("Received tracking message for paste {}", pasteId);
 
-            var message = clientConsumer.receive();
-            if (message == null) {
-                return null;
-            }
-
-            var pasteId = message.getStringProperty(Message.PASTE_ID_PROPERTY);
-            var timeViewed = Instant.ofEpochMilli(message.getLongProperty(Message.TIME_VIEWED_PROPERTY));
-            log.debug("Received tracking message for paste {}", pasteId);
-
-            return new Message(pasteId, timeViewed);
-        })
-        .onErrorComplete(ActiveMQObjectClosedException.class)
-        .subscribeOn(consumerThreadPool);
+                    return new Message(pasteId, timeViewed);
+                })
+                .onErrorComplete(ActiveMQObjectClosedException.class)
+                .subscribeOn(consumerThreadPool);
     }
 
     private ClientProducer producer() throws ActiveMQException {
@@ -118,5 +113,4 @@ public class MessagingClient {
         private static final String PASTE_ID_PROPERTY = "pasteId";
         private static final String TIME_VIEWED_PROPERTY = "timeViewed";
     }
-
 }

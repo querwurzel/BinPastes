@@ -14,7 +14,6 @@ import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWeb
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
@@ -33,7 +32,9 @@ import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.timeout;
 import static org.springframework.test.util.ReflectionTestUtils.setField;
 
-@SpringBootTest(properties = "logging.level.com.github.binpastes.paste.application.tracking=INFO")
+@SpringBootTest(properties = {
+        "logging.level.com.github.binpastes.paste.application.tracking=INFO"
+})
 @AutoConfigureWebTestClient
 @DirtiesContext
 class TrackingIT {

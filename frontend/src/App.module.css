@@ -1,5 +1,6 @@
 
-.head {
+.header,
+.footer {
   margin: 2rem;
   padding: 0;
   text-align: left;
@@ -23,10 +24,6 @@
 
 .right {
   flex-basis: 35%;
-}
-
-.footer {
-  margin: 2rem;
 }
 
 @media screen and (max-width:750px) {

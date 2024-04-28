@@ -7,7 +7,7 @@ import RecentPastes from './components/RecentPastes/RecentPastes';
 const App: () => JSX.Element = (props) => {
   return (
     <>
-      <header class={styles.head}>
+      <header class={styles.header}>
         <Header />
       </header>
 

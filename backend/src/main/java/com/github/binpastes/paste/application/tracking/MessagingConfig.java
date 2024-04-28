@@ -92,7 +92,7 @@ class MessagingConfig {
         pool.setCorePoolSize(1);
         pool.setMaxPoolSize(1);
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("activemq-consumer-");
+        pool.setThreadNamePrefix("mq-consumer-");
         pool.initialize();
         return Schedulers.fromExecutor(pool);
     }
@@ -103,7 +103,7 @@ class MessagingConfig {
         pool.setCorePoolSize(Runtime.getRuntime().availableProcessors());
         pool.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("activemq-producer-");
+        pool.setThreadNamePrefix("mq-producer-");
         pool.initialize();
         return Schedulers.fromExecutor(pool);
     }
