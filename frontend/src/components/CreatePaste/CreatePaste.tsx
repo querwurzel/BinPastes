@@ -1,8 +1,8 @@
-import {Component, createSignal, JSX, Show, onMount, onCleanup} from "solid-js";
+import {Component, createSignal, JSX, onMount, onCleanup} from "solid-js";
 import {createStore} from "solid-js/store";
 import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
-import {CopyToClipboard} from '../../assets/Vectors';
+import {CopyToClipboard} from "../../assets/Vectors";
 import styles from "./createPaste.module.css";
 
 export type PasteClone = {
@@ -11,7 +11,7 @@ export type PasteClone = {
 }
 
 type CreatePasteProps = {
-  onCreatePaste: (paste: PasteCreateCmd) => Promise<string>
+  onCreatePaste: (paste: PasteCreateCmd) => Promise<void>
   initialPaste?: PasteClone
 }
 
@@ -26,8 +26,8 @@ type FormModel = {
 const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste}): JSX.Element => {
 
   const [form, setForm] = createStore<FormModel>({
-    title: initialPaste?.title || null,
-    content: initialPaste?.content || null,
+    title: initialPaste?.title,
+    content: initialPaste?.content,
     expiry: null,
     exposure: null,
     password: null,
@@ -74,8 +74,8 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
           expiry: null,
           exposure: null
         } as FormModel)
-    setLastPasteUrl();
-    submitInput.style.backgroundColor = null;
+
+    submitInput.style.backgroundColor = "";
   }
 
   function resetCreateForm() {
@@ -102,11 +102,7 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
     }
 
     onCreatePaste(data)
-      .then(url => {
-        resetCreateForm();
-        setLastPasteUrl(url);
-      })
-      .catch(_ => submitInput.style.backgroundColor = 'red');
+      .catch(() => submitInput.style.backgroundColor = 'red');
   }
 
   return (
@@ -178,9 +174,6 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
       </fieldset>
 
       <fieldset>
-        <Show when={lastPasteUrl()}>
-          <p class={styles.lastPaste}>{lastPasteUrl()}<CopyToClipboard/></p>
-        </Show>
         <input ref={submitInput} type="submit" value="Paste"/>
         <input type="reset" value="Reset"/>
       </fieldset>

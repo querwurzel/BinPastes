@@ -1,6 +1,7 @@
 import {useNavigate, useParams} from '@solidjs/router';
 import {Component, createResource, JSX, lazy, Match, Switch} from 'solid-js';
 import ApiClient from '../api/client';
+import type {PasteView} from '../api/model/PasteView';
 import AppContext from '../AppContext';
 import ReadPaste from '../components/ReadPaste/ReadPaste';
 
@@ -12,7 +13,14 @@ const Read: Component = (): JSX.Element => {
 
   const params = useParams<{id: string}>();
 
-  const [paste] = createResource(() => params.id, (id) => AppContext.popPasteCreated() || ApiClient.findOne(id));
+  const [paste] = createResource(
+    () => params.id,
+    (id) => AppContext.popPasteCreated() || ApiClient.findPaste(id)
+  );
+
+  function burnPaste(): Promise<PasteView> {
+      return ApiClient.findOneTimePaste(paste().id);
+  }
 
   function clonePaste() {
     AppContext.pushPasteCloned({
@@ -24,28 +32,22 @@ const Read: Component = (): JSX.Element => {
 
   function deletePaste() {
     ApiClient.deletePaste(paste().id)
-      .then(_ => {
+      .then(() => {
         AppContext.pushPasteDeleted(paste());
-        navigate('/')
+        navigate('/');
       })
       .catch(() => {})
   }
 
   return (
-    <>
-      <Switch>
-        <Match when={paste.error}>
-
-          <NotFound />
-
-        </Match>
-        <Match when={paste.state === 'ready'}>
-
-          <ReadPaste paste={paste()} onClonePaste={clonePaste} onDeletePaste={deletePaste}/>
-
-        </Match>
-      </Switch>
-    </>
+    <Switch>
+      <Match when={paste.error}>
+        <NotFound/>
+      </Match>
+      <Match when={paste.state === 'ready'}>
+        <ReadPaste initialPaste={paste()} onBurnPaste={burnPaste} onClonePaste={clonePaste} onDeletePaste={deletePaste}/>
+      </Match>
+    </Switch>
   )
 }
 

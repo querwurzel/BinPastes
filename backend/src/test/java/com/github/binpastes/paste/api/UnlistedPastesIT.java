@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
@@ -48,10 +49,10 @@ class UnlistedPastesIT {
         var unlistedPaste = givenUnlistedPaste();
 
         webClient.get()
-                .uri("/api/v1/paste/" + unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES));
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
     }
 
     @Test
@@ -60,20 +61,20 @@ class UnlistedPastesIT {
         var unlistedPaste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(5).minusSeconds(1),
+                LocalDateTime.now().plusMinutes(1).minusSeconds(1),
                 false,
                 PasteExposure.UNLISTED,
                 "1.1.1.1"
         ));
 
         webClient.get()
-                .uri("/api/v1/paste/" + unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().value(
                         HttpHeaders.CACHE_CONTROL,
                         (value) -> assertThat(Long.valueOf(value.replace("max-age=", "")))
-                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(5)));
+                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(1)));
     }
 
     @Test
@@ -92,11 +93,11 @@ class UnlistedPastesIT {
     @Test
     @DisplayName("GET /search - unlisted paste cannot be searched for")
     void searchAllPastes() {
-        givenUnlistedPaste();
+        var paste = givenUnlistedPaste();
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", "ipsum")
+                .uri("/api/v1/paste/search?term={term}", paste.getTitle())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("pastes", emptyList());
@@ -140,27 +141,28 @@ class UnlistedPastesIT {
                               "isPublic": false,
                               "isErasable": true,
                               "isEncrypted": true,
+                              "isPermanent": false,
                               "isOneTime": false,
                               "lastViewed": null,
                               "views": 0
                             }
-                """, false);
+                """);
     }
 
     @Test
     @DisplayName("DELETE /{pasteId} - unlisted paste might always be deleted")
-    void deleteUnlistedPaste() throws InterruptedException {
+    void deleteUnlistedPaste() {
         var unlistedPaste = givenUnlistedPaste();
 
         webClient.delete()
-                .uri("/api/v1/paste/" + unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
-                .expectStatus().isNoContent()
+                .expectStatus().isAccepted()
                 .expectBody().isEmpty();
 
-        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
-                .uri("/api/v1/paste/" + unlistedPaste.getId())
-                .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
+        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient
+                .get()
+                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
                 .expectStatus().isNotFound());
     }

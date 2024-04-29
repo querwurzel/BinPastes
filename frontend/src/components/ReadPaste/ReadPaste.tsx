@@ -1,32 +1,35 @@
-import {Component, createEffect, createSignal, For, JSX, on, onMount, onCleanup, Show} from 'solid-js';
+import {Component, createEffect, createSignal, For, JSX, on, onMount, onCleanup, Show, Switch, Match} from 'solid-js';
 import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
 import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
-import {Lock, Unlock, Key, Trash, CopyToClipboard, Clone} from '../../assets/Vectors';
+import {Lock, Unlock, Key, Trash, Link, CopyToClipboard, Clone} from '../../assets/Vectors';
 import styles from './readPaste.module.css';
 
 type ReadPasteProps = {
-  paste: PasteView
+  initialPaste: PasteView
+  onBurnPaste: () => Promise<PasteView>
   onClonePaste: () => void
   onDeletePaste: () => void
 }
 
-const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePaste}): JSX.Element => {
+const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClonePaste, onDeletePaste}): JSX.Element => {
 
-  const [clearText, setClearText] = createSignal<string>();
+  const [paste, setPaste] = createSignal<PasteView>(initialPaste);
+  const [isBurnt, setBurnt] = createSignal<boolean>(false);
+  const [isEncrypted, setEncrypted] = createSignal<boolean>(initialPaste.isEncrypted);
 
   let keyInput: HTMLInputElement;
   let contentElement: HTMLPreElement;
 
-  createEffect(on(clearText, () => linkifyContent()));
+  createEffect(on(paste, () => linkifyContent()));
 
   onMount(() => {
-    window.addEventListener("keydown", globalSelectContent);
+    window.addEventListener("keydown", onCopyContent);
   })
 
   onCleanup(() => {
-    window.removeEventListener("keydown", globalSelectContent);
+    window.removeEventListener("keydown", onCopyContent);
   })
 
   function linkifyContent() {
@@ -39,124 +42,146 @@ const ReadPaste: Component<ReadPasteProps> = ({paste, onClonePaste, onDeletePast
   }
 
   function decryptContent(content: string, key: string) {
-    setClearText(decrypt(content, key));
-  }
-
-  function onDecryptClick() {
-    decryptContent(paste.content, keyInput.value);
-  }
-
-  function onDecryptSubmit(e: KeyboardEvent) {
-    if (e instanceof KeyboardEvent && e.key === "Enter") {
-      decryptContent(paste.content, keyInput.value);
+    const plainText = decrypt(content, key);
+    if (plainText) {
+      setEncrypted(false);
+      setPaste((prev) => ({
+        ...prev,
+        content: plainText
+      }));
+    } else {
+      keyInput.style.backgroundColor = 'red';
     }
   }
 
-  function onCloneClick(e: Event) {
+  function onDecryptClick() {
+    decryptContent(paste().content, keyInput.value);
+  }
+
+  function onDecryptSubmit(e: KeyboardEvent) {
+    if (e.key === "Enter") {
+      decryptContent(paste().content, keyInput.value);
+    }
+  }
+
+  function onBurn(e: Event) {
+    onBurnPaste()
+      .then((payload) => {
+        setBurnt(true);
+        setPaste(payload);
+      })
+      .catch(() => {});
+  }
+
+  function onCopyLink(e: Event) {
+    e.preventDefault();
+    navigator.clipboard
+      .writeText(window.location.href)
+      .catch(() => {});
+  }
+
+  function onClone(e: Event) {
     e.preventDefault();
     onClonePaste();
   }
 
-  function onCopyClick(e: Event) {
+  function onCopyToClipboard(e: Event) {
     e.preventDefault();
     navigator.clipboard
-      .writeText(content())
-      .catch(_ => {});
+      .writeText(paste().content)
+      .catch(() => {});
   }
 
-  function onDeleteClick(e: Event) {
+  function onDelete(e: Event) {
     e.preventDefault();
 
-    const msg = paste.title ? `Delete paste "${paste.title}"?` : 'Delete paste?';
+    const msg = paste().title ? `Delete paste "${paste().title}"?` : 'Delete paste?';
     if (window.confirm(msg)) {
       onDeletePaste();
     }
   }
 
-  function globalSelectContent(e: KeyboardEvent) {
+  function onCopyContent(e: KeyboardEvent) {
     if (e.altKey || e.shiftKey) {
       return;
     }
 
-    if (e.code === 'KeyA' && ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey)) { // XOR
-      selectContent();
-      e.preventDefault();
+    if (e.code === 'KeyC' && ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey)) { // XOR
+      onCopyToClipboard(e);
     }
   }
 
-  function selectContent() {
-      if (window.getSelection && document.createRange) {
-        let range = document.createRange();
-        range.selectNodeContents(contentElement);
-
-        let selection = window.getSelection();
-        selection.removeAllRanges();
-        selection.addRange(range);
-        return;
-      }
-
-      // @ts-ignore
-      if (document.body.createTextRange) {
-          // @ts-ignore
-          let range = document.body.createTextRange();
-          range.moveToElementText(contentElement);
-          range.select();
-      }
-  }
-
-  function content() {
-    return clearText() || paste.content;
+  function lines(): Array<string> | null {
+    const lines = paste().content.split(/\n/g);
+    return lines.length > 1
+      ? lines
+      : null;
   }
 
   return (
     <div class={styles.read}>
 
       <h2>
-        <Show when={paste.isEncrypted} keyed>
-          <Show when={clearText()} keyed fallback={<Lock/>}>
-            <Unlock/>
-          </Show>
+        <Show when={paste().isEncrypted}>
+        <Switch>
+        <Match when={isEncrypted()}>
+          <Lock/>
+        </Match>
+        <Match when={!isEncrypted()}>
+          <Unlock/>
+        </Match>
+        </Switch>
         </Show>
-        {paste.title || 'Untitled'}
+        {paste().title || 'Untitled'}
       </h2>
 
-      <p class={styles.meta}>
-        Created: <time title={toDateTimeString(paste.dateCreated)}>{toDateString(paste.dateCreated)}</time> |
-        Expires: <time>{paste.dateOfExpiry ? toDateTimeString(paste.dateOfExpiry) : 'Never'}</time> |
-        Size: {paste.sizeInBytes} bytes
-        <Show when={paste.views} keyed>
+      <div class={styles.meta}>
+        Created: <time title={toDateTimeString(paste().dateCreated)}>{toDateString(paste().dateCreated)}</time> |
+        Expires: <Show when={paste().dateOfExpiry} fallback={<span>Never</span>}><time>{toDateTimeString(paste().dateOfExpiry)}</time></Show>
+        <Show when={paste().sizeInBytes}> | Size: {paste().sizeInBytes}&nbsp;bytes</Show>
+        <Show when={paste().views}>
         <br />
-        Views: {paste.views} | Last viewed: <time title={toDateTimeString(paste.lastViewed)}>{relativeDiffLabel(paste.lastViewed)}</time>
+        Views: {paste().views} | Last viewed: <time title={toDateTimeString(paste().lastViewed)}>{relativeDiffLabel(paste().lastViewed)}</time>
         </Show>
         <br />
-        <Show when={paste.isPublic && !paste.isEncrypted} keyed> | <a onClick={onCloneClick} href="#" title="Clone"><Clone /></a></Show>
-        <Show when={!paste.isOneTime} keyed> | <a onClick={onCopyClick} href="#" title="Copy" class={styles.clipboard}><CopyToClipboard /></a></Show>
-        <Show when={paste.isErasable} keyed> | <a onClick={onDeleteClick} href="#" title="Delete"><Trash /></a></Show>
-      </p>
+        <a onClick={onCopyLink} href="#" title="Copy link"><Link /></a>
+        <Show when={paste().content && !isEncrypted()}><a onClick={onCopyToClipboard} href="#" title="Copy to clipboard" class={styles.clipboard}><CopyToClipboard /></a></Show>
+        <Show when={paste().isPublic && !paste().isEncrypted}><a onClick={onClone} href="#" title="Clone content"><Clone /></a></Show>
+        <Show when={paste().isErasable}><a onClick={onDelete} href="#" title="Delete item"><Trash /></a></Show>
+      </div>
 
-      <Show when={paste.isEncrypted && !clearText()}>
-        <p class={styles.decrypt}>
-          <strong>ENCRYPTED!</strong> Enter password to decode:
-          &#32;
-          <input ref={keyInput} type="password" onKeyUp={onDecryptSubmit}/>
-          &#32;
-          <button onClick={onDecryptClick}><Key /></button>
-        </p>
+      <Show when={paste().isOneTime}>
+        <div class={styles.onetime}>
+        <Switch>
+          <Match when={paste().content}>
+            <strong>For your eyes only! All information is lost after leaving this page!</strong>
+          </Match>
+          <Match when={!paste().content}>
+            <div><strong>This paste will burn after reading.</strong></div>
+            <button onClick={onBurn}>Reveal content</button>
+          </Match>
+        </Switch>
+        </div>
       </Show>
 
-      <Show when={paste.isOneTime}>
-        <h3 class={styles.onetime}><strong>For your eyes only! This paste has just been burnt after reading.</strong></h3>
-      </Show>
+      <Show when={paste().content} fallback={<div ref={contentElement}></div>}>
+        <Show when={paste().isEncrypted && isEncrypted()}>
+          <div class={styles.encryption}>
+            <strong>Encrypted!</strong> Enter password to decipher:
+            &#32;
+            <input ref={keyInput} type="password" autocomplete="one-time-code" onKeyUp={onDecryptSubmit}/>
+            &#32;
+            <button onClick={onDecryptClick}><Key /></button>
+          </div>
+        </Show>
 
-      <pre ref={contentElement}>
-      <Show when={content().split(/\n/g).length > 1} keyed fallback={<span class={styles.line}>{content()}</span>}>
-      <For each={content().split(/\n/g)}>{line =>
-        <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}<br /></span></span>
-      }
-      </For>
+        <pre ref={contentElement}>
+        <For each={lines()} fallback={<span class={styles.line}>{paste().content}</span>}>{line =>
+          <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}<br /></span></span>
+        }
+        </For>
+        </pre>
       </Show>
-      </pre>
-
     </div>
   )
 }

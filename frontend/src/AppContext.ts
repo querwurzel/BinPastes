@@ -16,16 +16,16 @@ class AppContextImpl implements IAppContext {
   private readonly creationEventHandlers: Array<(paste: PasteView) => void> = [];
   private readonly deletionEventHandlers: Array<(paste: PasteView) => void> = [];
 
-  private pasteCloned: PasteClone = null;
-  private pasteCreated: PasteView = null;
+  private pasteCloned?: PasteClone;
+  private pasteCreated?: PasteView;
 
   pushPasteCloned(data: PasteClone) {
     this.pasteCloned = data;
   }
 
-  popPasteCloned(): PasteClone | null {
+  popPasteCloned() : PasteClone | undefined {
     const holder = this.pasteCloned;
-    this.pasteCloned = null;
+    delete this.pasteCloned;
     return holder;
   }
 
@@ -34,9 +34,9 @@ class AppContextImpl implements IAppContext {
     this.creationEventHandlers.forEach(listener => listener(paste));
   }
 
-  popPasteCreated(): PasteView | null {
+  popPasteCreated() : PasteView | undefined {
     const holder = this.pasteCreated;
-    this.pasteCreated = null;
+    delete this.pasteCreated;
     return holder;
   }
 

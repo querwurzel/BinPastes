@@ -1,4 +1,4 @@
-import {JSX} from 'solid-js';
+import {JSX} from "solid-js";
 
 const Footer: () => JSX.Element = () => {
   return (

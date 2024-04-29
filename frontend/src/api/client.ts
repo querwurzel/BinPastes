@@ -32,7 +32,7 @@ function createPaste(cmd: PasteCreateCmd): Promise<PasteView> {
     });
 }
 
-function findOne(id: string): Promise<PasteView> {
+function findPaste(id: string): Promise<PasteView> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url)
@@ -43,6 +43,21 @@ function findOne(id: string): Promise<PasteView> {
         throw new Error(resp.status.toString())
       }
     })
+}
+
+function findOneTimePaste(id: String): Promise<PasteView> {
+  const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
+
+  return fetch(url, {
+      method: 'POST',
+    })
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json()
+      } else {
+        throw new Error(resp.status.toString())
+      }
+    });
 }
 
 function findAll(): Promise<Array<PasteListView>> {
@@ -60,10 +75,10 @@ function searchAll(term: string): Promise<Array<PasteSearchView>> {
   return fetch(url)
     .then(value => value.json())
     .then(value => value.pastes)
-    .catch(_ => [])
+    .catch(() => [])
 }
 
-function deletePaste(id: string): Promise<void> {
+function deletePaste(id: string): Promise<Response> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url, {
@@ -73,7 +88,8 @@ function deletePaste(id: string): Promise<void> {
 
 const ApiClient = {
   createPaste,
-  findOne,
+  findPaste,
+  findOneTimePaste,
   findAll,
   searchAll,
   deletePaste

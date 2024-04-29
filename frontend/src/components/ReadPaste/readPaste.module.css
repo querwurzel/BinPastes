@@ -1,4 +1,3 @@
-
 .read {
   border: 1px dotted #a5a5a5;
   border-radius: 7px;
@@ -6,9 +5,10 @@
 }
 
 .read h2,
-.read h3,
-.read pre,
-.read p {
+.read .meta,
+.read .encryption,
+.read .onetime,
+.read pre {
   margin: 1rem;
   padding: 0;
 }
@@ -55,9 +55,13 @@
   line-height: 1.5rem;
 }
 
+.read .meta a {
+    margin: 1rem 1rem 0;
+    display: inline-block;
+}
+
 .read .meta svg {
     width: 1rem;
-    margin: 1rem 1.5rem 0 0;
 }
 
 .read .meta svg:hover {
@@ -68,20 +72,33 @@
     fill: green;
 }
 
-.read .onetime {
+.read .onetime strong,
+.read .encryption strong {
   color: red;
+  font-size: 1.2rem;
 }
 
-.read .decrypt input {
+.read .onetime button {
+  margin: 1rem 0 0;
   display: inline-block;
+  color: var(--color-text);
 }
 
-.read .decrypt button {
+.read .encryption {
+    font-size: 1.2rem;
+}
+
+.read .encryption input {
+  display: inline-block;
+  margin: 0;
+}
+
+.read .encryption button {
   margin: 0;
   padding: .5rem;
   display: inline-block;
 }
 
-.read .decrypt button:active {
+.read .encryption button:active {
   background: grey;
 }

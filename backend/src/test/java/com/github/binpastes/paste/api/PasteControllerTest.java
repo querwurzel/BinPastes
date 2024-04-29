@@ -1,6 +1,6 @@
 package com.github.binpastes.paste.api;
 
-import com.github.binpastes.paste.application.PasteService;
+import com.github.binpastes.paste.application.PasteViewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +12,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.TimeUnit;
@@ -21,8 +20,7 @@ import java.util.stream.Stream;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -33,17 +31,17 @@ class PasteControllerTest {
     private WebTestClient webClient;
 
     @MockBean
-    private PasteService pasteService;
+    private PasteViewService pasteViewService;
 
     private static final String samplePasteId = "47116941fd49eda1b6c8abec63dbf8afe2fad088";
 
     @Test
     @DisplayName("GET /{pasteId} - 404 on unknown paste, no caching")
     void findUnknownPaste() {
-        doReturn(Mono.empty()).when(pasteService).find(anyString());
+        doReturn(Mono.empty()).when(pasteViewService).viewPaste(eq(samplePasteId), any());
 
         webClient.get()
-                .uri("/api/v1/paste/" + samplePasteId)
+                .uri("/api/v1/paste/{id}", samplePasteId)
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectHeader().cacheControl(CacheControl.empty());
@@ -52,10 +50,17 @@ class PasteControllerTest {
     @Test
     @DisplayName("GET / - empty list on no results")
     void listPastes() {
-        doReturn(Flux.empty()).when(pasteService).findAll();
+        doReturn(Mono.empty()).when(pasteViewService).viewAllPastes();
 
         webClient.get()
                 .uri("/api/v1/paste")
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().cacheControl(CacheControl.empty())
+                .expectBody().jsonPath("pastes", emptyList());
+
+        webClient.get()
+                .uri("/api/v1/paste/") // trailing slash
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.empty())
@@ -65,7 +70,7 @@ class PasteControllerTest {
     @Test
     @DisplayName("GET /search - term parameter and cache header")
     void searchPastesDecodesParameter() {
-        doReturn(Flux.empty()).when(pasteService).findByFullText(anyString());
+        doReturn(Mono.empty()).when(pasteViewService).searchByFullText(anyString());
 
         webClient.get()
                 .uri("/api/v1/paste/search?term={term}", "%3A-)")
@@ -74,16 +79,16 @@ class PasteControllerTest {
                 .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
                 .expectBody().jsonPath("pastes", emptyList());
 
-        verify(pasteService).findByFullText(eq(":-)"));
+        verify(pasteViewService).searchByFullText(eq(":-)"));
     }
 
     @Test
     @DisplayName("DELETE /{pasteId} - always return 204")
     void deletePaste() {
         webClient.delete()
-                .uri("/api/v1/paste/" + samplePasteId)
+                .uri("/api/v1/paste/{id}", samplePasteId)
                 .exchange()
-                .expectStatus().isNoContent()
+                .expectStatus().isAccepted()
                 .expectBody().isEmpty();
     }
 
@@ -93,6 +98,13 @@ class PasteControllerTest {
     void createPaste(Mono<String> payload) {
         webClient.post()
                 .uri("/api/v1/paste")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload, String.class)
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        webClient.post()
+                .uri("/api/v1/paste/") // trailing slash
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(payload, String.class)
                 .exchange()

@@ -25,6 +25,7 @@ const RecentPastes: () => JSX.Element = () => {
         dateCreated: paste.dateCreated,
         dateOfExpiry: paste.dateOfExpiry,
         isEncrypted: paste.isEncrypted,
+        isPermanent: paste.isPermanent,
         sizeInBytes: paste.sizeInBytes
       };
       mutate(prev => [newItem].concat(prev));

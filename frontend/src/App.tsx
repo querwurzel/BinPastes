@@ -1,10 +1,10 @@
-import {JSX} from 'solid-js';
+import {JSX, Component, ParentProps} from 'solid-js';
 import styles from './App.module.css';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
 
-const App: () => JSX.Element = (props) => {
+const App: Component = (props: ParentProps): JSX.Element => {
   return (
     <>
       <header class={styles.header}>

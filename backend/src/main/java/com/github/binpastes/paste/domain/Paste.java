@@ -21,6 +21,7 @@ public class Paste {
     private String id;
     @Version
     @Column(PasteSchema.VERSION)
+    @SuppressWarnings("FieldCanBeLocal")
     private Long version;
     @Column(PasteSchema.TITLE)
     private String title;
@@ -86,11 +87,11 @@ public class Paste {
         return dateOfExpiry;
     }
 
-    protected PasteExposure getExposure() {
+    private PasteExposure getExposure() {
         return exposure;
     }
 
-    protected String getRemoteAddress() {
+    private String getRemoteAddress() {
         return remoteAddress;
     }
 
@@ -144,13 +145,7 @@ public class Paste {
             setLastViewed(lastViewed);
         }
 
-        setViews(getViews() + 1);
-
-        if (isOneTime()) {
-            markAsExpired();
-        }
-
-        return this;
+        return setViews(getViews() + 1);
     }
 
     public Paste markAsExpired() {

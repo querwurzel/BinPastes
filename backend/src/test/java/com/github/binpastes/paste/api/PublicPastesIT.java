@@ -13,12 +13,13 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,10 +47,10 @@ class PublicPastesIT {
         var paste = givenPublicPaste();
 
         webClient.get()
-                .uri("/api/v1/paste/" + paste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES));
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
     }
 
     @Test
@@ -58,20 +59,20 @@ class PublicPastesIT {
         var paste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                now().plusMinutes(5).minusSeconds(1), // under 5min remaining
+                now().plusMinutes(1).minusSeconds(1), // under 5min remaining
                 false,
                 PasteExposure.PUBLIC,
                 "1.1.1.1"
         ));
 
         webClient.get()
-                .uri("/api/v1/paste/" + paste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().value(
                         HttpHeaders.CACHE_CONTROL,
                         (value) -> assertThat(Long.valueOf(value.replace("max-age=", "")))
-                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(5)));
+                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(1)));
     }
 
     @Test
@@ -118,11 +119,12 @@ class PublicPastesIT {
                               "isPublic": true,
                               "isErasable": true,
                               "isEncrypted": false,
+                              "isPermanent": false,
                               "isOneTime": false,
                               "lastViewed": null,
                               "views": 0
                             }
-                """, false);
+                """);
     }
 
     @Test
@@ -158,12 +160,13 @@ class PublicPastesIT {
                               "isPublic": true,
                               "isErasable": true,
                               "isEncrypted": true,
+                              "isPermanent": true,
                               "isOneTime": false,
                               "dateOfExpiry": null,
                               "lastViewed": null,
                               "views": 0
                             }
-                """, false);
+                """);
     }
 
     @Test
@@ -172,14 +175,15 @@ class PublicPastesIT {
         var paste = givenPublicPaste();
 
         webClient.delete()
-                .uri("/api/v1/paste/" + paste.getId())
-                .header("X-Forwarded-For", "someAuthor")
+                .uri("/api/v1/paste/{id}", paste.getId())
+                .header("X-Forwarded-For", ReflectionTestUtils.getField(paste, "remoteAddress").toString())
                 .exchange()
-                .expectStatus().isNoContent()
+                .expectStatus().isAccepted()
                 .expectBody().isEmpty();
 
-        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
-                .uri("/api/v1/paste/" + paste.getId())
+        waitAtMost(Duration.ofMillis(500)).untilAsserted(() -> webClient
+                .get()
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
                 .expectStatus().isNotFound());
@@ -193,7 +197,7 @@ class PublicPastesIT {
                         null,
                         false,
                         PasteExposure.PUBLIC,
-                        "someAuthor"
+                        "someRemoteAddress"
                 )
         );
     }

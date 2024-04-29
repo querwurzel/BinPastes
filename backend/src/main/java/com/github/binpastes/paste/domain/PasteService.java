@@ -1,8 +1,5 @@
-package com.github.binpastes.paste.application;
+package com.github.binpastes.paste.domain;
 
-import com.github.binpastes.paste.application.tracking.TrackingService;
-import com.github.binpastes.paste.domain.Paste;
-import com.github.binpastes.paste.domain.PasteRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +20,11 @@ public class PasteService {
 
     private static final Logger log = LoggerFactory.getLogger(PasteService.class);
 
-    private final TrackingService trackingService;
     private final PasteRepository pasteRepository;
 
     @Autowired
-    public PasteService(final PasteRepository pasteRepository, final TrackingService trackingService) {
+    public PasteService(final PasteRepository pasteRepository) {
         this.pasteRepository = pasteRepository;
-        this.trackingService = trackingService;
     }
 
     public Mono<Paste> create(
@@ -47,24 +42,21 @@ public class PasteService {
     }
 
     public Mono<Paste> find(String id) {
-        return pasteRepository
-                .findOneLegitById(id)
-                .flatMap(this::trackAccess);
+        return pasteRepository.findOneLegitById(id);
     }
 
-    private Mono<Paste> trackAccess(Paste paste) {
-        var result = Mono.just(paste);
-
-        if (paste.isOneTime()) {
-            return result
-                    .map(p -> p.trackView(LocalDateTime.now()))
-                    .flatMap(pasteRepository::save)
-                    .doOnSuccess(burntPaste -> log.info("OneTime paste {} viewed and burnt", burntPaste.getId()))
-                    .onErrorResume(OptimisticLockingFailureException.class, throwable -> Mono.empty());
-        }
-
-        trackingService.trackView(paste.getId());
-        return result;
+    /**
+     * Requests and expires one-time paste.
+     * @throws IllegalArgumentException if not one-time paste or paste already burnt
+     */
+    public Mono<Paste> findAndBurn(String id) {
+        return pasteRepository.findOneLegitById(id)
+                .filter(Paste::isOneTime)
+                .doOnNext(Paste::markAsExpired)
+                .flatMap(pasteRepository::save)
+                .doOnSuccess(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
+                .onErrorMap(OptimisticLockingFailureException.class, ignored -> new IllegalArgumentException())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException()));
     }
 
     public Flux<Paste> findAll() {
@@ -72,15 +64,23 @@ public class PasteService {
     }
 
     public Flux<Paste> findByFullText(String text) {
-        return pasteRepository
-                .searchAllLegitByFullText(text)
-                // TODO remove when fulltext search is 'good enough'
-                .collectList()
-                .doOnSuccess(pastes -> log.info("Found {} pastes searching for: {}", pastes.size(), text))
-                .flatMapMany(Flux::fromIterable);
+        return pasteRepository.searchAllLegitByFullText(text);
     }
 
-    public void delete(String id, String remoteAddress) {
+    public void trackView(String id, LocalDateTime viewedAt) {
+        pasteRepository
+                .findById(id)
+                .filter(Paste::isPublic) // only track public pastes
+                .map(paste -> paste.trackView(viewedAt))
+                .flatMap(pasteRepository::save)
+                .retryWhen(Retry
+                        .backoff(5, Duration.ofMillis(500))
+                        .filter(ex -> ex instanceof OptimisticLockingFailureException))
+                .subscribeOn(Schedulers.parallel())
+                .subscribe();
+    }
+
+    public void requestDeletion(String id, String remoteAddress) {
         pasteRepository
                 .findOneLegitById(id)
                 .filter(paste -> paste.isErasable(remoteAddress))

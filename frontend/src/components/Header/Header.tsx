@@ -1,5 +1,5 @@
-import {A} from '@solidjs/router';
-import {JSX} from 'solid-js';
+import {A} from "@solidjs/router";
+import {JSX} from "solid-js";
 
 const Header: () => JSX.Element = () => {
   return (

@@ -9,7 +9,7 @@ const Create: () => JSX.Element = () => {
 
   const navigate = useNavigate();
 
-  function onCreatePaste(cmd: PasteCreateCmd): Promise<string> {
+  function createPaste(cmd: PasteCreateCmd): Promise<void> {
     return ApiClient.createPaste(cmd)
       .then(paste => {
         const path = '/paste/' + paste.id;
@@ -17,22 +17,18 @@ const Create: () => JSX.Element = () => {
 
         navigator.clipboard
           .writeText(url)
-          .catch(_ => {});
+          .catch(() => {});
 
         if (paste.isPublic) {
           AppContext.pushPasteCreated(paste);
         }
 
-        if (!paste.isOneTime) {
-          navigate(path);
-        }
-
-        return url;
+        navigate(path);
       });
   }
 
   return (
-    <CreatePaste initialPaste={AppContext.popPasteCloned()} onCreatePaste={onCreatePaste} />
+    <CreatePaste initialPaste={AppContext.popPasteCloned()} onCreatePaste={createPaste} />
   )
 }
 

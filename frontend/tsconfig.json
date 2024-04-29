@@ -12,6 +12,7 @@
     "types": ["vite/client"],
     "noEmit": true,
     "rootDir": "src",
-    "isolatedModules": true
+    "isolatedModules": true,
+    "strict": true
   }
 }

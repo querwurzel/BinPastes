@@ -42,48 +42,53 @@ class OneTimePastesIT {
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - one-time paste is never cached")
-    void getOneTimePaste() {
+    @DisplayName("GET /{pasteId} - one-time paste hides content and discourages caching")
+    void getOneTimePasteHidesContent() {
         var oneTimePaste = givenOneTimePaste();
 
         webClient.get()
-                .uri("/api/v1/paste/" + oneTimePaste.getId())
+                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.noStore());
+                .expectHeader().cacheControl(CacheControl.noStore())
+                .expectBody()
+                .json("""
+                                {
+                                  "title": null,
+                                  "content": null,
+                                  "sizeInBytes": 0
+                                }
+                        """);
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - one-time paste is read-once")
-    void getOneTimePasteTwice() {
-        var oneTimePaste = givenOneTimePaste();
-
-        webClient.get()
-                .uri("/api/v1/paste/" + oneTimePaste.getId())
-                .exchange()
-                .expectStatus().isOk();
-
-        webClient.get()
-                .uri("/api/v1/paste/" + oneTimePaste.getId())
-                .exchange()
-                .expectStatus().isNotFound();
-    }
-
-    @Test
-    @DisplayName("GET /{pasteId} - one-time paste is read-once even under load")
-    void getOneTimePasteConcurrently() {
+    @DisplayName("POST /{pasteId} - one-time paste is only read once even under load")
+    void viewOneTimePasteConcurrently() {
         var oneTimePaste = givenOneTimePaste();
         var okCount = new AtomicInteger();
 
         Runnable call = () -> {
             try {
-                webClient.get()
-                        .uri("/api/v1/paste/" + oneTimePaste.getId())
+                webClient.post()
+                        .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                         .exchange()
-                        .expectStatus().isNotFound();
-            } catch (AssertionError e) {
+                        .expectStatus().isOk()
+                        .expectHeader().cacheControl(CacheControl.noStore())
+                        .expectBody()
+                        .json("""
+                                {
+                                  "title": "%s",
+                                  "content": "%s",
+                                  "sizeInBytes": %d
+                                }
+                                """.formatted(
+                                oneTimePaste.getTitle(),
+                                oneTimePaste.getContent(),
+                                oneTimePaste.getContent().getBytes().length
+                        ));
+
                 okCount.incrementAndGet();
-            }
+            } catch (AssertionError ignored) {}
         };
 
         Stream.generate(() -> call)
@@ -101,7 +106,7 @@ class OneTimePastesIT {
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/")
+                .uri("/api/v1/paste")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("pastes", emptyList());
@@ -110,18 +115,18 @@ class OneTimePastesIT {
     @Test
     @DisplayName("GET /search - one-time paste cannot be searched for")
     void searchAllPastes() {
-        givenOneTimePaste();
+        var oneTimePaste = givenOneTimePaste();
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", "ipsum")
+                .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("pastes", emptyList());
     }
 
     @Test
-    @DisplayName("POST / - one-time paste is created using all options")
+    @DisplayName("POST / - one-time paste is created using all options and hides content")
     void createOneTimePaste() {
         webClient.post()
                 .uri("/api/v1/paste")
@@ -151,35 +156,38 @@ class OneTimePastesIT {
                                 .isAfter(now().plusMonths(3).minusDays(1))
                 )
                 .json("""
-                            {
-                              "title": "someTitle",
-                              "content": "someContent",
-                              "sizeInBytes": 11,
-                              "isPublic": false,
-                              "isErasable": true,
-                              "isEncrypted": true,
-                              "isOneTime": true,
-                              "lastViewed": null,
-                              "views": 0
-                            }
-                """, false);
+                                    {
+                                      "title": null,
+                                      "content": null,
+                                      "sizeInBytes": 0,
+                                      "isPublic": false,
+                                      "isErasable": true,
+                                      "isEncrypted": true,
+                                      "isPermanent": false,
+                                      "isOneTime": true,
+                                      "lastViewed": null,
+                                      "views": 0
+                                    }
+                        """);
     }
 
     @Test
-    @DisplayName("DELETE /{pasteId} - one-time paste might always be deleted before reading")
+    @DisplayName("DELETE /{pasteId} - one-time paste might always be deleted before read")
     void deleteOneTimePaste() {
         var oneTimePaste = givenOneTimePaste();
 
         webClient.delete()
-                .uri("/api/v1/paste/" + oneTimePaste.getId())
+                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                 .exchange()
-                .expectStatus().isNoContent()
+                .expectStatus().isAccepted()
                 .expectBody().isEmpty();
 
-        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient.get()
-                .uri("/api/v1/paste/" + oneTimePaste.getId())
+        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient
+                .get()
+                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                 .exchange()
-                .expectStatus().isNotFound());
+                .expectStatus().isNotFound()
+        );
     }
 
     private Paste givenOneTimePaste() {

@@ -1,5 +1,5 @@
 
-function toDateTimeString(date: string | Date): string {
+function toDateTimeString(date: string | Date): string | null {
   if (!date) {
     return null;
   }
@@ -8,7 +8,7 @@ function toDateTimeString(date: string | Date): string {
   return toTimeString(instant) + ' / ' + toDateString(instant);
 }
 
-function toDateString(date: string | Date): string {
+function toDateString(date: string | Date): string | null {
   if (!date) {
     return null;
   }
@@ -17,7 +17,7 @@ function toDateString(date: string | Date): string {
   return instant.toLocaleDateString(navigator.language || 'en', {day: '2-digit', month: 'long', year: 'numeric'});
 }
 
-function toTimeString(date: string | Date): string {
+function toTimeString(date: string | Date): string | null {
   if (!date) {
     return null;
   }
@@ -26,7 +26,7 @@ function toTimeString(date: string | Date): string {
   return instant.toLocaleTimeString(navigator.language || 'en', {hour: '2-digit', minute: '2-digit'});
 }
 
-function relativeDiffLabel(date: string | Date): string {
+function relativeDiffLabel(date: string | Date): string | null {
   if (!date) {
     return null;
   }
@@ -73,6 +73,8 @@ function relativeDiffLabel(date: string | Date): string {
   if (diffSeconds < 2419200) { // < 4 weeks: (60 * 60 * 24 * 7) * 4
     return Math.trunc(diffSeconds / 604800) + ' weeks ago';
   }
+
+  return toDateString(instant);
 };
 
 function toDate(date: string | Date): Date {

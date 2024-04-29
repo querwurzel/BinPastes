@@ -4,9 +4,7 @@ import com.github.binpastes.paste.api.model.CreateCmd;
 import com.github.binpastes.paste.api.model.DetailView;
 import com.github.binpastes.paste.api.model.ListView;
 import com.github.binpastes.paste.api.model.SearchView;
-import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
-import com.github.binpastes.paste.application.PasteService;
-import com.github.binpastes.paste.domain.Paste;
+import com.github.binpastes.paste.application.PasteViewService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -28,9 +26,6 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
-
-import static com.github.binpastes.paste.api.model.ListView.ListItemView;
 
 @Validated
 @RestController
@@ -39,11 +34,11 @@ class PasteController {
 
     private static final Logger log = LoggerFactory.getLogger(PasteController.class);
 
-    private final PasteService pasteService;
+    private final PasteViewService pasteViewService;
 
     @Autowired
-    public PasteController(final PasteService pasteService) {
-        this.pasteService = pasteService;
+    public PasteController(final PasteViewService pasteViewService) {
+        this.pasteViewService = pasteViewService;
     }
 
     @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
@@ -53,8 +48,8 @@ class PasteController {
             ServerHttpRequest request,
             ServerHttpResponse response
     ) {
-        return pasteService
-                .find(pasteId)
+        return pasteViewService
+                .viewPaste(pasteId, remoteAddress(request))
                 .doOnNext(paste -> {
                     if (paste.isOneTime()) {
                         response.getHeaders().setCacheControl(CacheControl.noStore());
@@ -62,25 +57,32 @@ class PasteController {
                     }
 
                     var now = LocalDateTime.now();
-                    if (paste.isPermanent() || paste.getDateOfExpiry().plusMinutes(5).isAfter(now)) {
+                    if (paste.isPermanent() || paste.dateOfExpiry().plusMinutes(1).isAfter(now)) {
                         response.getHeaders().setCacheControl(
-                                CacheControl.maxAge(5, TimeUnit.MINUTES));
+                                CacheControl.maxAge(Duration.ofMinutes(1)));
                     } else {
                         response.getHeaders().setCacheControl(
-                                CacheControl.maxAge(Duration.between(now, paste.getDateOfExpiry())));
+                                CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry())).mustRevalidate());
                     }
                 })
-                .map(reference -> DetailView.of(reference, remoteAddress(request)))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+    }
+
+    @PostMapping("/{pasteId:[a-zA-Z0-9]{40}}")
+    public Mono<DetailView> findAndBurnOneTimePaste(
+            @PathVariable("pasteId")
+            String pasteId,
+            ServerHttpResponse response
+    ) {
+        response.getHeaders().setCacheControl(CacheControl.noStore());
+        return pasteViewService
+                .viewOneTimePaste(pasteId)
+                .onErrorMap(ignored -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @GetMapping
     public Mono<ListView> findPastes() {
-        return pasteService
-                .findAll()
-                .map(ListItemView::of)
-                .collectList()
-                .map(ListView::of);
+        return pasteViewService.viewAllPastes();
     }
 
     @GetMapping("/search")
@@ -92,33 +94,20 @@ class PasteController {
             final ServerHttpResponse response
     ) {
         var decodedTerm = URLDecoder.decode(term, Charset.defaultCharset());
-        response.getHeaders().setCacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES));
-        return pasteService
-                .findByFullText(decodedTerm)
-                .map(paste -> SearchItemView.of(paste, decodedTerm))
-                .collectList()
-                .map(SearchView::of);
+        response.getHeaders().setCacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
+        return pasteViewService.searchByFullText(decodedTerm);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<DetailView> createPaste(@Valid @RequestBody Mono<CreateCmd> createCmd, ServerHttpRequest request) {
-        return createCmd
-                .flatMap(cmd -> pasteService.create(
-                        cmd.title(),
-                        cmd.content(),
-                        cmd.dateOfExpiry(),
-                        cmd.isEncrypted(),
-                        cmd.pasteExposure(),
-                        remoteAddress(request)
-                ))
-                .map((Paste reference) -> DetailView.of(reference, remoteAddress(request)));
+    public Mono<DetailView> createPaste(@Valid @RequestBody CreateCmd createCmd, ServerHttpRequest request) {
+        return pasteViewService.createPaste(createCmd, remoteAddress(request));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @ResponseStatus(HttpStatus.ACCEPTED)
     public void deletePaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request) {
-        pasteService.delete(pasteId, remoteAddress(request));
+        pasteViewService.requestDeletion(pasteId, remoteAddress(request));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})
