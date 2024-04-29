@@ -61,7 +61,6 @@ public class PasteViewService {
     }
 
     public Mono<DetailView> viewOneTimePaste(String id) {
-        var now = LocalDateTime.now();
         return pasteService.findAndBurn(id)
                 .map(paste -> new DetailView(
                         paste.getId(),
