@@ -54,9 +54,9 @@ class OneTimePastesIT {
                 .expectBody()
                 .json("""
                                 {
-                                  "title": null,
-                                  "content": null,
-                                  "sizeInBytes": 0
+                                    "isErasable":true,
+                                    "isOneTime":true,
+                                    "isPermanent":true
                                 }
                         """);
     }
@@ -88,7 +88,8 @@ class OneTimePastesIT {
                         ));
 
                 okCount.incrementAndGet();
-            } catch (AssertionError ignored) {}
+            } catch (AssertionError ignored) {
+            }
         };
 
         Stream.generate(() -> call)
@@ -157,16 +158,9 @@ class OneTimePastesIT {
                 )
                 .json("""
                                     {
-                                      "title": null,
-                                      "content": null,
-                                      "sizeInBytes": 0,
-                                      "isPublic": false,
                                       "isErasable": true,
                                       "isEncrypted": true,
-                                      "isPermanent": false,
-                                      "isOneTime": true,
-                                      "lastViewed": null,
-                                      "views": 0
+                                      "isOneTime": true
                                     }
                         """);
     }

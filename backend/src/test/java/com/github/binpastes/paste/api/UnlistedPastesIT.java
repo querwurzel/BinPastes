@@ -138,13 +138,8 @@ class UnlistedPastesIT {
                               "title": "someTitle",
                               "content": "someContent",
                               "sizeInBytes": 11,
-                              "isPublic": false,
                               "isErasable": true,
-                              "isEncrypted": true,
-                              "isPermanent": false,
-                              "isOneTime": false,
-                              "lastViewed": null,
-                              "views": 0
+                              "isEncrypted": true
                             }
                 """);
     }

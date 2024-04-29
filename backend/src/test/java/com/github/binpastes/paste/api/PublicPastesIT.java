@@ -113,16 +113,10 @@ class PublicPastesIT {
                             assertThat(parse(dateOfExpiry)).isBefore(now().plusDays(1))
                     ).json("""
                             {
-                              "title": null,
                               "content": "validContent",
                               "sizeInBytes": 12,
                               "isPublic": true,
-                              "isErasable": true,
-                              "isEncrypted": false,
-                              "isPermanent": false,
-                              "isOneTime": false,
-                              "lastViewed": null,
-                              "views": 0
+                              "isErasable": true
                             }
                 """);
     }
@@ -160,11 +154,7 @@ class PublicPastesIT {
                               "isPublic": true,
                               "isErasable": true,
                               "isEncrypted": true,
-                              "isPermanent": true,
-                              "isOneTime": false,
-                              "dateOfExpiry": null,
-                              "lastViewed": null,
-                              "views": 0
+                              "isPermanent": true
                             }
                 """);
     }

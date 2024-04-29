@@ -1,9 +1,12 @@
 package com.github.binpastes.paste.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
 
+@JsonInclude(Include.NON_DEFAULT)
 public record DetailView(
         String id,
         String title,

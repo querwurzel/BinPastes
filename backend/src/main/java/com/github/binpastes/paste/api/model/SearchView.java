@@ -1,5 +1,7 @@
 package com.github.binpastes.paste.api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
@@ -13,6 +15,7 @@ public record SearchView(
         return new SearchView(pastes);
     }
 
+    @JsonInclude(Include.NON_DEFAULT)
     public record SearchItemView(
             String id,
             String title,
