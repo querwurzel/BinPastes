@@ -20,6 +20,10 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
       - name: shell
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
