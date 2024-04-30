@@ -20,6 +20,14 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: shell
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          which npm
+          which node
+          node --version
+
       - name: Build with Maven
         run: ./mvnw clean verify
 
