@@ -23,48 +23,30 @@ function createPaste(cmd: PasteCreateCmd): Promise<PasteView> {
       },
       body: JSON.stringify(cmd)
     })
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json()
-      } else {
-        throw new Error(resp.status.toString())
-      }
-    });
+    .then(resp => toJson(resp));
 }
 
 function findPaste(id: string): Promise<PasteView> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url)
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json()
-      } else {
-        throw new Error(resp.status.toString())
-      }
-    })
+    .then(resp => toJson(resp));
 }
 
 function findOneTimePaste(id: String): Promise<PasteView> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url, {
-      method: 'POST',
+      method: 'POST'
     })
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json()
-      } else {
-        throw new Error(resp.status.toString())
-      }
-    });
+    .then(resp => toJson(resp));
 }
 
 function findAll(): Promise<Array<PasteListView>> {
   const url = new URL('/api/v1/paste', apiBaseUrl());
 
   return fetch(url)
-    .then(value => value.json())
+    .then(resp => toJson(resp))
     .then(value => value.pastes);
 }
 
@@ -73,9 +55,9 @@ function searchAll(term: string): Promise<Array<PasteSearchView>> {
   const url = new URL('/api/v1/paste/search?' + encodeURI(params.toString()), apiBaseUrl());
 
   return fetch(url)
-    .then(value => value.json())
+    .then(resp => toJson(resp))
     .then(value => value.pastes)
-    .catch(() => [])
+    .catch(() => []);
 }
 
 function deletePaste(id: string): Promise<Response> {
@@ -84,6 +66,13 @@ function deletePaste(id: string): Promise<Response> {
   return fetch(url, {
     method: 'DELETE'
   });
+}
+
+function toJson(resp: Response) {
+  if (resp.ok) {
+    return resp.json()
+  }
+  throw new Error(resp.status.toString())
 }
 
 const ApiClient = {
