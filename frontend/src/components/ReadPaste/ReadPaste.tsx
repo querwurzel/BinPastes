@@ -16,7 +16,6 @@ type ReadPasteProps = {
 const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClonePaste, onDeletePaste}): JSX.Element => {
 
   const [paste, setPaste] = createSignal<PasteView>(initialPaste);
-  const [isBurnt, setBurnt] = createSignal<boolean>(false);
   const [isEncrypted, setEncrypted] = createSignal<boolean>(initialPaste.isEncrypted);
 
   let keyInput: HTMLInputElement;
@@ -66,10 +65,7 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
 
   function onBurn(e: Event) {
     onBurnPaste()
-      .then((payload) => {
-        setBurnt(true);
-        setPaste(payload);
-      })
+      .then((payload) => setPaste(payload))
       .catch(() => {});
   }
 
