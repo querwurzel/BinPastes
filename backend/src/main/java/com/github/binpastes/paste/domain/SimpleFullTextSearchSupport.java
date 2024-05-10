@@ -16,13 +16,13 @@ import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
 @Component
-@Order(Ordered.LOWEST_PRECEDENCE)
-class SimpleFullTextSupport implements FullTextSearchSupport {
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
+class SimpleFullTextSearchSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
 
     @Autowired
-    public SimpleFullTextSupport(final R2dbcEntityTemplate entityTemplate) {
+    public SimpleFullTextSearchSupport(final R2dbcEntityTemplate entityTemplate) {
         this.entityTemplate = entityTemplate;
     }
 

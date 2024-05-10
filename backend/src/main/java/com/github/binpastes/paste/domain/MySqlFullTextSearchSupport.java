@@ -13,15 +13,15 @@ import java.time.LocalDateTime;
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
-@Profile("mysql")
 @Component
+@Profile("mysql")
 @Order(0)
-class MySqlFullTextSupport implements FullTextSearchSupport {
+class MySqlFullTextSearchSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
 
     @Autowired
-    public MySqlFullTextSupport(final R2dbcEntityTemplate entityTemplate) {
+    public MySqlFullTextSearchSupport(final R2dbcEntityTemplate entityTemplate) {
         this.entityTemplate = entityTemplate;
     }
 

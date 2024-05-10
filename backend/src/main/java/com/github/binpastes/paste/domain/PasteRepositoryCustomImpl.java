@@ -32,6 +32,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
         this.fullTextSearchSupport = fullTextSearchSupport;
     }
 
+    @Override
     public Mono<Paste> findOneLegitById(String id) {
         var criteria = Criteria
                 .where(PasteSchema.ID).is(id)
@@ -41,10 +42,10 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
                                 .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 );
 
-        return entityTemplate
-                .selectOne(query(criteria), Paste.class);
+        return entityTemplate.selectOne(query(criteria), Paste.class);
     }
 
+    @Override
     public Flux<Paste> findAllLegit() {
         return entityTemplate
                 .select(Paste.class)
@@ -82,13 +83,11 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
         var result = fullTextSearchSupport.getFirst().searchByFullText(text);
 
         for (int idx = 1; idx < fullTextSearchSupport.size(); idx++) {
-            final var alternativeImplementation = fullTextSearchSupport.get(idx);
+            final var alternative = fullTextSearchSupport.get(idx);
 
             result = result.switchIfEmpty(subscriber -> {
-                log.warn("Utilising alternative FullTextSearch implementation {} for: {}", alternativeImplementation.getClass().getSimpleName(), text);
-                alternativeImplementation
-                        .searchByFullText(text)
-                        .subscribe(subscriber);
+                log.warn("Utilising alternative FullTextSearch implementation {} for: {}", alternative.getClass().getSimpleName(), text);
+                alternative.searchByFullText(text).subscribe(subscriber);
             });
         }
 
