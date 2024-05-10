@@ -1,6 +1,7 @@
 package com.github.binpastes.paste.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -15,7 +16,7 @@ import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
 @Component
-@Order
+@Order(Ordered.LOWEST_PRECEDENCE)
 class SimpleFullTextSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;

@@ -27,7 +27,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     private final List<FullTextSearchSupport> fullTextSearchSupport;
 
     public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, List<FullTextSearchSupport> fullTextSearchSupport) {
-        Assert.isTrue(fullTextSearchSupport.size() <= 2, "Expected at most two FullTextSearchSupport implementations"); // ugly, but works for now
+        Assert.notEmpty(fullTextSearchSupport, "Require at least one FullTextSearchSupport implementation");
         this.entityTemplate = entityManager;
         this.fullTextSearchSupport = fullTextSearchSupport;
     }
@@ -79,15 +79,19 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     @Override
     public Flux<Paste> searchAllLegitByFullText(String text) {
-        var flux = fullTextSearchSupport.getFirst().searchByFullText(text);
+        var result = fullTextSearchSupport.getFirst().searchByFullText(text);
 
-        return fullTextSearchSupport.size() == 1
-                ? flux
-                : flux.switchIfEmpty(subscriber -> {
-                    log.warn("Fulltext search found nothing for: {}", text);
-                    fullTextSearchSupport.getLast()
-                            .searchByFullText(text)
-                            .subscribe(subscriber);
-                });
+        for (int idx = 1; idx < fullTextSearchSupport.size(); idx++) {
+            final var alternativeImplementation = fullTextSearchSupport.get(idx);
+
+            result = result.switchIfEmpty(subscriber -> {
+                log.warn("Utilising alternative FullTextSearch implementation {} for: {}", alternativeImplementation.getClass().getSimpleName(), text);
+                alternativeImplementation
+                        .searchByFullText(text)
+                        .subscribe(subscriber);
+            });
+        }
+
+        return result;
     }
 }

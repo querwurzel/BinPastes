@@ -2,6 +2,7 @@ package com.github.binpastes.paste.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -14,6 +15,7 @@ import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 
 @Profile("mysql")
 @Component
+@Order(0)
 class MySqlFullTextSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
