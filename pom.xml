@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.0</version>
+    <version>3.2.6</version>
     <relativePath/><!-- lookup parent from repository -->
   </parent>
 
@@ -44,7 +44,7 @@
     <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
 
     <!-- 3rd-party library versions -->
-    <spring-boot-bom.version>3.3.0</spring-boot-bom.version>
+    <spring-boot-bom.version>3.2.6</spring-boot-bom.version>
     <junixsocket.version>2.9.1</junixsocket.version>
     <flyway.version>10.13.0</flyway.version>
     <artemis.version>2.33.0</artemis.version>
