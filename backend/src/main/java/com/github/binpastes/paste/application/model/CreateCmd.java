@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api.model;
+package com.github.binpastes.paste.application.model;
 
 import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;

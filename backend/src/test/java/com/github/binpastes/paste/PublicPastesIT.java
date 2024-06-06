@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api;
+package com.github.binpastes.paste;
 
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
@@ -13,24 +13,22 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.waitAtMost;
 
 @SpringBootTest
 @AutoConfigureWebTestClient
 @DirtiesContext
-class UnlistedPastesIT {
+class PublicPastesIT {
 
     @Autowired
     private WebTestClient webClient;
@@ -44,31 +42,31 @@ class UnlistedPastesIT {
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - unlisted paste is cached")
-    void getUnlistedPaste() {
-        var unlistedPaste = givenUnlistedPaste();
+    @DisplayName("GET /{pasteId} - public paste is cached")
+    void getPublicPaste() {
+        var paste = givenPublicPaste();
 
         webClient.get()
-                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - unlisted paste is cached only until expiry")
-    void getExpiringUnlistedPaste() {
-        var unlistedPaste = givenPaste(Paste.newInstance(
+    @DisplayName("GET /{pasteId} - public paste is cached only until expiry")
+    void getExpiringPublicPaste() {
+        var paste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(1).minusSeconds(1),
+                now().plusMinutes(1).minusSeconds(1), // under 5min remaining
                 false,
-                PasteExposure.UNLISTED,
+                PasteExposure.PUBLIC,
                 "1.1.1.1"
         ));
 
         webClient.get()
-                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().value(
@@ -78,44 +76,64 @@ class UnlistedPastesIT {
     }
 
     @Test
-    @DisplayName("GET / - unlisted paste is never listed")
+    @DisplayName("GET / - public paste is listed")
     void findAllPastes() {
-        givenUnlistedPaste();
+        givenPublicPaste();
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
                 .uri("/api/v1/paste/")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectBody().jsonPath("$.pastes.length()", 1);
     }
 
     @Test
-    @DisplayName("GET /search - unlisted paste cannot be searched for")
-    void searchAllPastes() {
-        var paste = givenUnlistedPaste();
-
-        assertThat(pasteRepository.count().block()).isOne();
-        webClient.get()
-                .uri("/api/v1/paste/search?term={term}", paste.getTitle())
+    @DisplayName("POST / - public paste is created with minimal input")
+    void createPublicPasteMinimalRequest() {
+            webClient.post()
+                .uri("/api/v1/paste")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Mono.just("""
+                        {
+                            "content": "validContent"
+                        }
+                        """), String.class)
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectStatus().isCreated()
+                .expectHeader().cacheControl(CacheControl.empty())
+                .expectBody()
+                    .jsonPath("$.id").<String>value(id ->
+                            assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                    )
+                    .jsonPath("$.dateCreated").<String>value(dateCreated ->
+                            assertThat(parse(dateCreated)).isBefore(now())
+                    )
+                    .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
+                            assertThat(parse(dateOfExpiry)).isBefore(now().plusDays(1))
+                    ).json("""
+                            {
+                              "content": "validContent",
+                              "sizeInBytes": 12,
+                              "isPublic": true,
+                              "isErasable": true
+                            }
+                """);
     }
 
     @Test
-    @DisplayName("POST / - unlisted paste is created using all options")
-    void createOneTimePaste() {
+    @DisplayName("POST / - public paste is created using all options")
+    void createPublicPasteMaximalRequest() {
         webClient.post()
                 .uri("/api/v1/paste")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just("""
                         {
-                            "title": "someTitle",
+                            "title": "  someTitle  ",
                             "content": "someContent",
-                            "exposure": "UNLISTED",
+                            "exposure": "PUBLIC",
                             "isEncrypted": true,
-                            "expiry": "THREE_MONTHS"
+                            "expiry": "NEVER"
                         }
                         """), String.class)
                 .exchange()
@@ -128,49 +146,48 @@ class UnlistedPastesIT {
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
                         assertThat(parse(dateCreated)).isBefore(now())
                 )
-                .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                        assertThat(parse(dateOfExpiry))
-                                .isBefore(now().plusMonths(3))
-                                .isAfter(now().plusMonths(3).minusDays(1))
-                )
                 .json("""
                             {
                               "title": "someTitle",
                               "content": "someContent",
                               "sizeInBytes": 11,
+                              "isPublic": true,
                               "isErasable": true,
-                              "isEncrypted": true
+                              "isEncrypted": true,
+                              "isPermanent": true
                             }
                 """);
     }
 
     @Test
-    @DisplayName("DELETE /{pasteId} - unlisted paste might always be deleted")
-    void deleteUnlistedPaste() {
-        var unlistedPaste = givenUnlistedPaste();
+    @DisplayName("DELETE /{pasteId} - public paste might be deleted")
+    void deletePublicPaste() {
+        var paste = givenPublicPaste();
 
         webClient.delete()
-                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
+                .header("X-Forwarded-For", ReflectionTestUtils.getField(paste, "remoteAddress").toString())
                 .exchange()
                 .expectStatus().isAccepted()
                 .expectBody().isEmpty();
 
-        waitAtMost(ofMillis(500)).untilAsserted(() -> webClient
+        waitAtMost(Duration.ofMillis(500)).untilAsserted(() -> webClient
                 .get()
-                .uri("/api/v1/paste/{id}", unlistedPaste.getId())
+                .uri("/api/v1/paste/{id}", paste.getId())
+                .header(HttpHeaders.CACHE_CONTROL, CacheControl.noCache().getHeaderValue())
                 .exchange()
                 .expectStatus().isNotFound());
     }
 
-    private Paste givenUnlistedPaste() {
+    private Paste givenPublicPaste() {
         return givenPaste(
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
                         null,
                         false,
-                        PasteExposure.UNLISTED,
-                        "1.1.1.1"
+                        PasteExposure.PUBLIC,
+                        "someRemoteAddress"
                 )
         );
     }

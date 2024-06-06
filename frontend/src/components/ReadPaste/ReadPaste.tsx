@@ -3,7 +3,7 @@ import linkifyElement from 'linkify-element';
 import {PasteView} from '../../api/model/PasteView';
 import {decrypt} from '../../crypto/CryptoUtil';
 import {relativeDiffLabel, toDateString, toDateTimeString} from '../../datetime/DateTimeUtil';
-import {Lock, Unlock, Key, Trash, Link, CopyToClipboard, Clone} from '../../assets/Vectors';
+import {Lock, Unlock, Key, Trash, Link, Copy, Clone} from '../../assets/Vectors';
 import styles from './readPaste.module.css';
 
 type ReadPasteProps = {
@@ -141,8 +141,8 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
         </Show>
         <br />
         <a onClick={onCopyLink} href="#" title="Copy link"><Link /></a>
-        <Show when={paste().content && !isEncrypted()}><a onClick={onCopyToClipboard} href="#" title="Copy to clipboard" class={styles.clipboard}><CopyToClipboard /></a></Show>
-        <Show when={paste().isPublic && !paste().isEncrypted}><a onClick={onClone} href="#" title="Clone content"><Clone /></a></Show>
+        <Show when={paste().content && !isEncrypted()}><a onClick={onCopyToClipboard} href="#" title="Copy content" class={styles.clipboard}><Copy /></a></Show>
+        <Show when={paste().isPublic && !paste().isEncrypted}><a onClick={onClone} href="#" title="Clone paste"><Clone /></a></Show>
         <Show when={paste().isErasable}><a onClick={onDelete} href="#" title="Delete item"><Trash /></a></Show>
       </div>
 

@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api;
+package com.github.binpastes.paste;
 
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.PasteRepository;
