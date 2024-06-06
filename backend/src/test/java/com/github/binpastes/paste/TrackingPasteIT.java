@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api;
+package com.github.binpastes.paste;
 
 import com.github.binpastes.paste.application.tracking.MessagingClient;
 import com.github.binpastes.paste.application.tracking.TrackingService;
@@ -37,7 +37,7 @@ import static org.springframework.test.util.ReflectionTestUtils.setField;
 })
 @AutoConfigureWebTestClient
 @DirtiesContext
-class TrackingIT {
+class TrackingPasteIT {
 
     @Autowired
     private WebTestClient webClient;

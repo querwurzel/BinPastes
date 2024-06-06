@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api;
+package com.github.binpastes.paste;
 
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.PasteRepository;
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @AutoConfigureWebTestClient
 @DirtiesContext
-class SearchPastesIT {
+class SearchPasteIT {
 
     @Autowired
     private WebTestClient webClient;

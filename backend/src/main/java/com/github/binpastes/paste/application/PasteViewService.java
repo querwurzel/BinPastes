@@ -1,11 +1,11 @@
 package com.github.binpastes.paste.application;
 
-import com.github.binpastes.paste.api.model.CreateCmd;
-import com.github.binpastes.paste.api.model.DetailView;
-import com.github.binpastes.paste.api.model.ListView;
-import com.github.binpastes.paste.api.model.ListView.ListItemView;
-import com.github.binpastes.paste.api.model.SearchView;
-import com.github.binpastes.paste.api.model.SearchView.SearchItemView;
+import com.github.binpastes.paste.application.model.CreateCmd;
+import com.github.binpastes.paste.application.model.DetailView;
+import com.github.binpastes.paste.application.model.ListView;
+import com.github.binpastes.paste.application.model.ListView.ListItemView;
+import com.github.binpastes.paste.application.model.SearchView;
+import com.github.binpastes.paste.application.model.SearchView.SearchItemView;
 import com.github.binpastes.paste.application.tracking.TrackingService;
 import com.github.binpastes.paste.domain.PasteService;
 import org.slf4j.Logger;
@@ -13,8 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
 
 @Service
 public class PasteViewService {

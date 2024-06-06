@@ -1,4 +1,4 @@
-package com.github.binpastes.paste.api;
+package com.github.binpastes.paste;
 
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
@@ -28,7 +28,7 @@ import static org.awaitility.Awaitility.waitAtMost;
 @SpringBootTest
 @AutoConfigureWebTestClient
 @DirtiesContext
-class OneTimePastesIT {
+class OneTimePasteIT {
 
     @Autowired
     private WebTestClient webClient;

@@ -1,9 +1,9 @@
 package com.github.binpastes.paste.api;
 
-import com.github.binpastes.paste.api.model.CreateCmd;
-import com.github.binpastes.paste.api.model.DetailView;
-import com.github.binpastes.paste.api.model.ListView;
-import com.github.binpastes.paste.api.model.SearchView;
+import com.github.binpastes.paste.application.model.CreateCmd;
+import com.github.binpastes.paste.application.model.DetailView;
+import com.github.binpastes.paste.application.model.ListView;
+import com.github.binpastes.paste.application.model.SearchView;
 import com.github.binpastes.paste.application.PasteViewService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
