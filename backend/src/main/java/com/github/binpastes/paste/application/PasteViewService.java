@@ -7,6 +7,7 @@ import com.github.binpastes.paste.application.model.ListView.ListItemView;
 import com.github.binpastes.paste.application.model.SearchView;
 import com.github.binpastes.paste.application.model.SearchView.SearchItemView;
 import com.github.binpastes.paste.application.tracking.TrackingService;
+import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.PasteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,21 +38,7 @@ public class PasteViewService {
                 })
                 .map(paste -> {
                     if (paste.isOneTime()) {
-                        return new DetailView(
-                                paste.getId(),
-                                null,
-                                null,
-                                0,
-                                paste.isPublic(),
-                                paste.isErasable(remoteAddress),
-                                paste.isEncrypted(),
-                                paste.isOneTime(),
-                                paste.isPermanent(),
-                                paste.getDateCreated(),
-                                paste.getDateOfExpiry(),
-                                paste.getLastViewed(),
-                                paste.getViews()
-                        );
+                        return toOneTimeView(paste, remoteAddress);
                     } else {
                         return DetailView.of(paste, remoteAddress);
                     }
@@ -94,36 +81,41 @@ public class PasteViewService {
 
     public Mono<DetailView> createPaste(CreateCmd cmd, String remoteAddress) {
         return pasteService.create(
-                cmd.title(),
-                cmd.content(),
-                cmd.dateOfExpiry(),
-                cmd.isEncrypted(),
-                cmd.pasteExposure(),
-                remoteAddress
-        ).map(paste -> {
-            if (paste.isOneTime()) {
-                return new DetailView(
-                        paste.getId(),
-                        null,
-                        null,
-                        0,
-                        paste.isPublic(),
-                        paste.isErasable(remoteAddress),
-                        paste.isEncrypted(),
-                        paste.isOneTime(),
-                        paste.isPermanent(),
-                        paste.getDateCreated(),
-                        paste.getDateOfExpiry(),
-                        paste.getLastViewed(),
-                        paste.getViews()
-                );
-            } else {
-                return DetailView.of(paste, remoteAddress);
-            }
-        });
+                        cmd.title(),
+                        cmd.content(),
+                        cmd.dateOfExpiry(),
+                        cmd.isEncrypted(),
+                        cmd.pasteExposure(),
+                        remoteAddress
+                )
+                .map(paste -> {
+                    if (paste.isOneTime()) {
+                        return toOneTimeView(paste, remoteAddress);
+                    } else {
+                        return DetailView.of(paste, remoteAddress);
+                    }
+                });
     }
 
     public void requestDeletion(String id, String remoteAddress) {
         pasteService.requestDeletion(id, remoteAddress);
+    }
+
+    private static DetailView toOneTimeView(Paste reference, String remoteAddress) {
+        return new DetailView(
+                reference.getId(),
+                null,
+                null,
+                0,
+                reference.isPublic(),
+                reference.isErasable(remoteAddress),
+                reference.isEncrypted(),
+                reference.isOneTime(),
+                reference.isPermanent(),
+                reference.getDateCreated(),
+                reference.getDateOfExpiry(),
+                reference.getLastViewed(),
+                reference.getViews()
+        );
     }
 }

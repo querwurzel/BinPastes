@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 import static java.time.Duration.ofMillis;
-import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +60,7 @@ class UnlistedPasteIT {
         var unlistedPaste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(1).minusSeconds(1),
+                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 false,
                 PasteExposure.UNLISTED,
                 "1.1.1.1"
@@ -106,6 +105,7 @@ class UnlistedPasteIT {
     @Test
     @DisplayName("POST / - unlisted paste is created using all options")
     void createOneTimePaste() {
+        var now = LocalDateTime.now();
         webClient.post()
                 .uri("/api/v1/paste")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -126,12 +126,10 @@ class UnlistedPasteIT {
                         assertThat(id).matches("^[a-zA-Z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isBefore(now())
+                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(now)
                 )
                 .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                        assertThat(parse(dateOfExpiry))
-                                .isBefore(now().plusMonths(3))
-                                .isAfter(now().plusMonths(3).minusDays(1))
+                        assertThat(parse(dateOfExpiry)).isEqualToIgnoringSeconds(now.plusMonths(3))
                 )
                 .json("""
                             {

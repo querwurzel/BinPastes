@@ -18,9 +18,9 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
-import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.waitAtMost;
@@ -59,7 +59,7 @@ class PublicPasteIT {
         var paste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                now().plusMinutes(1).minusSeconds(1), // under 5min remaining
+                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 false,
                 PasteExposure.PUBLIC,
                 "1.1.1.1"
@@ -91,7 +91,8 @@ class PublicPasteIT {
     @Test
     @DisplayName("POST / - public paste is created with minimal input")
     void createPublicPasteMinimalRequest() {
-            webClient.post()
+        var now = LocalDateTime.now();
+        webClient.post()
                 .uri("/api/v1/paste")
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(Mono.just("""
@@ -103,22 +104,22 @@ class PublicPasteIT {
                 .expectStatus().isCreated()
                 .expectHeader().cacheControl(CacheControl.empty())
                 .expectBody()
-                    .jsonPath("$.id").<String>value(id ->
-                            assertThat(id).matches("^[a-zA-Z0-9]{40}$")
-                    )
-                    .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                            assertThat(parse(dateCreated)).isBefore(now())
-                    )
-                    .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                            assertThat(parse(dateOfExpiry)).isBefore(now().plusDays(1))
-                    ).json("""
-                            {
-                              "content": "validContent",
-                              "sizeInBytes": 12,
-                              "isPublic": true,
-                              "isErasable": true
-                            }
-                """);
+                .jsonPath("$.id").<String>value(id ->
+                        assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                )
+                .jsonPath("$.dateCreated").<String>value(dateCreated ->
+                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(now)
+                )
+                .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
+                        assertThat(parse(dateOfExpiry)).isEqualToIgnoringSeconds(now.plusDays(1))
+                ).json("""
+                                    {
+                                      "content": "validContent",
+                                      "sizeInBytes": 12,
+                                      "isPublic": true,
+                                      "isErasable": true
+                                    }
+                        """);
     }
 
     @Test
@@ -144,19 +145,19 @@ class PublicPasteIT {
                         assertThat(id).matches("^[a-zA-Z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isBefore(now())
+                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(LocalDateTime.now())
                 )
                 .json("""
-                            {
-                              "title": "someTitle",
-                              "content": "someContent",
-                              "sizeInBytes": 11,
-                              "isPublic": true,
-                              "isErasable": true,
-                              "isEncrypted": true,
-                              "isPermanent": true
-                            }
-                """);
+                                    {
+                                      "title": "someTitle",
+                                      "content": "someContent",
+                                      "sizeInBytes": 11,
+                                      "isPublic": true,
+                                      "isErasable": true,
+                                      "isEncrypted": true,
+                                      "isPermanent": true
+                                    }
+                        """);
     }
 
     @Test

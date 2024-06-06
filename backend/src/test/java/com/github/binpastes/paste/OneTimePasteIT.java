@@ -15,11 +15,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static java.time.Duration.ofMillis;
-import static java.time.LocalDateTime.now;
 import static java.time.LocalDateTime.parse;
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +42,7 @@ class OneTimePasteIT {
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - one-time paste hides content and discourages caching")
+    @DisplayName("GET /{pasteId} - one-time paste hides title & content and discourages caching")
     void getOneTimePasteHidesContent() {
         var oneTimePaste = givenOneTimePaste();
 
@@ -52,11 +52,14 @@ class OneTimePasteIT {
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.noStore())
                 .expectBody()
+                .jsonPath("$.content").doesNotExist()
+                .jsonPath("$.title").doesNotExist()
+                .jsonPath("$.sizeInBytes").doesNotExist()
                 .json("""
                                 {
-                                    "isErasable":true,
-                                    "isOneTime":true,
-                                    "isPermanent":true
+                                    "isErasable": true,
+                                    "isOneTime": true,
+                                    "isPermanent" :true
                                 }
                         """);
     }
@@ -67,7 +70,7 @@ class OneTimePasteIT {
         var oneTimePaste = givenOneTimePaste();
         var okCount = new AtomicInteger();
 
-        Runnable call = () -> {
+        final Runnable call = () -> {
             try {
                 webClient.post()
                         .uri("/api/v1/paste/{id}", oneTimePaste.getId())
@@ -88,8 +91,7 @@ class OneTimePasteIT {
                         ));
 
                 okCount.incrementAndGet();
-            } catch (AssertionError ignored) {
-            }
+            } catch (AssertionError ignored) {}
         };
 
         Stream.generate(() -> call)
@@ -129,6 +131,7 @@ class OneTimePasteIT {
     @Test
     @DisplayName("POST / - one-time paste is created using all options and hides content")
     void createOneTimePaste() {
+        var now = LocalDateTime.now();
         webClient.post()
                 .uri("/api/v1/paste")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -149,13 +152,14 @@ class OneTimePasteIT {
                         assertThat(id).matches("^[a-zA-Z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isBefore(now())
+                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(now)
                 )
                 .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                        assertThat(parse(dateOfExpiry))
-                                .isBefore(now().plusMonths(3))
-                                .isAfter(now().plusMonths(3).minusDays(1))
+                        assertThat(parse(dateOfExpiry)).isEqualToIgnoringSeconds(now.plusMonths(3))
                 )
+                .jsonPath("$.content").doesNotExist()
+                .jsonPath("$.title").doesNotExist()
+                .jsonPath("$.sizeInBytes").doesNotExist()
                 .json("""
                                     {
                                       "isErasable": true,
