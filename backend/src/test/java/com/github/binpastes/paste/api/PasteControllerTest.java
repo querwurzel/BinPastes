@@ -36,7 +36,7 @@ class PasteControllerTest {
     private static final String samplePasteId = "47116941fd49eda1b6c8abec63dbf8afe2fad088";
 
     @Test
-    @DisplayName("GET /{pasteId} - 404 on unknown paste, no caching")
+    @DisplayName("GET /{pasteId} - 404 on unknown paste, no cacheControl header")
     void findUnknownPaste() {
         doReturn(Mono.empty()).when(pasteViewService).viewPaste(eq(samplePasteId), any());
 
@@ -48,7 +48,7 @@ class PasteControllerTest {
     }
 
     @Test
-    @DisplayName("GET / - empty list on no results")
+    @DisplayName("GET / - empty list, no cacheControl header")
     void listPastes() {
         doReturn(Mono.empty()).when(pasteViewService).viewAllPastes();
 
@@ -68,7 +68,7 @@ class PasteControllerTest {
     }
 
     @Test
-    @DisplayName("GET /search - term parameter and cache header")
+    @DisplayName("GET /search - term parameter url-decoded, cache header set")
     void searchPastesDecodesParameter() {
         doReturn(Mono.empty()).when(pasteViewService).searchByFullText(anyString());
 
@@ -83,7 +83,7 @@ class PasteControllerTest {
     }
 
     @Test
-    @DisplayName("DELETE /{pasteId} - always return 204")
+    @DisplayName("DELETE /{pasteId} - always return 202")
     void deletePaste() {
         webClient.delete()
                 .uri("/api/v1/paste/{id}", samplePasteId)
