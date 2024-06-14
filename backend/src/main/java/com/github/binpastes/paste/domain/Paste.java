@@ -149,13 +149,16 @@ public class Paste {
     }
 
     public Paste markAsExpired() {
-        var now = LocalDateTime.now();
-        var dateOfExpiry = getDateOfExpiry();
-        if (isNull(dateOfExpiry) || now.isBefore(dateOfExpiry)) {
-            return setDateOfExpiry(now);
+        return markAsExpired(LocalDateTime.now());
+    }
+
+    public Paste markAsExpired(LocalDateTime dateOfExpiry) {
+        var currentExpiry = getDateOfExpiry();
+        if (isNull(currentExpiry) || dateOfExpiry.isBefore(currentExpiry)) {
+            return setDateOfExpiry(dateOfExpiry);
         }
 
-        throw new IllegalStateException("Paste has already expired: " + dateOfExpiry);
+        throw new IllegalStateException("Paste has already expired: " + currentExpiry);
     }
 
     protected Paste setId(final String id) {
@@ -229,10 +232,7 @@ public class Paste {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Paste{");
-        sb.append("id='").append(id).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Paste{id='" + id + "'}";
     }
 
     public enum PasteExposure {

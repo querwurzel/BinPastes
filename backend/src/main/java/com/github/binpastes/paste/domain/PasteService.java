@@ -51,9 +51,9 @@ public class PasteService {
     public Mono<Paste> findAndBurn(String id) {
         return pasteRepository.findOneLegitById(id)
                 .filter(Paste::isOneTime)
-                .doOnNext(Paste::markAsExpired)
+                .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnSuccess(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()));
+                .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()));
     }
 
     public Flux<Paste> findAll() {
@@ -78,10 +78,11 @@ public class PasteService {
     }
 
     public void requestDeletion(String id, String remoteAddress) {
+        var now = LocalDateTime.now();
         pasteRepository
                 .findOneLegitById(id)
                 .filter(paste -> paste.isErasable(remoteAddress))
-                .map(Paste::markAsExpired)
+                .map(paste -> paste.markAsExpired(now))
                 .flatMap(pasteRepository::save)
                 .retryWhen(Retry
                         .backoff(5, Duration.ofMillis(500))
