@@ -47,16 +47,13 @@ public class PasteService {
 
     /**
      * Requests and expires one-time paste.
-     * @throws IllegalArgumentException if not one-time paste or paste already burnt
      */
     public Mono<Paste> findAndBurn(String id) {
         return pasteRepository.findOneLegitById(id)
                 .filter(Paste::isOneTime)
                 .doOnNext(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnSuccess(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
-                .onErrorMap(OptimisticLockingFailureException.class, ignored -> new IllegalArgumentException())
-                .switchIfEmpty(Mono.error(new IllegalArgumentException()));
+                .doOnSuccess(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()));
     }
 
     public Flux<Paste> findAll() {

@@ -1,10 +1,10 @@
 package com.github.binpastes.paste.api;
 
+import com.github.binpastes.paste.application.PasteViewService;
 import com.github.binpastes.paste.application.model.CreateCmd;
 import com.github.binpastes.paste.application.model.DetailView;
 import com.github.binpastes.paste.application.model.ListView;
 import com.github.binpastes.paste.application.model.SearchView;
-import com.github.binpastes.paste.application.PasteViewService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -77,7 +77,7 @@ class PasteController {
         response.getHeaders().setCacheControl(CacheControl.noStore());
         return pasteViewService
                 .viewOneTimePaste(pasteId)
-                .onErrorMap(ignored -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @GetMapping
