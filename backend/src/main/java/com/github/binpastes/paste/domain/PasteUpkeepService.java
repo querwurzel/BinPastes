@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 
@@ -20,7 +21,7 @@ class PasteUpkeepService {
         this.pasteRepository = pasteRepository;
     }
 
-    @Scheduled(cron = "0 3 3 * * *" /* 3:03 each day */)
+    @Scheduled(cron = "0 3 3 * * *" /* 3:03am each day */)
     private void cleanUpExpiredPastes() {
         pasteRepository
                 .markExpiredPastesForDeletion()
@@ -32,10 +33,11 @@ class PasteUpkeepService {
                         log.info("Expiry: no expired pastes found");
                     }
                 })
-                .block();
+                .subscribeOn(Schedulers.immediate())
+                .subscribe();
     }
 
-    @Scheduled(cron = "0 4 4 * * *" /* 4:04 each day */)
+    @Scheduled(cron = "0 4 4 * * *" /* 4:04am each day */)
     private void cleanUpDeletedPastes() {
         pasteRepository
                 .deleteByDateDeletedBefore(LocalDateTime.now().minusMonths(6))
@@ -47,7 +49,7 @@ class PasteUpkeepService {
                         log.info("Deletion: no qualified pastes found for deletion");
                     }
                 })
-                .block();
+                .subscribeOn(Schedulers.immediate())
+                .subscribe();
     }
-
 }

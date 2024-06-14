@@ -44,7 +44,11 @@ public class WebServerConfig implements WebFluxConfigurer {
      * This gives back control to the SPA (index.html) for paths/routes that are not served by the backend.
      */
     @Bean
-    public RouterFunctionMapping indexRoute(@Value("static/index.html") final ClassPathResource indexHtml) {
+    public RouterFunctionMapping indexRoute(
+            @Value("static/index.html")
+            final ClassPathResource indexHtml,
+            final RouterFunctionMapping welcomePageRouterFunctionMapping
+    ) {
         Assert.isTrue(indexHtml.exists(), "index.html must exist");
 
         var route = route(RequestPredicates
@@ -58,7 +62,8 @@ public class WebServerConfig implements WebFluxConfigurer {
                 request -> ok().contentType(MediaType.TEXT_HTML).bodyValue(indexHtml));
 
         var routerFunctionMapping = new RouterFunctionMapping(route);
-        routerFunctionMapping.setOrder(500); // after WelcomePageRouterFunctionMapping (order:1)
+        routerFunctionMapping.setOrder(
+                welcomePageRouterFunctionMapping.getOrder() * 10); // after WelcomePageRouterFunctionMapping (order:1)
         return routerFunctionMapping;
     }
 
@@ -66,5 +71,4 @@ public class WebServerConfig implements WebFluxConfigurer {
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
         registry.setOrder(Ordered.LOWEST_PRECEDENCE - 147483647);
     }
-
 }
