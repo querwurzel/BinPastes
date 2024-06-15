@@ -10,6 +10,7 @@ import org.apache.activemq.artemis.core.config.CoreAddressConfiguration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -25,7 +26,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 class MessagingConfig {
 
     @Bean
-    @DependsOn("flywayInitializer")
+    @DependsOnDatabaseInitialization
     public MessagingClient messagingClient(
             ClientSessionFactory clientSessionFactory,
             Scheduler consumerThreadPool,
