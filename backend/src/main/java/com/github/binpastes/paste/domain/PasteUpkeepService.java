@@ -25,7 +25,8 @@ class PasteUpkeepService {
     private void cleanUpExpiredPastes() {
         pasteRepository
                 .markExpiredPastesForDeletion()
-                .doFirst(() -> log.info("Expiry: marking expired pastes for deletion .."))
+                .publishOn(Schedulers.parallel())
+                .doFirst(() -> log.info("Expiry: marking expired pastes for deletion"))
                 .doOnSuccess(count -> {
                     if (count > 0) {
                         log.warn("Expiry: found {} expired pastes, now marked for deletion", count);
@@ -33,7 +34,6 @@ class PasteUpkeepService {
                         log.info("Expiry: no expired pastes found");
                     }
                 })
-                .subscribeOn(Schedulers.immediate())
                 .subscribe();
     }
 
@@ -41,7 +41,8 @@ class PasteUpkeepService {
     private void cleanUpDeletedPastes() {
         pasteRepository
                 .deleteByDateDeletedBefore(LocalDateTime.now().minusMonths(6))
-                .doFirst(() -> log.info("Deletion: deleting pastes marked for deletion .."))
+                .publishOn(Schedulers.parallel())
+                .doFirst(() -> log.info("Deletion: deleting pastes marked for deletion"))
                 .doOnSuccess(count -> {
                     if (count > 0) {
                         log.warn("Deletion: deleted {} pastes", count);
@@ -49,7 +50,6 @@ class PasteUpkeepService {
                         log.info("Deletion: no qualified pastes found for deletion");
                     }
                 })
-                .subscribeOn(Schedulers.immediate())
                 .subscribe();
     }
 }

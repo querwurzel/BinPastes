@@ -59,10 +59,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-core-client</artifactId>
-        </dependency>
 
         <!-- testing -->
         <dependency>
