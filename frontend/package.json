@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "@types/crypto-js": "4.2.2",
-    "pnpm": "9.6.0",
+    "pnpm": "9.7.0",
     "typescript": "5.5.4",
-    "vite": "5.3.5",
+    "vite": "5.4.0",
     "vite-plugin-solid": "2.10.2"
   },
   "dependencies": {
