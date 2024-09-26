@@ -44,9 +44,9 @@ class PasteController {
     @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     public Mono<DetailView> findPaste(
             @PathVariable("pasteId")
-            String pasteId,
-            ServerHttpRequest request,
-            ServerHttpResponse response
+            final String pasteId,
+            final ServerHttpRequest request,
+            final ServerHttpResponse response
     ) {
         return pasteViewService
                 .viewPaste(pasteId, remoteAddress(request))
@@ -71,8 +71,8 @@ class PasteController {
     @PostMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     public Mono<DetailView> findAndBurnOneTimePaste(
             @PathVariable("pasteId")
-            String pasteId,
-            ServerHttpResponse response
+            final String pasteId,
+            final ServerHttpResponse response
     ) {
         response.getHeaders().setCacheControl(CacheControl.noStore());
         return pasteViewService
@@ -100,23 +100,23 @@ class PasteController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<DetailView> createPaste(@Valid @RequestBody CreateCmd createCmd, ServerHttpRequest request) {
+    public Mono<DetailView> createPaste(@Valid @RequestBody final CreateCmd createCmd, final ServerHttpRequest request) {
         return pasteViewService.createPaste(createCmd, remoteAddress(request));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deletePaste(@PathVariable("pasteId") String pasteId, ServerHttpRequest request) {
+    public void deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
         pasteViewService.requestDeletion(pasteId, remoteAddress(request));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    private void handleValidationException(RuntimeException e) {
+    private void handleValidationException(final RuntimeException e) {
         log.info("Received invalid request [{}]: {}", e.getClass().getSimpleName(), e.getMessage());
     }
 
-    private static String remoteAddress(ServerHttpRequest request) {
+    private static String remoteAddress(final ServerHttpRequest request) {
         if (request.getHeaders().containsKey("X-Forwarded-For")) {
             return request.getHeaders().getFirst("X-Forwarded-For");
         }
