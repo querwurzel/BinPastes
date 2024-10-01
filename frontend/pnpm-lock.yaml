@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@solidjs/router':
-        specifier: 0.14.5
-        version: 0.14.5(solid-js@1.9.1)
+        specifier: 0.14.7
+        version: 0.14.7(solid-js@1.9.1)
       crypto-js:
         specifier: 4.2.0
         version: 4.2.0
@@ -386,8 +386,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@solidjs/router@0.14.5':
-    resolution: {integrity: sha512-J8ZMntnkDvNCSO9n4HyhlQlGdxYa1mandQLt5LMd0YiWAXGlYzjj+bB+OVtzsH1woWfoEJlVnBnGkMpf2lY/ig==}
+  '@solidjs/router@0.14.7':
+    resolution: {integrity: sha512-agLf8AUz5XnW6+F64a4Iq+QQQobI5zGHQ/gUYd/WHSwcbnFpavbsiwRLob3YhWMXVX3sQyn4ekUN+uchMCRupw==}
     peerDependencies:
       solid-js: ^1.8.6
 
@@ -946,7 +946,7 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.22.4':
     optional: true
 
-  '@solidjs/router@0.14.5(solid-js@1.9.1)':
+  '@solidjs/router@0.14.7(solid-js@1.9.1)':
     dependencies:
       solid-js: 1.9.1
 
