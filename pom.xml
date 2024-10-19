@@ -41,7 +41,7 @@
     <!-- maven plugin versions -->
     <maven-frontend-plugin.version>1.15.1</maven-frontend-plugin.version>
     <maven-wrapper-plugin.version>3.3.2</maven-wrapper-plugin.version>
-    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+    <maven-jacoco-plugin.version>0.8.12</maven-jacoco-plugin.version>
 
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.3.4</spring-boot-bom.version>
@@ -68,7 +68,7 @@
         <plugin>
           <groupId>org.jacoco</groupId>
           <artifactId>jacoco-maven-plugin</artifactId>
-          <version>${jacoco-maven-plugin.version}</version>
+          <version>${maven-jacoco-plugin.version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
