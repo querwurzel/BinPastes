@@ -1,6 +1,7 @@
 package com.github.binpastes.paste.domain;
 
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
+import org.assertj.core.data.TemporalUnitWithinOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -8,6 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -86,8 +88,8 @@ class PasteTest {
         } else {
             paste.markAsExpired();
 
-            assertThat(paste.getDateOfExpiry().withSecond(0).withNano(0))
-                    .isEqualTo(LocalDateTime.now().withSecond(0).withNano(0));
+            assertThat(paste.getDateOfExpiry())
+                    .isCloseTo(LocalDateTime.now(), new TemporalUnitWithinOffset(59, ChronoUnit.SECONDS));
         }
     }
 
