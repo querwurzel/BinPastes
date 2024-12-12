@@ -97,8 +97,8 @@ public class PasteViewService {
                 });
     }
 
-    public void requestDeletion(String id, String remoteAddress) {
-        pasteService.requestDeletion(id, remoteAddress);
+    public Mono<Void> requestDeletion(String id, String remoteAddress) {
+        return pasteService.requestDeletion(id, remoteAddress);
     }
 
     private static DetailView toOneTimeView(Paste reference, String remoteAddress) {

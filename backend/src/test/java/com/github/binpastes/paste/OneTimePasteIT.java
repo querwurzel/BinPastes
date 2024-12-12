@@ -177,7 +177,7 @@ class OneTimePasteIT {
         webClient.delete()
                 .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                 .exchange()
-                .expectStatus().isAccepted()
+                .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
         waitAtMost(ofMillis(500)).untilAsserted(() -> webClient

@@ -105,9 +105,9 @@ class PasteController {
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    public void deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
-        pasteViewService.requestDeletion(pasteId, remoteAddress(request));
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public Mono<Void> deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
+        return pasteViewService.requestDeletion(pasteId, remoteAddress(request));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})

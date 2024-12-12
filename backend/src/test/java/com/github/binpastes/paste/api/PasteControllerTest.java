@@ -88,7 +88,7 @@ class PasteControllerTest {
         webClient.delete()
                 .uri("/api/v1/paste/{id}", samplePasteId)
                 .exchange()
-                .expectStatus().isAccepted()
+                .expectStatus().isNoContent()
                 .expectBody().isEmpty();
     }
 

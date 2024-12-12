@@ -77,9 +77,9 @@ public class PasteService {
                 .subscribe();
     }
 
-    public void requestDeletion(String id, String remoteAddress) {
+    public Mono<Void> requestDeletion(String id, String remoteAddress) {
         var now = LocalDateTime.now();
-        pasteRepository
+        return pasteRepository
                 .findOneLegitById(id)
                 .filter(paste -> paste.isErasable(remoteAddress))
                 .map(paste -> paste.markAsExpired(now))
@@ -88,7 +88,6 @@ public class PasteService {
                         .backoff(5, Duration.ofMillis(500))
                         .filter(ex -> ex instanceof OptimisticLockingFailureException))
                 .doOnNext(paste -> log.info("Deleted paste {} on behalf of {}", paste.getId(), remoteAddress))
-                .subscribeOn(Schedulers.parallel())
-                .subscribe();
+                .then();
     }
 }

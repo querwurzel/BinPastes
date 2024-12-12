@@ -169,7 +169,7 @@ class PublicPasteIT {
                 .uri("/api/v1/paste/{id}", paste.getId())
                 .header("X-Forwarded-For", ReflectionTestUtils.getField(paste, "remoteAddress").toString())
                 .exchange()
-                .expectStatus().isAccepted()
+                .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
         waitAtMost(Duration.ofMillis(500)).untilAsserted(() -> webClient

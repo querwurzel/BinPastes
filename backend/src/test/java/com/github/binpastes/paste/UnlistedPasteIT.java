@@ -150,7 +150,7 @@ class UnlistedPasteIT {
         webClient.delete()
                 .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
-                .expectStatus().isAccepted()
+                .expectStatus().isNoContent()
                 .expectBody().isEmpty();
 
         waitAtMost(ofMillis(500)).untilAsserted(() -> webClient
