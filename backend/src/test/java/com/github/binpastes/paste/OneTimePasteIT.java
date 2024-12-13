@@ -85,7 +85,7 @@ class OneTimePasteIT {
                                   "sizeInBytes": %d
                                 }
                                 """.formatted(
-                                oneTimePaste.getTitle(),
+                                oneTimePaste.getTitle().get(),
                                 oneTimePaste.getContent(),
                                 oneTimePaste.getContent().getBytes().length
                         ));

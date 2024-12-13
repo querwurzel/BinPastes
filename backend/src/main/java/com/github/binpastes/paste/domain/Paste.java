@@ -9,6 +9,7 @@ import org.springframework.data.relational.core.mapping.Table;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 import static java.util.Objects.isNull;
@@ -75,16 +76,16 @@ public class Paste {
         return this.dateCreated;
     }
 
-    public String getTitle() {
-        return title;
+    public Optional<String> getTitle() {
+        return Optional.ofNullable(title);
     }
 
     public String getContent() {
         return content;
     }
 
-    public LocalDateTime getDateOfExpiry() {
-        return dateOfExpiry;
+    public Optional<LocalDateTime> getDateOfExpiry() {
+        return Optional.ofNullable(dateOfExpiry);
     }
 
     private PasteExposure getExposure() {
@@ -95,8 +96,8 @@ public class Paste {
         return remoteAddress;
     }
 
-    public LocalDateTime getLastViewed() {
-        return lastViewed;
+    public Optional<LocalDateTime> getLastViewed() {
+        return Optional.ofNullable(lastViewed);
     }
 
     public long getViews() {
@@ -120,7 +121,7 @@ public class Paste {
     }
 
     public boolean isPermanent() {
-        return isNull(this.dateOfExpiry);
+        return getDateOfExpiry().isEmpty();
     }
 
     public boolean isErasable(String remoteAddress) {
@@ -141,7 +142,7 @@ public class Paste {
 
     public Paste trackView(LocalDateTime lastViewed) {
         var currentLastViewed = getLastViewed();
-        if (isNull(currentLastViewed) || currentLastViewed.isBefore(lastViewed)) {
+        if (currentLastViewed.isEmpty() || currentLastViewed.get().isBefore(lastViewed)) {
             setLastViewed(lastViewed);
         }
 
@@ -154,11 +155,11 @@ public class Paste {
 
     public Paste markAsExpired(LocalDateTime dateOfExpiry) {
         var currentExpiry = getDateOfExpiry();
-        if (isNull(currentExpiry) || dateOfExpiry.isBefore(currentExpiry)) {
+        if (currentExpiry.isEmpty() || dateOfExpiry.isBefore(currentExpiry.get())) {
             return setDateOfExpiry(dateOfExpiry);
         }
 
-        throw new IllegalStateException("Paste has already expired: " + currentExpiry);
+        throw new IllegalStateException("Paste has already expired: " + currentExpiry.get());
     }
 
     protected Paste setId(final String id) {

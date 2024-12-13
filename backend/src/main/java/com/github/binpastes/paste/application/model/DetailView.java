@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @JsonInclude(Include.NON_DEFAULT)
 public record DetailView(
         String id,
-        String title,
+        Optional<String> title,
         String content,
         int sizeInBytes,
         boolean isPublic,
@@ -18,8 +19,8 @@ public record DetailView(
         boolean isOneTime,
         boolean isPermanent,
         LocalDateTime dateCreated,
-        LocalDateTime dateOfExpiry,
-        LocalDateTime lastViewed,
+        Optional<LocalDateTime> dateOfExpiry,
+        Optional<LocalDateTime> lastViewed,
         long views
 ) {
     public static DetailView of(final Paste reference, final String remoteAddress) {

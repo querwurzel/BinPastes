@@ -42,7 +42,7 @@ class PasteTest {
 
         assertThat(newPaste.getId()).isNotEmpty();
         assertThat(newPaste.getViews()).isZero();
-        assertThat(newPaste.getLastViewed()).isNull();
+        assertThat(newPaste.getLastViewed()).isEmpty();
     }
 
     @Test
@@ -66,7 +66,7 @@ class PasteTest {
         newPaste.trackView(today);
         newPaste.trackView(yesterday);
 
-        assertThat(newPaste.getLastViewed()).isEqualTo(today);
+        assertThat(newPaste.getLastViewed().get()).isEqualTo(today);
         assertThat(newPaste.getViews()).isEqualTo(2);
     }
 
@@ -84,11 +84,11 @@ class PasteTest {
 
         if (exceptionExpected) {
             assertThrows(IllegalStateException.class, paste::markAsExpired);
-            assertThat(paste.getDateOfExpiry()).isEqualTo(dateOfExpiry);
+            assertThat(paste.getDateOfExpiry().get()).isEqualTo(dateOfExpiry);
         } else {
             paste.markAsExpired();
 
-            assertThat(paste.getDateOfExpiry())
+            assertThat(paste.getDateOfExpiry().get())
                     .isCloseTo(LocalDateTime.now(), new TemporalUnitWithinOffset(59, ChronoUnit.SECONDS));
         }
     }

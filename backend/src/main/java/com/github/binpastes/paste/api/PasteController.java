@@ -57,12 +57,12 @@ class PasteController {
                     }
 
                     var now = LocalDateTime.now();
-                    if (paste.isPermanent() || paste.dateOfExpiry().plusMinutes(1).isAfter(now)) {
+                    if (paste.isPermanent() || paste.dateOfExpiry().get().plusMinutes(1).isAfter(now)) {
                         response.getHeaders().setCacheControl(
                                 CacheControl.maxAge(Duration.ofMinutes(1)));
                     } else {
                         response.getHeaders().setCacheControl(
-                                CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry())).mustRevalidate());
+                                CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry().get())).mustRevalidate());
                     }
                 })
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));

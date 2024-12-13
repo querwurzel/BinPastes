@@ -6,6 +6,7 @@ import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public record ListView(
         List<ListItemView> pastes
@@ -17,12 +18,12 @@ public record ListView(
     @JsonInclude(Include.NON_DEFAULT)
     public record ListItemView(
             String id,
-            String title,
+            Optional<String> title,
             int sizeInBytes,
             boolean isEncrypted,
             boolean isPermanent,
             LocalDateTime dateCreated,
-            LocalDateTime dateOfExpiry
+            Optional<LocalDateTime> dateOfExpiry
     ) {
         public static ListItemView of(final Paste reference) {
             return new ListItemView(

@@ -6,6 +6,7 @@ import com.github.binpastes.paste.domain.Paste;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public record SearchView(
         List<SearchItemView> pastes
@@ -18,11 +19,11 @@ public record SearchView(
     @JsonInclude(Include.NON_DEFAULT)
     public record SearchItemView(
             String id,
-            String title,
+            Optional<String> title,
             String highlight,
             int sizeInBytes,
             LocalDateTime dateCreated,
-            LocalDateTime dateOfExpiry
+            Optional<LocalDateTime> dateOfExpiry
     ) {
 
         private static final short HIGHLIGHT_RANGE = 30;
