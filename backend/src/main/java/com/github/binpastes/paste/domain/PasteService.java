@@ -32,11 +32,11 @@ public class PasteService {
             String content,
             LocalDateTime dateOfExpiry,
             boolean isEncrypted,
-            String exposure,
+            PasteExposure exposure,
             String remoteAddress
     ) {
         return pasteRepository
-                .save(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, PasteExposure.valueOf(exposure), remoteAddress))
+                .save(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress))
                 .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
                 .doOnError(throwable -> log.error("Failed to create new paste", throwable));
     }

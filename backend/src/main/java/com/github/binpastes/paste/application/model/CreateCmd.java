@@ -1,5 +1,6 @@
 package com.github.binpastes.paste.application.model;
 
+import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,14 +19,14 @@ public final class CreateCmd {
     private final String content;
     private final Boolean isEncrypted;
     private final ExpirationRange expiry;
-    private final Exposure exposure;
+    private final Paste.PasteExposure exposure;
 
-    public CreateCmd(
+    private CreateCmd(
             final String title,
             final String content,
             final Boolean isEncrypted,
             final ExpirationRange expiry,
-            final Exposure exposure
+            final Paste.PasteExposure exposure
     ) {
         this.title = title;
         this.content = content;
@@ -54,16 +55,10 @@ public final class CreateCmd {
                 : expiry.toTimestamp();
     }
 
-    public String pasteExposure() {
+    public Paste.PasteExposure pasteExposure() {
         return exposure == null
-                ? Exposure.PUBLIC.name() // default exposure if not set
-                : exposure.name();
-    }
-
-    private enum Exposure {
-        PUBLIC,
-        UNLISTED,
-        ONCE
+                ? Paste.PasteExposure.PUBLIC // default exposure if not set
+                : exposure;
     }
 
     private enum ExpirationRange {
