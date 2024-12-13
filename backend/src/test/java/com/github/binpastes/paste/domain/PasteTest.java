@@ -66,7 +66,7 @@ class PasteTest {
         newPaste.trackView(today);
         newPaste.trackView(yesterday);
 
-        assertThat(newPaste.getLastViewed().get()).isEqualTo(today);
+        assertThat(newPaste.getLastViewed()).hasValue(today);
         assertThat(newPaste.getViews()).isEqualTo(2);
     }
 
@@ -84,7 +84,7 @@ class PasteTest {
 
         if (exceptionExpected) {
             assertThrows(IllegalStateException.class, paste::markAsExpired);
-            assertThat(paste.getDateOfExpiry().get()).isEqualTo(dateOfExpiry);
+            assertThat(paste.getDateOfExpiry()).hasValue(dateOfExpiry);
         } else {
             paste.markAsExpired();
 
