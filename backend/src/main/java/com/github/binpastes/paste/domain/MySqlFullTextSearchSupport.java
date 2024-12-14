@@ -1,9 +1,11 @@
 package com.github.binpastes.paste.domain;
 
+import io.r2dbc.spi.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
+import org.springframework.data.relational.domain.RowDocument;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -17,6 +19,8 @@ import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 @Profile("mysql")
 @Order(0)
 class MySqlFullTextSearchSupport implements FullTextSearchSupport {
+
+    private static final Byte ONE = (byte) 1;
 
     private final R2dbcEntityTemplate entityTemplate;
 
@@ -48,6 +52,9 @@ class MySqlFullTextSearchSupport implements FullTextSearchSupport {
                             .execute()
                 ))
                 .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row) -> {
+
+                    // TODO Paste bla = entityTemplate.getConverter().read(Paste.class, (Row) row);
+
                     var paste = new Paste();
                     paste.setId(row.get(PasteSchema.ID, String.class));
                     paste.setVersion(row.get(PasteSchema.VERSION, Long.class));
@@ -56,7 +63,7 @@ class MySqlFullTextSearchSupport implements FullTextSearchSupport {
                             ? null
                             : row.get(PasteSchema.TITLE, String.class));
                     paste.setContent(row.get(PasteSchema.CONTENT, String.class));
-                    paste.setIsEncrypted(row.get(PasteSchema.IS_ENCRYPTED, Byte.class) == (byte)1);
+                    paste.setIsEncrypted(ONE.equals(row.get(PasteSchema.IS_ENCRYPTED, Byte.class)));
                     paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE, String.class)));
 
                     paste.setDateCreated(row.get(PasteSchema.DATE_CREATED, LocalDateTime.class));
