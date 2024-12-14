@@ -69,8 +69,9 @@ class OneTimePasteIT {
     void viewOneTimePasteConcurrently() {
         var oneTimePaste = givenOneTimePaste();
         var okCount = new AtomicInteger();
+        var notFoundCount = new AtomicInteger();
 
-        final Runnable call = () -> {
+        final Runnable call = new Thread(() -> {
             try {
                 webClient.post()
                         .uri("/api/v1/paste/{id}", oneTimePaste.getId())
@@ -91,15 +92,21 @@ class OneTimePasteIT {
                         ));
 
                 okCount.incrementAndGet();
-            } catch (AssertionError ignored) {}
-        };
+            } catch (AssertionError ex) {
+                if (ex.getMessage().contains("404")) {
+                    notFoundCount.incrementAndGet();
+                }
+            }
+        });
 
         Stream.generate(() -> call)
-                .parallel()
                 .limit(100)
+                .toList()
+                .parallelStream()
                 .forEach(Runnable::run);
 
         assertThat(okCount.get()).isOne();
+        assertThat(notFoundCount.get()).isEqualTo(100 - 1);
     }
 
     @Test
@@ -193,9 +200,9 @@ class OneTimePasteIT {
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
-                        null,
                         false,
                         PasteExposure.ONCE,
+                        null,
                         "1.1.1.1"
                 )
         );

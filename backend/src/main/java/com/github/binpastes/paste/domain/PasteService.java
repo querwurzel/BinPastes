@@ -36,7 +36,7 @@ public class PasteService {
             String remoteAddress
     ) {
         return pasteRepository
-                .save(Paste.newInstance(title, content, dateOfExpiry, isEncrypted, exposure, remoteAddress))
+                .save(Paste.newInstance(title, content, isEncrypted, exposure, dateOfExpiry, remoteAddress))
                 .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
                 .doOnError(throwable -> log.error("Failed to create new paste", throwable));
     }
@@ -53,7 +53,8 @@ public class PasteService {
                 .filter(Paste::isOneTime)
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
-                .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()));
+                .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
+                .onErrorComplete(OptimisticLockingFailureException.class);
     }
 
     public Flux<Paste> findAll() {
@@ -78,11 +79,10 @@ public class PasteService {
     }
 
     public Mono<Void> requestDeletion(String id, String remoteAddress) {
-        var now = LocalDateTime.now();
         return pasteRepository
                 .findOneLegitById(id)
                 .filter(paste -> paste.isErasable(remoteAddress))
-                .map(paste -> paste.markAsExpired(now))
+                .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
                 .retryWhen(Retry
                         .backoff(5, Duration.ofMillis(500))

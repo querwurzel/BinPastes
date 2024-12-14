@@ -59,9 +59,9 @@ class PublicPasteIT {
         var paste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 false,
                 PasteExposure.PUBLIC,
+                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 "1.1.1.1"
         ));
 
@@ -185,9 +185,9 @@ class PublicPasteIT {
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
-                        null,
                         false,
                         PasteExposure.PUBLIC,
+                        null,
                         "someRemoteAddress"
                 )
         );

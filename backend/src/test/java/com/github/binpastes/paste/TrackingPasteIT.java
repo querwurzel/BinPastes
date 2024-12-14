@@ -81,12 +81,12 @@ class TrackingPasteIT {
         Flux.fromStream(Stream.generate(intialPaste::getId))
                 .take(concurrency)
                 .doOnNext(trackingService::trackView)
-                // simulate a concurrent update
                 .doOnNext(id -> pasteRepository.findById(id)
                         .doOnNext(paste -> setField(paste, "remoteAddress", String.valueOf(random.nextInt())))
-                        .flatMap(paste -> pasteRepository.save(paste))
+                        .flatMap(paste -> pasteRepository.save(paste)) // simulate a concurrent update
                         .retry()
-                        .subscribe())
+                        .subscribe()
+                )
                 .subscribeOn(Schedulers.parallel())
                 .subscribe();
 
@@ -114,9 +114,9 @@ class TrackingPasteIT {
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
-                        null,
                         false,
                         PasteExposure.PUBLIC,
+                        null,
                         "someRemoteAddress"
                 )
         );

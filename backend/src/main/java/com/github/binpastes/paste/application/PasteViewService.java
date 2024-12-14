@@ -47,21 +47,7 @@ public class PasteViewService {
 
     public Mono<DetailView> viewOneTimePaste(String id) {
         return pasteService.findAndBurn(id)
-                .map(paste -> new DetailView(
-                        paste.getId(),
-                        paste.getTitle(),
-                        paste.getContent(),
-                        paste.getContent().getBytes().length,
-                        paste.isPublic(),
-                        false, // paste just burnt
-                        paste.isEncrypted(),
-                        paste.isOneTime(),
-                        paste.isPermanent(),
-                        paste.getDateCreated(),
-                        paste.getDateOfExpiry(),
-                        paste.getLastViewed(),
-                        paste.getViews()
-                ));
+                .map(paste -> DetailView.of(paste, null));
     }
 
     public Mono<ListView> viewAllPastes() {

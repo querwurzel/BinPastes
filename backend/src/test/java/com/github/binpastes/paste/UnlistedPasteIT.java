@@ -60,9 +60,9 @@ class UnlistedPasteIT {
         var unlistedPaste = givenPaste(Paste.newInstance(
                 "someTitle",
                 "Lorem ipsum dolor sit amet",
-                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 false,
                 PasteExposure.UNLISTED,
+                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
                 "1.1.1.1"
         ));
 
@@ -165,9 +165,9 @@ class UnlistedPasteIT {
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
-                        null,
                         false,
                         PasteExposure.UNLISTED,
+                        null,
                         "1.1.1.1"
                 )
         );

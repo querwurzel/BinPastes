@@ -13,6 +13,7 @@ import java.util.Optional;
 
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 @Table(PasteSchema.TABLE_NAME)
 public class Paste {
@@ -50,19 +51,23 @@ public class Paste {
     private Long views;
 
     public static Paste newInstance(
-            String title,
-            String content,
-            LocalDateTime dateOfExpiry,
-            boolean isEncrypted,
-            PasteExposure exposure,
-            String remoteAddress
+            final String title,
+            final String content,
+            final boolean isEncrypted,
+            final PasteExposure exposure,
+            final LocalDateTime dateOfExpiry,
+            final String remoteAddress
     ) {
+        if (nonNull(dateOfExpiry) && LocalDateTime.now().isAfter(dateOfExpiry)) {
+            throw new IllegalArgumentException("dateOfExpiry must be in the future!");
+        }
+
         return new Paste()
+                .setContent(Objects.requireNonNull(content))
+                .setExposure(Objects.requireNonNull(exposure))
                 .setId(IdGenerator.newStringId())
                 .setTitle(title)
-                .setContent(Objects.requireNonNull(content))
                 .setIsEncrypted(isEncrypted)
-                .setExposure(Objects.requireNonNull(exposure))
                 .setRemoteAddress(remoteAddress)
                 .setDateOfExpiry(dateOfExpiry)
                 .setViews(0);
@@ -92,8 +97,8 @@ public class Paste {
         return exposure;
     }
 
-    private String getRemoteAddress() {
-        return remoteAddress;
+    private Optional<String> getRemoteAddress() {
+        return Optional.ofNullable(remoteAddress);
     }
 
     public Optional<LocalDateTime> getLastViewed() {
@@ -125,12 +130,12 @@ public class Paste {
     }
 
     public boolean isErasable(String remoteAddress) {
-        if (isUnlisted() || isOneTime()) {
+        if (isUnlisted() || (isOneTime() && !isExpired())) {
             return true;
         }
 
         if (isPublic()) {
-            final var createdBySameAuthor = Objects.equals(remoteAddress, getRemoteAddress());
+            final var createdBySameAuthor = Objects.equals(remoteAddress, getRemoteAddress().orElse(null));
 
             if (createdBySameAuthor) {
                 return LocalDateTime.now().minusHours(1).isBefore(getDateCreated());
@@ -149,17 +154,17 @@ public class Paste {
         return setViews(getViews() + 1);
     }
 
-    public Paste markAsExpired() {
-        return markAsExpired(LocalDateTime.now());
+    public boolean isExpired() {
+        var currentExpiry = getDateOfExpiry();
+        return currentExpiry.isPresent() && currentExpiry.get().isBefore(LocalDateTime.now());
     }
 
-    public Paste markAsExpired(LocalDateTime dateOfExpiry) {
-        var currentExpiry = getDateOfExpiry();
-        if (currentExpiry.isEmpty() || dateOfExpiry.isBefore(currentExpiry.get())) {
-            return setDateOfExpiry(dateOfExpiry);
+    public Paste markAsExpired() {
+        if (isExpired()) {
+            return this;
         }
 
-        throw new IllegalStateException("Paste has already expired: " + currentExpiry.get());
+        return setDateOfExpiry(LocalDateTime.now());
     }
 
     protected Paste setId(final String id) {

@@ -65,9 +65,9 @@ class SearchPasteIT {
                 Paste.newInstance(
                         "someTitle",
                         "Lorem ipsum dolor sit amet",
-                        null,
                         false,
                         Paste.PasteExposure.PUBLIC,
+                        null,
                         "someRemoteAddress"
                 )
         );
