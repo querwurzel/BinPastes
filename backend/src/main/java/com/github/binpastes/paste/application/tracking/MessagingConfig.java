@@ -28,9 +28,9 @@ class MessagingConfig {
     @Bean
     @DependsOnDatabaseInitialization
     public MessagingClient messagingClient(
-            ClientSessionFactory clientSessionFactory,
-            Scheduler consumerThreadPool,
-            Scheduler producerThreadPool
+            final ClientSessionFactory clientSessionFactory,
+            final Scheduler consumerThreadPool,
+            final Scheduler producerThreadPool
     ) {
         return new MessagingClient(clientSessionFactory, consumerThreadPool, producerThreadPool);
     }
@@ -39,25 +39,23 @@ class MessagingConfig {
     public EmbeddedActiveMQ activeMqServer() throws Exception {
         org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
 
-        CoreAddressConfiguration addr = new CoreAddressConfiguration();
-        addr
+        config.addAddressConfiguration(new CoreAddressConfiguration()
                 .setName("binpastes")
                 .addQueueConfig(new QueueConfiguration()
                         .setName(new SimpleString("pasteTrackingQueue"))
                         .setAddress(new SimpleString("binpastes"))
                         .setMaxConsumers(1)
                         .setDelayBeforeDispatch(SECONDS.toMillis(3))
-                        .setDurable(true))
-                .addRoutingType(RoutingType.ANYCAST);
+                        .setDurable(true)
+                )
+                .addRoutingType(RoutingType.ANYCAST));
 
-        AddressSettings addressSettings = new AddressSettings()
+        config.addAddressSetting("binpastes", new AddressSettings()
                 .setDefaultAddressRoutingType(RoutingType.ANYCAST)
                 .setDefaultQueueRoutingType(RoutingType.ANYCAST)
                 .setEnableIngressTimestamp(false)
-                .setExpiryDelay(TimeUnit.DAYS.toMillis(7));
-
-        config.addAddressConfiguration(addr);
-        config.addAddressSetting("binpastes", addressSettings);
+                .setExpiryDelay(TimeUnit.DAYS.toMillis(7))
+        );
 
         config.setMessageExpiryScanPeriod(SECONDS.toMillis(3));
 
@@ -93,7 +91,7 @@ class MessagingConfig {
         pool.setCorePoolSize(1);
         pool.setMaxPoolSize(1);
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("mq-consumer-");
+        pool.setThreadNamePrefix("amq-consumer-");
         pool.initialize();
         return Schedulers.fromExecutor(pool);
     }
@@ -101,10 +99,10 @@ class MessagingConfig {
     @Bean(initMethod = "init", destroyMethod = "dispose")
     public Scheduler producerThreadPool() {
         ThreadPoolTaskExecutor pool = new ThreadPoolTaskExecutor();
-        pool.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        pool.setCorePoolSize(1);
         pool.setMaxPoolSize(Runtime.getRuntime().availableProcessors());
         pool.setAllowCoreThreadTimeOut(true);
-        pool.setThreadNamePrefix("mq-producer-");
+        pool.setThreadNamePrefix("amq-producer-");
         pool.initialize();
         return Schedulers.fromExecutor(pool);
     }
@@ -122,8 +120,7 @@ class MessagingConfig {
     }
 
     @Bean(destroyMethod = "close")
-    public ClientSessionFactory clientSession(ServerLocator serverLocator) throws Exception {
+    public ClientSessionFactory clientSession(final ServerLocator serverLocator) throws Exception {
         return serverLocator.createSessionFactory();
     }
-
 }
