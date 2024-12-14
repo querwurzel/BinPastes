@@ -3,6 +3,7 @@ package com.github.binpastes.paste;
 import com.github.binpastes.paste.domain.Paste;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
 import com.github.binpastes.paste.domain.PasteRepository;
+import org.assertj.core.data.TemporalUnitLessThanOffset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 import static java.time.LocalDateTime.parse;
@@ -108,10 +110,10 @@ class PublicPasteIT {
                         assertThat(id).matches("^[a-zA-Z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(now)
+                        assertThat(parse(dateCreated)).isCloseTo(now, new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 )
                 .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                        assertThat(parse(dateOfExpiry)).isEqualToIgnoringSeconds(now.plusDays(1))
+                        assertThat(parse(dateOfExpiry)).isCloseTo(now.plusDays(1), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 ).json("""
                                     {
                                       "content": "validContent",
@@ -145,7 +147,7 @@ class PublicPasteIT {
                         assertThat(id).matches("^[a-zA-Z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isEqualToIgnoringSeconds(LocalDateTime.now())
+                        assertThat(parse(dateCreated)).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 )
                 .json("""
                                     {
