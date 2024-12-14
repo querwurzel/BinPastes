@@ -7,11 +7,13 @@ import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
 import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
-import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
@@ -26,10 +28,17 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     private final List<FullTextSearchSupport> fullTextSearchSupport;
 
-    public PasteRepositoryCustomImpl(R2dbcEntityTemplate entityManager, List<FullTextSearchSupport> fullTextSearchSupport) {
-        Assert.notEmpty(fullTextSearchSupport, "Require at least one FullTextSearchSupport implementation");
+    PasteRepositoryCustomImpl(
+            final R2dbcEntityTemplate entityManager,
+            final FullTextSearchSupport primaryfullTextSearchSupport,
+            final FullTextSearchSupport... secondaryfullTextSearchSupport
+    ) {
+        final var implementations = new LinkedHashSet<FullTextSearchSupport>();
+        implementations.add(primaryfullTextSearchSupport);
+        implementations.addAll(Arrays.asList(secondaryfullTextSearchSupport));
+
         this.entityTemplate = entityManager;
-        this.fullTextSearchSupport = fullTextSearchSupport;
+        this.fullTextSearchSupport = new ArrayList<>(implementations);
     }
 
     @Override
@@ -47,22 +56,16 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     @Override
     public Flux<Paste> findAllLegit() {
-        return entityTemplate
-                .select(Paste.class)
-                .matching(
-                        Query
-                                .query(
-                                        Criteria
-                                                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
-                                                .and(
-                                                        Criteria
-                                                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
-                                                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
-                                                )
-                                )
-                                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED))
+        final var query = Query.query(Criteria
+                        .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                        .and(Criteria
+                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
+                        )
                 )
-                .all();
+                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED));
+
+        return entityTemplate.select(query, Paste.class);
     }
 
     @Override
