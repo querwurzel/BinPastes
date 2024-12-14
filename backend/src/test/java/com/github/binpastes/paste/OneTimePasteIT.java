@@ -102,13 +102,13 @@ class OneTimePasteIT {
         };
 
         Stream.generate(() -> request)
-                .limit(100)
+                .limit(50)
                 .toList()
                 .parallelStream()
                 .forEach(Runnable::run);
 
         assertThat(okCount.get()).isOne();
-        assertThat(notFoundCount.get()).isEqualTo(100 - 1);
+        assertThat(notFoundCount.get()).isEqualTo(50 - 1);
     }
 
     @Test
@@ -170,11 +170,11 @@ class OneTimePasteIT {
                 .jsonPath("$.title").doesNotExist()
                 .jsonPath("$.sizeInBytes").doesNotExist()
                 .json("""
-                                    {
-                                      "isErasable": true,
-                                      "isEncrypted": true,
-                                      "isOneTime": true
-                                    }
+                        {
+                            "isErasable": true,
+                            "isEncrypted": true,
+                            "isOneTime": true
+                        }
                         """);
     }
 

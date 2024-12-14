@@ -6,7 +6,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.data.relational.core.query.Query;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
@@ -14,6 +13,7 @@ import java.time.LocalDateTime;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 import static com.github.binpastes.paste.domain.Paste.PasteSchema;
+import static org.springframework.data.relational.core.query.Query.query;
 
 @Component
 @Order(Ordered.LOWEST_PRECEDENCE - 1)
@@ -42,13 +42,9 @@ class SimpleFullTextSearchSupport implements FullTextSearchSupport {
                         )
                 );
 
-        return entityTemplate
-                .select(Paste.class)
-                .matching(
-                        Query
-                                .query(criteria)
-                                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED))
-                )
-                .all();
+        return entityTemplate.select(
+                query(criteria).sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED)),
+                Paste.class
+        );
     }
 }

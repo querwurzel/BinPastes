@@ -134,13 +134,13 @@ class UnlistedPasteIT {
                         assertThat(parse(dateOfExpiry)).isCloseTo(now.plusMonths(3), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 )
                 .json("""
-                            {
-                              "title": "someTitle",
-                              "content": "someContent",
-                              "sizeInBytes": 11,
-                              "isErasable": true,
-                              "isEncrypted": true
-                            }
+                        {
+                            "title": "someTitle",
+                            "content": "someContent",
+                            "sizeInBytes": 11,
+                            "isErasable": true,
+                            "isEncrypted": true
+                        }
                 """);
     }
 

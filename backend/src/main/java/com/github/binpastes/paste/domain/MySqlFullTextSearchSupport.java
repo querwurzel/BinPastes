@@ -18,8 +18,6 @@ import static com.github.binpastes.paste.domain.Paste.PasteSchema;
 @Order(0)
 class MySqlFullTextSearchSupport implements FullTextSearchSupport {
 
-    private static final Byte TRUE = (byte) 1;
-
     private final R2dbcEntityTemplate entityTemplate;
 
     @Autowired
@@ -42,40 +40,15 @@ class MySqlFullTextSearchSupport implements FullTextSearchSupport {
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
         return Mono.from(connectionFactory.create())
                 .flatMap(mySqlConnection -> Mono.from(mySqlConnection
-                            .createStatement(query)
-                            .bind(0, PasteExposure.PUBLIC)
-                            .bind(1, LocalDateTime.now())
-                            .bind(2, text)
-                            .bind(3, text)
-                            .execute()
+                        .createStatement(query)
+                        .bind(0, PasteExposure.PUBLIC)
+                        .bind(1, LocalDateTime.now())
+                        .bind(2, text)
+                        .bind(3, text)
+                        .execute()
                 ))
-                .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row) -> {
-
-                    // TODO Paste bla = entityTemplate.getConverter().read(Paste.class, (Row) row);
-
-                    var paste = new Paste();
-                    paste.setId(row.get(PasteSchema.ID, String.class));
-                    paste.setVersion(row.get(PasteSchema.VERSION, Long.class));
-
-                    paste.setTitle(row.get(PasteSchema.TITLE) == null
-                            ? null
-                            : row.get(PasteSchema.TITLE, String.class));
-                    paste.setContent(row.get(PasteSchema.CONTENT, String.class));
-                    paste.setIsEncrypted(TRUE.equals(row.get(PasteSchema.IS_ENCRYPTED, Byte.class)));
-                    paste.setExposure(PasteExposure.valueOf(row.get(PasteSchema.EXPOSURE, String.class)));
-
-                    paste.setDateCreated(row.get(PasteSchema.DATE_CREATED, LocalDateTime.class));
-                    paste.setDateOfExpiry(row.get(PasteSchema.DATE_OF_EXPIRY) == null
-                            ? null
-                            : row.get(PasteSchema.DATE_OF_EXPIRY, LocalDateTime.class));
-                    paste.setDateDeleted(row.get(PasteSchema.DATE_DELETED) == null
-                            ? null
-                            : row.get(PasteSchema.DATE_DELETED, LocalDateTime.class));
-
-                    paste.setRemoteAddress(row.get(PasteSchema.REMOTE_ADDRESS) == null
-                            ? null
-                            : row.get(PasteSchema.REMOTE_ADDRESS, String.class));
-                    return paste;
-                })));
+                .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) ->
+                        entityTemplate.getConverter().read(Paste.class, row, rowMetadata)
+                )));
     }
 }

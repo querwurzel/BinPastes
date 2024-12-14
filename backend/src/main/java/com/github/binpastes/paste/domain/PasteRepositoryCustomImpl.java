@@ -25,7 +25,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     private final List<FullTextSearchSupport> fullTextSearchSupport;
 
-    PasteRepositoryCustomImpl(
+    public PasteRepositoryCustomImpl(
             final R2dbcEntityTemplate entityManager,
             final List<FullTextSearchSupport> fullTextSearchSupport
     ) {

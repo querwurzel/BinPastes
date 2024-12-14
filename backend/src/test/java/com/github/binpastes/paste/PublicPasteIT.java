@@ -115,12 +115,12 @@ class PublicPasteIT {
                 .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
                         assertThat(parse(dateOfExpiry)).isCloseTo(now.plusDays(1), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 ).json("""
-                                    {
-                                      "content": "validContent",
-                                      "sizeInBytes": 12,
-                                      "isPublic": true,
-                                      "isErasable": true
-                                    }
+                        {
+                            "content": "validContent",
+                            "sizeInBytes": 12,
+                            "isPublic": true,
+                            "isErasable": true
+                        }
                         """);
     }
 
@@ -150,15 +150,15 @@ class PublicPasteIT {
                         assertThat(parse(dateCreated)).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
                 )
                 .json("""
-                                    {
-                                      "title": "someTitle",
-                                      "content": "someContent",
-                                      "sizeInBytes": 11,
-                                      "isPublic": true,
-                                      "isErasable": true,
-                                      "isEncrypted": true,
-                                      "isPermanent": true
-                                    }
+                        {
+                            "title": "someTitle",
+                            "content": "someContent",
+                            "sizeInBytes": 11,
+                            "isPublic": true,
+                            "isErasable": true,
+                            "isEncrypted": true,
+                            "isPermanent": true
+                        }
                         """);
     }
 
