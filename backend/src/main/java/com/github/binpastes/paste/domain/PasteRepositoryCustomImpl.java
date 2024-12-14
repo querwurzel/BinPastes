@@ -5,15 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.relational.core.query.Criteria;
-import org.springframework.data.relational.core.query.Query;
 import org.springframework.data.relational.core.query.Update;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
@@ -30,25 +27,20 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     PasteRepositoryCustomImpl(
             final R2dbcEntityTemplate entityManager,
-            final FullTextSearchSupport primaryfullTextSearchSupport,
-            final FullTextSearchSupport... secondaryfullTextSearchSupport
+            final List<FullTextSearchSupport> fullTextSearchSupport
     ) {
-        final var implementations = new LinkedHashSet<FullTextSearchSupport>();
-        implementations.add(primaryfullTextSearchSupport);
-        implementations.addAll(Arrays.asList(secondaryfullTextSearchSupport));
-
+        Assert.notEmpty(fullTextSearchSupport, "Require at least one FullTextSearchSupport implementation");
         this.entityTemplate = entityManager;
-        this.fullTextSearchSupport = new ArrayList<>(implementations);
+        this.fullTextSearchSupport = fullTextSearchSupport;
     }
 
     @Override
     public Mono<Paste> findOneLegitById(String id) {
         var criteria = Criteria
                 .where(PasteSchema.ID).is(id)
-                .and(
-                        Criteria
-                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
-                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
+                .and(Criteria
+                        .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                        .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 );
 
         return entityTemplate.selectOne(query(criteria), Paste.class);
@@ -56,16 +48,17 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
 
     @Override
     public Flux<Paste> findAllLegit() {
-        final var query = Query.query(Criteria
-                        .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
-                        .and(Criteria
-                                .where(PasteSchema.DATE_OF_EXPIRY).isNull()
-                                .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
-                        )
-                )
-                .sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED));
+        final var criteria = Criteria
+                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                .and(Criteria
+                        .where(PasteSchema.DATE_OF_EXPIRY).isNull()
+                        .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
+                );
 
-        return entityTemplate.select(query, Paste.class);
+        return entityTemplate.select(
+                query(criteria).sort(Sort.by(Sort.Direction.DESC, PasteSchema.DATE_CREATED)),
+                Paste.class
+        );
     }
 
     @Override
