@@ -71,7 +71,7 @@ class OneTimePasteIT {
         var okCount = new AtomicInteger();
         var notFoundCount = new AtomicInteger();
 
-        final Runnable call = new Thread(() -> {
+        final Runnable request = () -> {
             try {
                 webClient.post()
                         .uri("/api/v1/paste/{id}", oneTimePaste.getId())
@@ -97,9 +97,9 @@ class OneTimePasteIT {
                     notFoundCount.incrementAndGet();
                 }
             }
-        });
+        };
 
-        Stream.generate(() -> call)
+        Stream.generate(() -> request)
                 .limit(100)
                 .toList()
                 .parallelStream()
