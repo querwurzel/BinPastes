@@ -61,7 +61,7 @@ class PublicPasteIT {
                 "Lorem ipsum dolor sit amet",
                 false,
                 PasteExposure.PUBLIC,
-                LocalDateTime.now().plusMinutes(1).minusSeconds(3), // expiry before max-age
+                LocalDateTime.now().plusMinutes(1).minusSeconds(1), // expiry before max-age
                 "1.1.1.1"
         ));
 
