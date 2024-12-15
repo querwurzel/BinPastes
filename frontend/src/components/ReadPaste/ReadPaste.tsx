@@ -98,11 +98,11 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
   }
 
   function onCopyContent(e: KeyboardEvent) {
-    if (e.altKey || e.shiftKey) {
-      return;
-    }
+    const shortCutActive = !(e.altKey) &&
+      (e.code === 'KeyC' && e.shiftKey) &&
+      ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey /* XOR */);
 
-    if (e.code === 'KeyC' && ((e.ctrlKey || e.metaKey) && e.ctrlKey !== e.metaKey)) { // XOR
+    if (shortCutActive) {
       onCopyToClipboard(e);
     }
   }

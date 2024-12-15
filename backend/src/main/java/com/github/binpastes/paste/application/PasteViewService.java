@@ -52,56 +52,57 @@ public class PasteViewService {
 
     public Mono<ListView> viewAllPastes() {
         return pasteService.findAll()
-                .map(ListItemView::of)
-                .collectList()
-                .map(ListView::of);
+            .map(ListItemView::of)
+            .collectList()
+            .map(ListView::new);
     }
 
     public Mono<SearchView> searchByFullText(String term) {
         return pasteService.findByFullText(term)
-                .map(paste -> SearchItemView.of(paste, term))
-                .collectList()
-                .map(SearchView::of)
-                .doOnSuccess(searchView -> log.info("Found {} pastes searching for: {}", searchView.pastes().size(), term));
+            .map(paste -> SearchItemView.of(paste, term))
+            .collectList()
+            .map(SearchView::new)
+            .doOnSuccess(searchView -> log.info("Found {} pastes searching for: {}", searchView.pastes().size(), term));
     }
 
     public Mono<DetailView> createPaste(CreateCmd cmd, String remoteAddress) {
         return pasteService.create(
-                        cmd.title(),
-                        cmd.content(),
-                        cmd.dateOfExpiry(),
-                        cmd.isEncrypted(),
-                        cmd.pasteExposure(),
-                        remoteAddress
-                )
-                .map(paste -> {
-                    if (paste.isOneTime()) {
-                        return toOneTimeView(paste, remoteAddress);
-                    } else {
-                        return DetailView.of(paste, remoteAddress);
-                    }
-                });
+                cmd.title(),
+                cmd.content(),
+                cmd.dateOfExpiry(),
+                cmd.isEncrypted(),
+                cmd.pasteExposure(),
+                remoteAddress
+            )
+            .map(paste -> {
+                if (paste.isOneTime()) {
+                    return DetailView.ofOneTime(paste, remoteAddress);
+                } else {
+                    return DetailView.of(paste, remoteAddress);
+                }
+            });
     }
 
     public Mono<Void> requestDeletion(String id, String remoteAddress) {
         return pasteService.requestDeletion(id, remoteAddress);
     }
 
+    @Deprecated
     private static DetailView toOneTimeView(Paste reference, String remoteAddress) {
         return new DetailView(
-                reference.getId(),
-                null,
-                null,
-                0,
-                reference.isPublic(),
-                reference.isErasable(remoteAddress),
-                reference.isEncrypted(),
-                reference.isOneTime(),
-                reference.isPermanent(),
-                reference.getDateCreated(),
-                reference.getDateOfExpiry(),
-                reference.getLastViewed(),
-                reference.getViews()
+            reference.getId(),
+            null,
+            null,
+            0,
+            reference.isPublic(),
+            reference.isErasable(remoteAddress),
+            reference.isEncrypted(),
+            reference.isOneTime(),
+            reference.isPermanent(),
+            reference.getDateCreated(),
+            reference.getDateOfExpiry(),
+            reference.getLastViewed(),
+            reference.getViews()
         );
     }
 }

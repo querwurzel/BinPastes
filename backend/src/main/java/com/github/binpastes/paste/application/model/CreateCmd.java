@@ -1,6 +1,6 @@
 package com.github.binpastes.paste.application.model;
 
-import com.github.binpastes.paste.domain.Paste;
+import com.github.binpastes.paste.domain.Paste.PasteExposure;
 import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -19,14 +19,14 @@ public final class CreateCmd {
     private final String content;
     private final Boolean isEncrypted;
     private final ExpirationRange expiry;
-    private final Paste.PasteExposure exposure;
+    private final PasteExposure exposure;
 
     private CreateCmd(
-            final String title,
-            final String content,
-            final Boolean isEncrypted,
-            final ExpirationRange expiry,
-            final Paste.PasteExposure exposure
+        final String title,
+        final String content,
+        final Boolean isEncrypted,
+        final ExpirationRange expiry,
+        final PasteExposure exposure
     ) {
         this.title = title;
         this.content = content;
@@ -37,8 +37,8 @@ public final class CreateCmd {
 
     public String title() {
         return title == null
-                ? null
-                : title.strip();
+            ? null
+            : title.strip();
     }
 
     public String content() {
@@ -51,14 +51,14 @@ public final class CreateCmd {
 
     public LocalDateTime dateOfExpiry() {
         return expiry == null
-                ? ExpirationRange.ONE_DAY.toTimestamp() // default expiry if not set
-                : expiry.toTimestamp();
+            ? ExpirationRange.ONE_DAY.toTimestamp() // default expiry if not set
+            : expiry.toTimestamp();
     }
 
-    public Paste.PasteExposure pasteExposure() {
+    public PasteExposure pasteExposure() {
         return exposure == null
-                ? Paste.PasteExposure.PUBLIC // default exposure if not set
-                : exposure;
+            ? PasteExposure.PUBLIC // default exposure if not set
+            : exposure;
     }
 
     private enum ExpirationRange {

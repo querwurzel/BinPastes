@@ -35,7 +35,6 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Validated
 @RestController
@@ -53,41 +52,41 @@ class PasteController {
 
     @GetMapping("/{pasteId:[a-z0-9]{40}}")
     public Mono<DetailView> findPaste(
-            @PathVariable("pasteId")
-            final String pasteId,
-            final ServerHttpRequest request,
-            final ServerHttpResponse response
+        @PathVariable("pasteId")
+        final String pasteId,
+        final ServerHttpRequest request,
+        final ServerHttpResponse response
     ) {
         return pasteViewService
-                .viewPaste(pasteId, remoteAddress(request).orElse(null))
-                .doOnNext(paste -> {
-                    if (paste.isOneTime()) {
-                        response.getHeaders().setCacheControl(CacheControl.noStore());
-                        return;
-                    }
+            .viewPaste(pasteId, remoteAddress(request))
+            .doOnNext(paste -> {
+                if (paste.isOneTime()) {
+                    response.getHeaders().setCacheControl(CacheControl.noStore());
+                    return;
+                }
 
-                    var now = LocalDateTime.now();
-                    if (paste.isPermanent() || paste.dateOfExpiry().get().plusMinutes(1).isAfter(now)) {
-                        response.getHeaders().setCacheControl(
-                                CacheControl.maxAge(Duration.ofMinutes(1)));
-                    } else {
-                        response.getHeaders().setCacheControl(
-                                CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry().get())).mustRevalidate());
-                    }
-                })
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+                var now = LocalDateTime.now();
+                if (paste.isPermanent() || paste.dateOfExpiry().get().plusMinutes(1).isAfter(now)) {
+                    response.getHeaders().setCacheControl(
+                        CacheControl.maxAge(Duration.ofMinutes(1)));
+                } else {
+                    response.getHeaders().setCacheControl(
+                        CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry().get())).mustRevalidate());
+                }
+            })
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @PostMapping("/{pasteId:[a-z0-9]{40}}")
     public Mono<DetailView> findAndBurnOneTimePaste(
-            @PathVariable("pasteId")
-            final String pasteId,
-            final ServerHttpResponse response
+        @PathVariable("pasteId")
+        final String pasteId,
+        final ServerHttpResponse response
     ) {
         response.getHeaders().setCacheControl(CacheControl.noStore());
         return pasteViewService
-                .viewOneTimePaste(pasteId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
+            .viewOneTimePaste(pasteId)
+            .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
     @GetMapping
@@ -97,11 +96,11 @@ class PasteController {
 
     @GetMapping("/search")
     public Mono<SearchView> searchPastes(
-            @RequestParam("term")
-            @NotBlank
-            @Pattern(regexp = "[\\p{L}\\p{N}\\p{P}\\s]{3,50}")
-            final String term,
-            final ServerHttpResponse response
+        @RequestParam("term")
+        @NotBlank
+        @Pattern(regexp = "[\\p{L}\\p{N}\\p{P}\\s]{3,50}")
+        final String term,
+        final ServerHttpResponse response
     ) {
         var decodedTerm = URLDecoder.decode(term, Charset.defaultCharset());
         response.getHeaders().setCacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
@@ -111,13 +110,13 @@ class PasteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<DetailView> createPaste(@Valid @RequestBody final CreateCmd createCmd, final ServerHttpRequest request) {
-        return pasteViewService.createPaste(createCmd, remoteAddress(request).orElse(null));
+        return pasteViewService.createPaste(createCmd, remoteAddress(request));
     }
 
     @DeleteMapping("/{pasteId:[a-z0-9]{40}}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
-        return pasteViewService.requestDeletion(pasteId, remoteAddress(request).orElse(null));
+        return pasteViewService.requestDeletion(pasteId, remoteAddress(request));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})
@@ -126,15 +125,15 @@ class PasteController {
         log.info("Received invalid request [{}]: {}", e.getClass().getSimpleName(), e.getMessage());
     }
 
-    private static Optional<String> remoteAddress(final ServerHttpRequest request) {
+    private static String remoteAddress(final ServerHttpRequest request) {
         if (request.getHeaders().containsKey("X-Forwarded-For")) {
-            return Optional.of(request.getHeaders().getFirst("X-Forwarded-For"));
+            return request.getHeaders().getFirst("X-Forwarded-For");
         }
 
         if (request.getRemoteAddress() == null) {
-            return Optional.empty();
+            return null;
         }
 
-        return Optional.ofNullable(request.getRemoteAddress().getAddress().getHostAddress());
+        return request.getRemoteAddress().getAddress().getHostAddress();
     }
 }

@@ -51,21 +51,21 @@ class OneTimePasteIT {
         var oneTimePaste = givenOneTimePaste();
 
         webClient.get()
-                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.noStore())
-                .expectBody()
-                .jsonPath("$.content").doesNotExist()
-                .jsonPath("$.title").doesNotExist()
-                .jsonPath("$.sizeInBytes").doesNotExist()
-                .json("""
-                                {
-                                    "isErasable": true,
-                                    "isOneTime": true,
-                                    "isPermanent" :true
-                                }
-                        """);
+            .uri("/api/v1/paste/{id}", oneTimePaste.getId())
+            .exchange()
+            .expectStatus().isOk()
+            .expectHeader().cacheControl(CacheControl.noStore())
+            .expectBody()
+            .jsonPath("$.content").doesNotExist()
+            .jsonPath("$.title").doesNotExist()
+            .jsonPath("$.sizeInBytes").doesNotExist()
+            .json("""
+                        {
+                            "isErasable": true,
+                            "isOneTime": true,
+                            "isPermanent" :true
+                        }
+                """);
     }
 
     @Test
@@ -78,9 +78,9 @@ class OneTimePasteIT {
         final Runnable request = () -> {
             try {
                 webClient.post()
-                        .uri("/api/v1/paste/{id}", oneTimePaste.getId())
-                        .exchange()
-                        .expectStatus().isOk();
+                    .uri("/api/v1/paste/{id}", oneTimePaste.getId())
+                    .exchange()
+                    .expectStatus().isOk();
 
                 okCount.incrementAndGet();
             } catch (AssertionError ex) {
@@ -91,11 +91,11 @@ class OneTimePasteIT {
         };
 
         Flux.fromStream(Stream.generate(() -> request))
-                .take(50)
-                .parallel()
-                .doOnNext(Runnable::run)
-                .runOn(Schedulers.boundedElastic())
-                .subscribe();
+            .take(50)
+            .parallel()
+            .doOnNext(Runnable::run)
+            .runOn(Schedulers.boundedElastic())
+            .subscribe();
 
         assertThat(okCount.get()).isOne();
         assertThat(notFoundCount.get()).isEqualTo(50 - 1);
@@ -109,10 +109,10 @@ class OneTimePasteIT {
         assertThat(pasteRepository.count().block()).isOne();
 
         webClient.get()
-                .uri("/api/v1/paste")
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+            .uri("/api/v1/paste")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody().jsonPath("pastes", emptyList());
     }
 
     @Test
@@ -123,10 +123,10 @@ class OneTimePasteIT {
         assertThat(pasteRepository.count().block()).isOne();
 
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle().get())
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+            .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle().get())
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody().jsonPath("pastes", emptyList());
     }
 
     @Test
@@ -134,40 +134,40 @@ class OneTimePasteIT {
     void createOneTimePaste() {
         var now = LocalDateTime.now();
         webClient.post()
-                .uri("/api/v1/paste")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(Mono.just("""
-                        {
-                            "title": "someTitle",
-                            "content": "someContent",
-                            "exposure": "ONCE",
-                            "isEncrypted": true,
-                            "expiry": "THREE_MONTHS"
-                        }
-                        """), String.class)
-                .exchange()
-                .expectStatus().isCreated()
-                .expectHeader().cacheControl(CacheControl.empty())
-                .expectBody()
-                .jsonPath("$.id").<String>value(id ->
-                        assertThat(id).matches("^[a-z0-9]{40}$")
-                )
-                .jsonPath("$.dateCreated").<String>value(dateCreated ->
-                        assertThat(parse(dateCreated)).isCloseTo(now, new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
-                )
-                .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
-                        assertThat(parse(dateOfExpiry)).isCloseTo(now.plusMonths(3), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
-                )
-                .jsonPath("$.content").doesNotExist()
-                .jsonPath("$.title").doesNotExist()
-                .jsonPath("$.sizeInBytes").doesNotExist()
-                .json("""
-                        {
-                            "isErasable": true,
-                            "isEncrypted": true,
-                            "isOneTime": true
-                        }
-                        """);
+            .uri("/api/v1/paste")
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(Mono.just("""
+                {
+                    "title": "someTitle",
+                    "content": "someContent",
+                    "exposure": "ONCE",
+                    "isEncrypted": true,
+                    "expiry": "THREE_MONTHS"
+                }
+                """), String.class)
+            .exchange()
+            .expectStatus().isCreated()
+            .expectHeader().cacheControl(CacheControl.empty())
+            .expectBody()
+            .jsonPath("$.id").<String>value(id ->
+                assertThat(id).matches("^[a-z0-9]{40}$")
+            )
+            .jsonPath("$.dateCreated").<String>value(dateCreated ->
+                assertThat(parse(dateCreated)).isCloseTo(now, new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
+            )
+            .jsonPath("$.dateOfExpiry").<String>value(dateOfExpiry ->
+                assertThat(parse(dateOfExpiry)).isCloseTo(now.plusMonths(3), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
+            )
+            .jsonPath("$.content").doesNotExist()
+            .jsonPath("$.title").doesNotExist()
+            .jsonPath("$.sizeInBytes").doesNotExist()
+            .json("""
+                {
+                    "isErasable": true,
+                    "isEncrypted": true,
+                    "isOneTime": true
+                }
+                """);
     }
 
     @Test
@@ -176,29 +176,29 @@ class OneTimePasteIT {
         var oneTimePaste = givenOneTimePaste();
 
         webClient.delete()
-                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
-                .exchange()
-                .expectStatus().isNoContent()
-                .expectBody().isEmpty();
+            .uri("/api/v1/paste/{id}", oneTimePaste.getId())
+            .exchange()
+            .expectStatus().isNoContent()
+            .expectBody().isEmpty();
 
         waitAtMost(ofMillis(500)).untilAsserted(() -> webClient
-                .get()
-                .uri("/api/v1/paste/{id}", oneTimePaste.getId())
-                .exchange()
-                .expectStatus().isNotFound()
+            .get()
+            .uri("/api/v1/paste/{id}", oneTimePaste.getId())
+            .exchange()
+            .expectStatus().isNotFound()
         );
     }
 
     private Paste givenOneTimePaste() {
         return persistedPaste(
-                Paste.newInstance(
-                        "someTitle",
-                        "Lorem ipsum dolor sit amet",
-                        false,
-                        PasteExposure.ONCE,
-                        null,
-                        "1.1.1.1"
-                )
+            Paste.newInstance(
+                "someTitle",
+                "Lorem ipsum dolor sit amet",
+                false,
+                PasteExposure.ONCE,
+                null,
+                "1.1.1.1"
+            )
         );
     }
 
