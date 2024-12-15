@@ -17,7 +17,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -26,6 +35,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -49,7 +59,7 @@ class PasteController {
             final ServerHttpResponse response
     ) {
         return pasteViewService
-                .viewPaste(pasteId, remoteAddress(request))
+                .viewPaste(pasteId, remoteAddress(request).orElse(null))
                 .doOnNext(paste -> {
                     if (paste.isOneTime()) {
                         response.getHeaders().setCacheControl(CacheControl.noStore());
@@ -101,13 +111,13 @@ class PasteController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<DetailView> createPaste(@Valid @RequestBody final CreateCmd createCmd, final ServerHttpRequest request) {
-        return pasteViewService.createPaste(createCmd, remoteAddress(request));
+        return pasteViewService.createPaste(createCmd, remoteAddress(request).orElse(null));
     }
 
     @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
-        return pasteViewService.requestDeletion(pasteId, remoteAddress(request));
+        return pasteViewService.requestDeletion(pasteId, remoteAddress(request).orElse(null));
     }
 
     @ExceptionHandler({ConstraintViolationException.class, WebExchangeBindException.class})
@@ -116,15 +126,15 @@ class PasteController {
         log.info("Received invalid request [{}]: {}", e.getClass().getSimpleName(), e.getMessage());
     }
 
-    private static String remoteAddress(final ServerHttpRequest request) {
+    private static Optional<String> remoteAddress(final ServerHttpRequest request) {
         if (request.getHeaders().containsKey("X-Forwarded-For")) {
-            return request.getHeaders().getFirst("X-Forwarded-For");
+            return Optional.of(request.getHeaders().getFirst("X-Forwarded-For"));
         }
 
         if (request.getRemoteAddress() == null) {
-            return null;
+            return Optional.empty();
         }
 
-        return request.getRemoteAddress().getAddress().getHostAddress();
+        return Optional.ofNullable(request.getRemoteAddress().getAddress().getHostAddress());
     }
 }
