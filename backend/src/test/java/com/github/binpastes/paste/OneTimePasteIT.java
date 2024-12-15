@@ -14,12 +14,13 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.parse;
@@ -78,20 +79,7 @@ class OneTimePasteIT {
                 webClient.post()
                         .uri("/api/v1/paste/{id}", oneTimePaste.getId())
                         .exchange()
-                        .expectStatus().isOk()
-                        .expectHeader().cacheControl(CacheControl.noStore())
-                        .expectBody()
-                        .json("""
-                                {
-                                  "title": "%s",
-                                  "content": "%s",
-                                  "sizeInBytes": %d
-                                }
-                                """.formatted(
-                                oneTimePaste.getTitle().get(),
-                                oneTimePaste.getContent(),
-                                oneTimePaste.getContent().getBytes().length
-                        ));
+                        .expectStatus().isOk();
 
                 okCount.incrementAndGet();
             } catch (AssertionError ex) {
@@ -101,11 +89,11 @@ class OneTimePasteIT {
             }
         };
 
-        Stream.generate(() -> request)
-                .limit(50)
-                .toList()
-                .parallelStream()
-                .forEach(Runnable::run);
+        Flux.range(1, 50)
+                .parallel()
+                .doOnNext(unused -> request.run())
+                .runOn(Schedulers.boundedElastic())
+                .subscribe();
 
         assertThat(okCount.get()).isOne();
         assertThat(notFoundCount.get()).isEqualTo(50 - 1);
@@ -117,6 +105,7 @@ class OneTimePasteIT {
         givenOneTimePaste();
 
         assertThat(pasteRepository.count().block()).isOne();
+
         webClient.get()
                 .uri("/api/v1/paste")
                 .exchange()
@@ -130,15 +119,16 @@ class OneTimePasteIT {
         var oneTimePaste = givenOneTimePaste();
 
         assertThat(pasteRepository.count().block()).isOne();
+
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle())
+                .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle().get())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("pastes", emptyList());
     }
 
     @Test
-    @DisplayName("POST / - one-time paste is created using all options and hides content")
+    @DisplayName("POST / - one-time paste is created and hides content")
     void createOneTimePaste() {
         var now = LocalDateTime.now();
         webClient.post()

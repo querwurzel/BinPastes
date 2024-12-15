@@ -98,7 +98,7 @@ class UnlistedPasteIT {
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", paste.getTitle())
+                .uri("/api/v1/paste/search?term={term}", paste.getTitle().get())
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody().jsonPath("pastes", emptyList());
