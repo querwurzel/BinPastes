@@ -38,25 +38,25 @@ class MessagingConfig {
         var config = new ConfigurationImpl();
 
         config.addAddressConfiguration(new CoreAddressConfiguration()
-                .setName("binpastes")
-                .addQueueConfig(new QueueConfiguration()
-                        .setName(new SimpleString("pasteTrackingQueue"))
-                        .setAddress(new SimpleString("binpastes"))
-                        .setMaxConsumers(1)
-                        .setExclusive(true) // dispatch all messages to only one consumer at a time
-                        .setConsumersBeforeDispatch(1)
-                        .setDelayBeforeDispatch(TimeUnit.SECONDS.toMillis(5))
-                        .setDurable(true)
-                )
-                .addRoutingType(RoutingType.ANYCAST));
+            .setName("binpastes")
+            .addQueueConfig(new QueueConfiguration()
+                .setName(new SimpleString("pasteTrackingQueue"))
+                .setAddress(new SimpleString("binpastes"))
+                .setMaxConsumers(1)
+                .setExclusive(true) // dispatch all messages to only one consumer at a time
+                .setConsumersBeforeDispatch(1)
+                .setDelayBeforeDispatch(TimeUnit.SECONDS.toMillis(5))
+                .setDurable(true)
+            )
+            .addRoutingType(RoutingType.ANYCAST));
 
         config.addAddressSetting("binpastes", new AddressSettings()
-                .setDefaultAddressRoutingType(RoutingType.ANYCAST)
-                .setDefaultQueueRoutingType(RoutingType.ANYCAST)
-                .setRedeliveryDelay(TimeUnit.SECONDS.toMillis(5))
-                .setRedeliveryMultiplier(1.5)
-                .setMaxDeliveryAttempts(5)
-                .setAutoCreateDeadLetterResources(true)
+            .setDefaultAddressRoutingType(RoutingType.ANYCAST)
+            .setDefaultQueueRoutingType(RoutingType.ANYCAST)
+            .setRedeliveryDelay(TimeUnit.SECONDS.toMillis(5))
+            .setRedeliveryMultiplier(1.5)
+            .setMaxDeliveryAttempts(5)
+            .setAutoCreateDeadLetterResources(true)
         );
 
         config.setName("binpastesMQ");
@@ -83,7 +83,7 @@ class MessagingConfig {
         config.setPagingDirectory("./tracking/paging");
 
         var server = new EmbeddedActiveMQ()
-                .setConfiguration(config);
+            .setConfiguration(config);
 
         return server;
     }

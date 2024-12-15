@@ -23,7 +23,10 @@ public class PasteViewService {
     private final TrackingService trackingService;
 
     @Autowired
-    public PasteViewService(PasteService pasteService, TrackingService trackingService) {
+    public PasteViewService(
+        final PasteService pasteService,
+        final TrackingService trackingService
+    ) {
         this.pasteService = pasteService;
         this.trackingService = trackingService;
     }
@@ -46,7 +49,7 @@ public class PasteViewService {
 
     public Mono<DetailView> viewOneTimePaste(String id) {
         return pasteService.findAndBurn(id)
-                .map(paste -> DetailView.of(paste, null));
+            .map(paste -> DetailView.of(paste, null));
     }
 
     public Mono<ListView> viewAllPastes() {

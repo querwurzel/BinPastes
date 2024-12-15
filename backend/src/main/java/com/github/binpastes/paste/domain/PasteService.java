@@ -29,17 +29,17 @@ public class PasteService {
     }
 
     public Mono<Paste> create(
-            String title,
-            String content,
-            LocalDateTime dateOfExpiry,
-            boolean isEncrypted,
-            PasteExposure exposure,
-            String remoteAddress
+        final String title,
+        final String content,
+        final LocalDateTime dateOfExpiry,
+        final boolean isEncrypted,
+        final PasteExposure exposure,
+        final String remoteAddress
     ) {
         return pasteRepository
-                .save(Paste.newInstance(title, content, isEncrypted, exposure, dateOfExpiry, remoteAddress))
-                .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
-                .doOnError(throwable -> log.error("Failed to create new paste", throwable));
+            .save(Paste.newInstance(title, content, isEncrypted, exposure, dateOfExpiry, remoteAddress))
+            .doOnSuccess(newPaste -> log.info("Created new paste {}", newPaste.getId()))
+            .doOnError(throwable -> log.error("Failed to create new paste", throwable));
     }
 
     public Mono<Paste> find(String id) {
@@ -51,11 +51,11 @@ public class PasteService {
      */
     public Mono<Paste> findAndBurn(String id) {
         return pasteRepository.findOneLegitById(id)
-                .filter(Paste::isOneTime)
-                .map(Paste::markAsExpired)
-                .flatMap(pasteRepository::save)
-                .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
-                .onErrorComplete(OptimisticLockingFailureException.class);
+            .filter(Paste::isOneTime)
+            .map(Paste::markAsExpired)
+            .flatMap(pasteRepository::save)
+            .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
+            .onErrorComplete(OptimisticLockingFailureException.class);
     }
 
     public Flux<Paste> findAll() {
@@ -81,18 +81,18 @@ public class PasteService {
 
     public Mono<Void> requestDeletion(String id, String remoteAddress) {
         return pasteRepository
-                .findOneLegitById(id)
-                .filter(paste -> paste.isErasable(remoteAddress))
-                .map(Paste::markAsExpired)
-                .flatMap(pasteRepository::save)
-                .retryWhen(Retry
-                        .backoff(3, Duration.ofMillis(100))
-                        .filter(ex -> ex instanceof OptimisticLockingFailureException))
-                .doOnNext(paste -> log.atInfo()
-                        .addArgument(paste.getId())
-                        .addArgument(Objects.toString(remoteAddress, "anonymous"))
-                        .log("Deleted paste {} on behalf of {}")
-                )
-                .then();
+            .findOneLegitById(id)
+            .filter(paste -> paste.isErasable(remoteAddress))
+            .map(Paste::markAsExpired)
+            .flatMap(pasteRepository::save)
+            .retryWhen(Retry
+                .backoff(3, Duration.ofMillis(100))
+                .filter(ex -> ex instanceof OptimisticLockingFailureException))
+            .doOnNext(paste -> log.atInfo()
+                .addArgument(paste.getId())
+                .addArgument(Objects.toString(remoteAddress, "anonymous"))
+                .log("Deleted paste {} on behalf of {}")
+            )
+            .then();
     }
 }
