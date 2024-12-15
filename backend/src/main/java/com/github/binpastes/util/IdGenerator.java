@@ -8,9 +8,13 @@ import java.util.UUID;
 public final class IdGenerator {
 
     public static String randomAlphaNumericalId() {
+        return randomAlphaNumericalId(UUID.randomUUID().toString().getBytes());
+    }
+
+    public static String randomAlphaNumericalId(byte[] bytes) {
         try {
             final MessageDigest crypt = MessageDigest.getInstance("SHA-1");
-            crypt.update(UUID.randomUUID().toString().getBytes());
+            crypt.update(bytes);
             return new BigInteger(1, crypt.digest()).toString(16);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
