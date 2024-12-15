@@ -22,7 +22,6 @@ class ArchitectureTest {
     @Test
     void moduleVerification() {
         ApplicationModules applicationModules = ApplicationModules.of(BinPastes.class);
-        applicationModules.forEach(System.out::println);
         applicationModules.verify();
     }
 
