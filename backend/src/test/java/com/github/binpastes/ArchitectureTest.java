@@ -1,6 +1,5 @@
-package com.github.binpastes.paste;
+package com.github.binpastes;
 
-import com.github.binpastes.BinPastes;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
