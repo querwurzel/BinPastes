@@ -21,6 +21,7 @@ import reactor.core.scheduler.Schedulers;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.parse;
@@ -89,9 +90,10 @@ class OneTimePasteIT {
             }
         };
 
-        Flux.range(1, 50)
+        Flux.fromStream(Stream.generate(() -> request))
+                .take(50)
                 .parallel()
-                .doOnNext(unused -> request.run())
+                .doOnNext(Runnable::run)
                 .runOn(Schedulers.boundedElastic())
                 .subscribe();
 

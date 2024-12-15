@@ -80,6 +80,7 @@ class TrackingPasteIT {
 
         Flux.fromStream(Stream.generate(intialPaste::getId))
                 .take(concurrency)
+                .parallel()
                 .doOnNext(trackingService::trackView)
                 .doOnNext(id -> pasteRepository.findById(id)
                         .doOnNext(paste -> setField(paste, "remoteAddress", String.valueOf(random.nextInt())))
@@ -87,7 +88,7 @@ class TrackingPasteIT {
                         .retry()
                         .subscribe()
                 )
-                .subscribeOn(Schedulers.parallel())
+                .runOn(Schedulers.parallel())
                 .subscribe();
 
         waitAtMost(Duration.ofMinutes(1)).pollInterval(Duration.ofSeconds(1)).until(
