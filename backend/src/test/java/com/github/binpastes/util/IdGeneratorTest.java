@@ -28,7 +28,9 @@ class IdGeneratorTest {
     void massTest() {
         var id = IdGenerator.randomAlphaNumericalId();
 
-        assertThat(id).matches("[a-zA-Z0-9]{40}");
+        assertThat(id)
+            .hasSize(40)
+            .matches("[a-zA-Z0-9]{40}");
     }
 
     private static Stream<Arguments> ids() {
