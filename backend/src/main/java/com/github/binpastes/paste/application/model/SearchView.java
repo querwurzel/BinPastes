@@ -40,15 +40,18 @@ public record SearchView(
         }
 
         public static String highlight(final String content, final String term) {
-            final int idx = content.indexOf(term);
+            final int idx = content.toLowerCase().indexOf(term.toLowerCase());
 
             if (idx == -1) {
                 return content.substring(0, Math.min(2 * HIGHLIGHT_RANGE, content.length())).trim();
             }
 
+            var leftRemainder = Math.abs(Math.min(0, idx - HIGHLIGHT_RANGE));
+            var rightRemainder = Math.max(0, idx + HIGHLIGHT_RANGE - content.length());
+
             return content.substring(
-                    Math.max(0, idx - HIGHLIGHT_RANGE),
-                    Math.min(content.length(), idx + term.length() + HIGHLIGHT_RANGE)
+                Math.max(0, idx - HIGHLIGHT_RANGE - rightRemainder),
+                Math.min(content.length(), idx + HIGHLIGHT_RANGE + leftRemainder)
             ).trim();
         }
     }

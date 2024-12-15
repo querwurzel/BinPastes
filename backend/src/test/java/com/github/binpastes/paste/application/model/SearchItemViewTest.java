@@ -10,18 +10,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SearchItemViewTest {
 
     private static final String content = """
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur egestas odio faucibus mi commodo faucibus. Mauris pellentesque vitae urna sed vehicula. Mauris sollicitudin rutrum condimentum. Sed vel cursus neque, vel imperdiet justo. Integer et volutpat erat, at ullamcorper nisi. Praesent viverra interdum ex, eget scelerisque augue. Nunc sagittis libero quis tristique rutrum. Vestibulum dapibus ex vel auctor mattis. Donec vel vulputate sem, at posuere magna. Curabitur sodales condimentum erat, et pellentesque est viverra quis.
+        Lorum ipsum dolor sit amet, consectetur adipiscing elit. Curabitur egestas amet faucibus mi faucibus.
+        Mauris pellentesque vitae urna sed vehicula. Mauris sollicitudin rutrum condimentum. Sed elit cursus neque,
+        vel imperdiet justo. Integer et volutpat erat, at ullamcorper nisi. Praesent viverra interdum ex.
     """.trim();
 
     @ParameterizedTest
     @DisplayName("highlight - extract excerpt from content")
     @CsvSource(delimiter = '|', textBlock = """
-        'elit'   | 'amet, consectetur adipiscing elit. Curabitur egestas odio fauci'
-        'foobar' | 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cur'
+        'Match at the beginning'   | 'Lorum'     | 'Lorum ipsum dolor sit amet, consectetur adipiscing elit. Cur'
+        'Match case sensitive'     | 'lOrUm'     | 'Lorum ipsum dolor sit amet, consectetur adipiscing elit. Cur'
+        'Match twice, first taken' | 'amet'      | 'Lorum ipsum dolor sit amet, consectetur adipiscing elit. Cur'
+        'Excerpt is trimmed'       | 'Curabitur' | 'consectetur adipiscing elit. Curabitur egestas amet faucibu'
+        'Match at the end'         | 'ex'        | 'pat erat, at ullamcorper nisi. Praesent viverra interdum ex.'
     """)
-    void highlight(String term, String expectedHighlight) {
-
-        assertThat(SearchItemView.highlight(content, term)).isEqualTo(expectedHighlight);
-
+    void highlight(String scenario, String term, String expectedHighlight) {
+        assertThat(SearchItemView.highlight(content, term))
+            .as(scenario)
+            .isEqualTo(expectedHighlight);
     }
 }
