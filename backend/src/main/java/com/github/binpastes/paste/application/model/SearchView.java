@@ -46,8 +46,8 @@ public record SearchView(
                 return content.substring(0, Math.min(2 * HIGHLIGHT_RANGE, content.length())).trim();
             }
 
-            var leftRemainder = Math.abs(Math.min(0, idx - HIGHLIGHT_RANGE));
-            var rightRemainder = Math.max(0, idx + HIGHLIGHT_RANGE - content.length());
+            final int leftRemainder = Math.abs(Math.min(0, idx - HIGHLIGHT_RANGE));
+            final int rightRemainder = Math.max(0, idx + HIGHLIGHT_RANGE - content.length());
 
             return content.substring(
                 Math.max(0, idx - HIGHLIGHT_RANGE - rightRemainder),
