@@ -20,8 +20,6 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.concurrent.TimeUnit;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 @Configuration
 class MessagingConfig {
 
@@ -37,7 +35,7 @@ class MessagingConfig {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public EmbeddedActiveMQ activeMqServer() throws Exception {
-        org.apache.activemq.artemis.core.config.Configuration config = new ConfigurationImpl();
+        var config = new ConfigurationImpl();
 
         config.addAddressConfiguration(new CoreAddressConfiguration()
                 .setName("binpastes")
@@ -45,7 +43,9 @@ class MessagingConfig {
                         .setName(new SimpleString("pasteTrackingQueue"))
                         .setAddress(new SimpleString("binpastes"))
                         .setMaxConsumers(1)
-                        .setDelayBeforeDispatch(SECONDS.toMillis(3))
+                        .setExclusive(true) // dispatch all messages to only one consumer at a time
+                        .setConsumersBeforeDispatch(1)
+                        .setDelayBeforeDispatch(TimeUnit.SECONDS.toMillis(5))
                         .setDurable(true)
                 )
                 .addRoutingType(RoutingType.ANYCAST));
@@ -53,25 +53,28 @@ class MessagingConfig {
         config.addAddressSetting("binpastes", new AddressSettings()
                 .setDefaultAddressRoutingType(RoutingType.ANYCAST)
                 .setDefaultQueueRoutingType(RoutingType.ANYCAST)
-                .setEnableIngressTimestamp(false)
-                .setExpiryDelay(TimeUnit.DAYS.toMillis(7))
+                .setRedeliveryDelay(TimeUnit.SECONDS.toMillis(5))
+                .setRedeliveryMultiplier(1.5)
+                .setMaxDeliveryAttempts(5)
+                .setAutoCreateDeadLetterResources(true)
         );
-
-        config.setMessageExpiryScanPeriod(SECONDS.toMillis(3));
 
         config.setName("binpastesMQ");
         config.addAcceptorConfiguration("in-vm", "vm://0");
 
         config.setGracefulShutdownEnabled(true);
-        config.setGracefulShutdownTimeout(SECONDS.toMillis(1));
+        config.setGracefulShutdownTimeout(TimeUnit.SECONDS.toMillis(1));
         config.setJournalPoolFiles(3);
         config.setSecurityEnabled(false);
         config.setJMXManagementEnabled(true);
 
+        config.setLargeMessageSync(false);
+
         config.setPersistDeliveryCountBeforeDelivery(true);
 
         config.setScheduledThreadPoolMaxSize(1);
-        config.setThreadPoolMaxSize(1);
+        config.setThreadPoolMaxSize(Runtime.getRuntime().availableProcessors());
+
         config.setPersistenceEnabled(true);
 
         config.setBindingsDirectory("./tracking/bindings");
@@ -79,10 +82,10 @@ class MessagingConfig {
         config.setLargeMessagesDirectory("./tracking/large_messages");
         config.setPagingDirectory("./tracking/paging");
 
-        var embeddedActiveMQ = new EmbeddedActiveMQ();
-        embeddedActiveMQ.setConfiguration(config);
+        var server = new EmbeddedActiveMQ()
+                .setConfiguration(config);
 
-        return embeddedActiveMQ;
+        return server;
     }
 
     @Bean(initMethod = "init", destroyMethod = "dispose")
@@ -110,12 +113,14 @@ class MessagingConfig {
     @Bean(destroyMethod = "close")
     @DependsOn("activeMqServer")
     public ServerLocator serverLocator() throws Exception {
-        ServerLocator serverLocator = ActiveMQClient.createServerLocator("vm://0");
-        serverLocator.setReconnectAttempts(1);
-        serverLocator.setUseGlobalPools(false);
-        serverLocator.setAutoGroup(true);
-        serverLocator.setGroupID("binpastes-views");
-        serverLocator.setPreAcknowledge(true);
+        var serverLocator = ActiveMQClient.createServerLocator("vm://0")
+                .setReconnectAttempts(1)
+                .setFlowControlThreadPoolMaxSize(1)
+                .setScheduledThreadPoolMaxSize(1)
+                .setThreadPoolMaxSize(Runtime.getRuntime().availableProcessors())
+                .setUseGlobalPools(false)
+                .setAutoGroup(false)
+                .setPreAcknowledge(true); // tradeoff to lose views potentially
         return serverLocator;
     }
 

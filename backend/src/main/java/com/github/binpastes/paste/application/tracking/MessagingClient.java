@@ -98,7 +98,7 @@ public class MessagingClient {
         var session = sessions.get();
 
         if (session == null) {
-            session = this.sessionFactory.createSession(true, true);
+            session = this.sessionFactory.createSession();
             session.start();
             sessions.set(session);
         }
@@ -106,7 +106,7 @@ public class MessagingClient {
         return session;
     }
 
-    public record Message (
+    public record Message(
             String pasteId,
             Instant timeViewed
     ) {

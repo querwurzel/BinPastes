@@ -12,6 +12,7 @@ import reactor.util.retry.Retry;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import static com.github.binpastes.paste.domain.Paste.PasteExposure;
 
@@ -85,9 +86,13 @@ public class PasteService {
                 .map(Paste::markAsExpired)
                 .flatMap(pasteRepository::save)
                 .retryWhen(Retry
-                        .backoff(5, Duration.ofMillis(500))
+                        .backoff(3, Duration.ofMillis(100))
                         .filter(ex -> ex instanceof OptimisticLockingFailureException))
-                .doOnNext(paste -> log.info("Deleted paste {} on behalf of {}", paste.getId(), remoteAddress))
+                .doOnNext(paste -> log.atInfo()
+                        .addArgument(paste.getId())
+                        .addArgument(Objects.toString(remoteAddress, "anonymous"))
+                        .log("Deleted paste {} on behalf of {}")
+                )
                 .then();
     }
 }
