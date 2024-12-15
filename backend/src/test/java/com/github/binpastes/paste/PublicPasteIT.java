@@ -107,7 +107,7 @@ class PublicPasteIT {
                 .expectHeader().cacheControl(CacheControl.empty())
                 .expectBody()
                 .jsonPath("$.id").<String>value(id ->
-                        assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                        assertThat(id).matches("^[a-z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
                         assertThat(parse(dateCreated)).isCloseTo(now, new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
@@ -144,7 +144,7 @@ class PublicPasteIT {
                 .expectHeader().cacheControl(CacheControl.empty())
                 .expectBody()
                 .jsonPath("$.id").<String>value(id ->
-                        assertThat(id).matches("^[a-zA-Z0-9]{40}$")
+                        assertThat(id).matches("^[a-z0-9]{40}$")
                 )
                 .jsonPath("$.dateCreated").<String>value(dateCreated ->
                         assertThat(parse(dateCreated)).isCloseTo(LocalDateTime.now(), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))

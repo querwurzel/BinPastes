@@ -30,7 +30,7 @@ class IdGeneratorTest {
 
         assertThat(id)
             .hasSize(40)
-            .matches("[a-zA-Z0-9]{40}");
+            .matches("[a-z0-9]{40}");
     }
 
     private static Stream<Arguments> ids() {

@@ -51,7 +51,7 @@ class PasteController {
         this.pasteViewService = pasteViewService;
     }
 
-    @GetMapping("/{pasteId:[a-zA-Z0-9]{40}}")
+    @GetMapping("/{pasteId:[a-z0-9]{40}}")
     public Mono<DetailView> findPaste(
             @PathVariable("pasteId")
             final String pasteId,
@@ -78,7 +78,7 @@ class PasteController {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }
 
-    @PostMapping("/{pasteId:[a-zA-Z0-9]{40}}")
+    @PostMapping("/{pasteId:[a-z0-9]{40}}")
     public Mono<DetailView> findAndBurnOneTimePaste(
             @PathVariable("pasteId")
             final String pasteId,
@@ -114,7 +114,7 @@ class PasteController {
         return pasteViewService.createPaste(createCmd, remoteAddress(request).orElse(null));
     }
 
-    @DeleteMapping("/{pasteId:[a-zA-Z0-9]{40}}")
+    @DeleteMapping("/{pasteId:[a-z0-9]{40}}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deletePaste(@PathVariable("pasteId") final String pasteId, final ServerHttpRequest request) {
         return pasteViewService.requestDeletion(pasteId, remoteAddress(request).orElse(null));
