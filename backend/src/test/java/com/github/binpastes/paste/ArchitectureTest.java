@@ -6,6 +6,7 @@ import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.core.importer.ImportOption.Predefined;
 import org.junit.jupiter.api.Test;
+import org.springframework.modulith.core.ApplicationModules;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
@@ -18,6 +19,13 @@ class ArchitectureTest {
             .withImportOption(Predefined.DO_NOT_INCLUDE_JARS)
             .withImportOption(Predefined.DO_NOT_INCLUDE_TESTS)
             .importPackagesOf(BinPastes.class);
+
+    @Test
+    void moduleVerification() {
+        ApplicationModules applicationModules = ApplicationModules.of(BinPastes.class);
+        applicationModules.forEach(System.out::println);
+        applicationModules.verify();
+    }
 
     @Test
     void applicationLayerIndependentOfDownstreamLayers() {

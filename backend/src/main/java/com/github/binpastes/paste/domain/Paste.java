@@ -65,7 +65,7 @@ public class Paste {
         return new Paste()
                 .setContent(Objects.requireNonNull(content))
                 .setExposure(Objects.requireNonNull(exposure))
-                .setId(IdGenerator.newStringId())
+                .setId(IdGenerator.randomAlphaNumericalId())
                 .setTitle(title)
                 .setIsEncrypted(isEncrypted)
                 .setRemoteAddress(remoteAddress)
