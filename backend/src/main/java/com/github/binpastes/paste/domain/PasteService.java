@@ -54,7 +54,7 @@ public class PasteService {
             .filter(Paste::isOneTime)
             .map(Paste::markAsExpired)
             .flatMap(pasteRepository::save)
-            .doOnNext(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
+            .doOnSuccess(paste -> log.info("OneTime paste {} viewed and burnt", paste.getId()))
             .onErrorComplete(OptimisticLockingFailureException.class);
     }
 
@@ -88,7 +88,7 @@ public class PasteService {
             .retryWhen(Retry
                 .backoff(3, Duration.ofMillis(100))
                 .filter(ex -> ex instanceof OptimisticLockingFailureException))
-            .doOnNext(paste -> log.atInfo()
+            .doOnSuccess(paste -> log.atInfo()
                 .addArgument(paste.getId())
                 .addArgument(Objects.toString(remoteAddress, "anonymous"))
                 .log("Deleted paste {} on behalf of {}")
