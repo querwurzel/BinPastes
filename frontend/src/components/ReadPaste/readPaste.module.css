@@ -91,6 +91,7 @@
 .read .encryption input {
   display: inline-block;
   margin: 0;
+  width: auto;
 }
 
 .read .encryption button {
