@@ -3,12 +3,8 @@ import {createStore} from "solid-js/store";
 import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
 import {CopyToClipboard} from "../../assets/Vectors";
+import {PasteClone} from "../../src/AppContext";
 import styles from "./createPaste.module.css";
-
-export type PasteClone = {
-  title?: string
-  content: string
-}
 
 type CreatePasteProps = {
   onCreatePaste: (paste: PasteCreateCmd) => Promise<void>

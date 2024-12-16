@@ -15,7 +15,7 @@ const App: Component = (props: ParentProps): JSX.Element => {
 
         <main class={styles.left}>
           <div class={styles.leftContainer}>
-          {props.children}
+            {props.children}
           </div>
         </main>
 

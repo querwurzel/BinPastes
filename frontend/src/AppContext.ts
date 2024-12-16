@@ -1,5 +1,9 @@
 import {PasteView} from './api/model/PasteView';
-import {PasteClone} from './components/CreatePaste/CreatePaste';
+
+export type PasteClone = {
+  title?: string
+  content: string
+}
 
 export interface IAppContext {
   pushPasteCloned: (data: PasteClone) => void
@@ -24,9 +28,9 @@ class AppContextImpl implements IAppContext {
   }
 
   popPasteCloned() : PasteClone | undefined {
-    const holder = this.pasteCloned;
+    const ref = this.pasteCloned;
     delete this.pasteCloned;
-    return holder;
+    return ref;
   }
 
   pushPasteCreated(paste: PasteView) {
@@ -35,9 +39,9 @@ class AppContextImpl implements IAppContext {
   }
 
   popPasteCreated() : PasteView | undefined {
-    const holder = this.pasteCreated;
+    const ref = this.pasteCreated;
     delete this.pasteCreated;
-    return holder;
+    return ref;
   }
 
   onPasteCreated(callback: (paste: PasteView) => void) {
