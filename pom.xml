@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.7</version>
+    <version>3.4.2</version>
     <relativePath/><!-- lookup parent from repository -->
   </parent>
 
@@ -44,11 +44,11 @@
     <maven-jacoco-plugin.version>0.8.12</maven-jacoco-plugin.version>
 
     <!-- 3rd-party library versions -->
-    <spring-boot-bom.version>3.3.7</spring-boot-bom.version>
-    <spring-modulith-bom.version>1.3.1</spring-modulith-bom.version>
+    <spring-boot-bom.version>3.4.2</spring-boot-bom.version>
+    <spring-modulith-bom.version>1.3.2</spring-modulith-bom.version>
     <junixsocket.version>2.10.1</junixsocket.version>
-    <flyway.version>11.1.0</flyway.version>
-    <r2dbc-mysql.version>1.3.1</r2dbc-mysql.version>
+    <flyway.version>11.2.0</flyway.version>
+    <r2dbc-mysql.version>1.3.2</r2dbc-mysql.version>
     <r2dbc-mariadb.version>1.3.0</r2dbc-mariadb.version>
   </properties>
 
