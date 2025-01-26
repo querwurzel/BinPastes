@@ -75,7 +75,7 @@ public class PasteService {
                 .retryWhen(Retry
                         .backoff(5, Duration.ofMillis(500))
                         .filter(ex -> ex instanceof OptimisticLockingFailureException))
-                .subscribeOn(Schedulers.parallel())
+                .subscribeOn(Schedulers.single())
                 .subscribe();
     }
 

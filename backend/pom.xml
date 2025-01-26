@@ -158,6 +158,25 @@
             </dependencies>
         </profile>
         <profile>
+            <id>h2</id>
+            <activation>
+                <property>
+                    <name>env</name>
+                    <value>h2</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.r2dbc</groupId>
+                    <artifactId>r2dbc-h2</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>dev</id>
             <activation>
                 <activeByDefault>true</activeByDefault>

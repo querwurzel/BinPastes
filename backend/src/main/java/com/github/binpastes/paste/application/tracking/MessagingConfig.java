@@ -117,7 +117,7 @@ class MessagingConfig {
                 .setReconnectAttempts(1)
                 .setFlowControlThreadPoolMaxSize(1)
                 .setScheduledThreadPoolMaxSize(1)
-                .setThreadPoolMaxSize(Runtime.getRuntime().availableProcessors())
+                .setThreadPoolMaxSize(1)
                 .setUseGlobalPools(false)
                 .setAutoGroup(false)
                 .setPreAcknowledge(true); // tradeoff to lose views potentially
