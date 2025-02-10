@@ -20,11 +20,9 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.parse;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.waitAtMost;
 
@@ -53,7 +51,7 @@ class UnlistedPasteIT {
                 .uri("/api/v1/paste/{id}", unlistedPaste.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofHours(1)));
     }
 
     @Test
@@ -73,9 +71,8 @@ class UnlistedPasteIT {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().value(
-                        HttpHeaders.CACHE_CONTROL,
-                        (value) -> assertThat(Long.valueOf(value.replace("max-age=", "")))
-                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(1)));
+                    HttpHeaders.CACHE_CONTROL,
+                    (value) -> assertThat(value).matches("max-age=5[0-9], must-revalidate"));
     }
 
     @Test

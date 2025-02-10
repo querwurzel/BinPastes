@@ -21,7 +21,6 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.TimeUnit;
 
 import static java.time.LocalDateTime.parse;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,7 @@ class PublicPasteIT {
                 .uri("/api/v1/paste/{id}", paste.getId())
                 .exchange()
                 .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
+                .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofHours(1)));
     }
 
     @Test
@@ -73,8 +72,7 @@ class PublicPasteIT {
                 .expectStatus().isOk()
                 .expectHeader().value(
                         HttpHeaders.CACHE_CONTROL,
-                        (value) -> assertThat(Long.valueOf(value.replace("max-age=", "")))
-                                .isLessThanOrEqualTo(TimeUnit.MINUTES.toSeconds(1)));
+                        (value) -> assertThat(value).matches("max-age=5[0-9], must-revalidate"));
     }
 
     @Test

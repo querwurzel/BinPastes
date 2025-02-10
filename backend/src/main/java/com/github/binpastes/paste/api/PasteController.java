@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.validation.annotation.Validated;
@@ -38,7 +39,10 @@ import java.time.LocalDateTime;
 
 @Validated
 @RestController
-@RequestMapping({"/api/v1/paste", "/api/v1/paste/"})
+@RequestMapping(
+    path = {"/api/v1/paste", "/api/v1/paste/"},
+    produces = MediaType.APPLICATION_JSON_VALUE
+)
 class PasteController {
 
     private static final Logger log = LoggerFactory.getLogger(PasteController.class);
@@ -64,15 +68,18 @@ class PasteController {
                     response.getHeaders().setCacheControl(CacheControl.noStore());
                     return;
                 }
+                if (paste.isPermanent()) {
+                    response.getHeaders().setCacheControl(CacheControl.maxAge(Duration.ofHours(1)));
+                    return;
+                }
 
                 var now = LocalDateTime.now();
-                if (paste.isPermanent() || paste.dateOfExpiry().get().plusMinutes(1).isAfter(now)) {
-                    response.getHeaders().setCacheControl(
-                        CacheControl.maxAge(Duration.ofMinutes(1)));
-                } else {
-                    response.getHeaders().setCacheControl(
-                        CacheControl.maxAge(Duration.between(now, paste.dateOfExpiry().get())).mustRevalidate());
-                }
+                var maxAge = paste.dateOfExpiry()
+                    .filter(exp -> exp.plusMinutes(1).isAfter(now))
+                    .map(exp-> Duration.between(now, exp))
+                    .orElse(Duration.ofMinutes(1));
+
+                response.getHeaders().setCacheControl(CacheControl.maxAge(maxAge).mustRevalidate());
             })
             .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND)));
     }

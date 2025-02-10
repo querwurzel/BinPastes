@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 
 import static java.time.Duration.ofMillis;
 import static java.time.LocalDateTime.parse;
-import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.waitAtMost;
 
