@@ -39,11 +39,12 @@ class SearchPasteIT {
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", paste.getTitle().get())
+                .uri("/api/v1/paste/search?term={term}", paste.getTitle().orElseThrow())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)))
-                .expectBody().jsonPath("$.pastes.length()", 1);
+                .expectBody()
+                .jsonPath("$.pastes.length()").isEqualTo(1);
     }
 
     @Test
@@ -57,7 +58,8 @@ class SearchPasteIT {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(Duration.ofMinutes(1)))
-                .expectBody().jsonPath("$.pastes.length()", 0);
+                .expectBody()
+                .jsonPath("$.pastes").isEmpty();
     }
 
     private Paste givenPublicPaste() {

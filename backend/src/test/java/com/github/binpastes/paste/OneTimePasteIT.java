@@ -112,7 +112,8 @@ class OneTimePasteIT {
             .uri("/api/v1/paste")
             .exchange()
             .expectStatus().isOk()
-            .expectBody().jsonPath("pastes", emptyList());
+            .expectBody()
+            .jsonPath("$.pastes").isEmpty();
     }
 
     @Test
@@ -123,10 +124,11 @@ class OneTimePasteIT {
         assertThat(pasteRepository.count().block()).isOne();
 
         webClient.get()
-            .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle().get())
+            .uri("/api/v1/paste/search?term={term}", oneTimePaste.getTitle().orElseThrow())
             .exchange()
             .expectStatus().isOk()
-            .expectBody().jsonPath("pastes", emptyList());
+            .expectBody()
+            .jsonPath("$.pastes").isEmpty();
     }
 
     @Test

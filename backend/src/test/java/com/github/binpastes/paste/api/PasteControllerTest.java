@@ -6,18 +6,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Named.named;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.*;
@@ -30,7 +30,7 @@ class PasteControllerTest {
     @Autowired
     private WebTestClient webClient;
 
-    @MockBean
+    @MockitoBean
     private PasteViewService pasteViewService;
 
     private static final String samplePasteId = "47116941fd49eda1b6c8abec63dbf8afe2fad088";
@@ -47,24 +47,17 @@ class PasteControllerTest {
                 .expectHeader().cacheControl(CacheControl.empty());
     }
 
-    @Test
-    @DisplayName("GET / - empty list, no cacheControl header")
-    void listPastes() {
+    @ParameterizedTest(name = "GET {0} - empty list, no cacheControl header")
+    @ValueSource(strings = {"/api/v1/paste", "/api/v1/paste/"})
+    void listPastes(String path) {
         doReturn(Mono.empty()).when(pasteViewService).viewAllPastes();
 
         webClient.get()
-                .uri("/api/v1/paste")
+                .uri(path)
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.empty())
-                .expectBody().jsonPath("pastes", emptyList());
-
-        webClient.get()
-                .uri("/api/v1/paste/") // trailing slash
-                .exchange()
-                .expectStatus().isOk()
-                .expectHeader().cacheControl(CacheControl.empty())
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectBody().isEmpty();
     }
 
     @Test
@@ -77,7 +70,7 @@ class PasteControllerTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectBody().isEmpty();
 
         verify(pasteViewService).searchByFullText(eq(":-)"));
     }

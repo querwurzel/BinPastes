@@ -88,7 +88,8 @@ class UnlistedPasteIT {
                 .uri("/api/v1/paste/")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectBody()
+                .jsonPath("$.pastes").isEmpty();
     }
 
     @Test
@@ -98,10 +99,11 @@ class UnlistedPasteIT {
 
         assertThat(pasteRepository.count().block()).isOne();
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", paste.getTitle().get())
+                .uri("/api/v1/paste/search?term={term}", paste.getTitle().orElseThrow())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("pastes", emptyList());
+                .expectBody()
+                .jsonPath("$.pastes").isEmpty();
     }
 
     @Test

@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
@@ -43,9 +43,9 @@ class TrackingPasteIT {
     private WebTestClient webClient;
     @Autowired
     private TrackingService trackingService;
-    @SpyBean
+    @MockitoSpyBean
     private PasteRepository pasteRepository;
-    @SpyBean
+    @MockitoSpyBean
     private MessagingClient messagingClient;
 
     @BeforeEach

@@ -87,7 +87,8 @@ class PublicPasteIT {
                 .uri("/api/v1/paste/")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody().jsonPath("$.pastes.length()", 1);
+                .expectBody()
+                .jsonPath("$.pastes.length()").isEqualTo(1);
     }
 
     @Test
