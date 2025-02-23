@@ -8,25 +8,26 @@
 
 .content {
   display: flex;
-  gap: 10px;
+  gap: 1rem;
   margin: 1rem;
 }
 
 .left {
   flex-basis: 65%;
   padding: 0;
+  margin: 0;
 }
 
 .leftContainer {
   position: sticky;
-  top: 3rem;
+  top: 1rem;
 }
 
 .right {
   flex-basis: 35%;
 }
 
-@media screen and (max-width:750px) {
+@media only screen and (max-width:1024px) {
 
   .content {
     flex-direction: column;
@@ -35,10 +36,6 @@
 
   .right {
     margin: 2rem 0;
-  }
-
-  .leftContainer {
-    position: static;
   }
 
 }

@@ -12,7 +12,7 @@
     --width-content: inherit;
 }
 
-@media (prefers-color-scheme: dark) {
+@media only screen and (prefers-color-scheme: dark) {
     :root[color-mode="user"] {
         --color-bg2: #4449;
     }

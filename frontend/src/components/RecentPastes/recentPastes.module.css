@@ -7,7 +7,7 @@
     word-break: break-all;
 }
 
-.recentPastes h3 {
+.recentPastes h2 {
     margin-left: 1rem;
     margin-top: 0;
     padding-top: 0;
@@ -46,7 +46,7 @@
     filter: brightness(var(--hover-brightness));
 }
 
-@media screen and (max-width:750px) {
+@media only screen and (max-width:1024px) {
     .recentPastes {
         border-left: none;
         border-bottom: 1px dotted #a5a5a5;

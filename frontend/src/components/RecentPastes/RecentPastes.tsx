@@ -62,10 +62,10 @@ const RecentPastes: () => JSX.Element = () => {
 
       <Switch>
         <Match when={pastes.error}>
-          <h3>Loading ..</h3>
+          <h2>Loading ..</h2>
         </Match>
         <Match when={pastes.latest}>
-          <h3>
+          <h2>
             <strong>
               <Show when={pastes()?.length} fallback={"Nothing pasted yet"}>
               Last {pastes()?.length} pastes
@@ -73,7 +73,7 @@ const RecentPastes: () => JSX.Element = () => {
             </strong>
             &nbsp;
             <span class={styles.refetch} onClick={manualRefetch}>↻</span>
-          </h3>
+          </h2>
 
           <A class={styles.searchLink} activeClass={styles.searchLinkActive} href={'/paste/search'}>Search all pastes</A>
 
