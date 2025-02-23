@@ -29,7 +29,12 @@
     "crypto-js": "4.2.0",
     "linkify-element": "4.2.0",
     "linkifyjs": "4.2.0",
-    "mvp.css": "1.17.1",
+    "mvp.css": "1.17.2",
     "solid-js": "1.9.5"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }

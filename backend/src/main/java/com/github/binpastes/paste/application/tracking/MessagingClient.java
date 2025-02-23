@@ -2,7 +2,6 @@ package com.github.binpastes.paste.application.tracking;
 
 import org.apache.activemq.artemis.api.core.ActiveMQException;
 import org.apache.activemq.artemis.api.core.ActiveMQObjectClosedException;
-import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ClientConsumer;
 import org.apache.activemq.artemis.api.core.client.ClientProducer;
 import org.apache.activemq.artemis.api.core.client.ClientSession;
@@ -74,8 +73,7 @@ public class MessagingClient {
         var clientProducer = this.clientProducers.get();
 
         if (clientProducer == null) {
-            var address = new SimpleString("binpastes");
-            clientProducer = session().createProducer(address);
+            clientProducer = session().createProducer("binpastes");
             this.clientProducers.set(clientProducer);
         }
 
@@ -86,8 +84,7 @@ public class MessagingClient {
         var clientConsumer = this.clientConsumers.get();
 
         if (clientConsumer == null) {
-            var queue = new SimpleString("pasteTrackingQueue");
-            clientConsumer = session().createConsumer(queue);
+            clientConsumer = session().createConsumer("pasteTrackingQueue");
             this.clientConsumers.set(clientConsumer);
         }
 

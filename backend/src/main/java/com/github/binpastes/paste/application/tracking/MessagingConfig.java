@@ -2,7 +2,6 @@ package com.github.binpastes.paste.application.tracking;
 
 import org.apache.activemq.artemis.api.core.QueueConfiguration;
 import org.apache.activemq.artemis.api.core.RoutingType;
-import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.client.ActiveMQClient;
 import org.apache.activemq.artemis.api.core.client.ClientSessionFactory;
 import org.apache.activemq.artemis.api.core.client.ServerLocator;
@@ -39,9 +38,9 @@ class MessagingConfig {
 
         config.addAddressConfiguration(new CoreAddressConfiguration()
             .setName("binpastes")
-            .addQueueConfig(new QueueConfiguration()
-                .setName(new SimpleString("pasteTrackingQueue"))
-                .setAddress(new SimpleString("binpastes"))
+            .addQueueConfig(QueueConfiguration
+                .of("pasteTrackingQueue")
+                .setAddress("binpastes")
                 .setMaxConsumers(1)
                 .setExclusive(true) // dispatch all messages to only one consumer at a time
                 .setConsumersBeforeDispatch(1)
