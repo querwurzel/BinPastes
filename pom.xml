@@ -42,7 +42,7 @@
     <maven-frontend-plugin.version>1.15.1</maven-frontend-plugin.version>
     <maven-wrapper-plugin.version>3.3.2</maven-wrapper-plugin.version>
     <maven-jacoco-plugin.version>0.8.12</maven-jacoco-plugin.version>
-    <maven-annotation-plugin.version>3.15.1</maven-annotation-plugin.version>
+    <maven-annotation-plugin.version><!-- to compensate for org.apache.pulsar:pulsar-bom parent -->3.13.1</maven-annotation-plugin.version>
 
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.4.3</spring-boot-bom.version>
