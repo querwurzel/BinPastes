@@ -19,9 +19,9 @@
   },
   "devDependencies": {
     "@types/crypto-js": "4.2.2",
-    "pnpm": "10.6.4",
-    "typescript": "5.8.2",
-    "vite": "6.2.2",
+    "pnpm": "10.10.0",
+    "typescript": "5.8.3",
+    "vite": "6.3.4",
     "vite-plugin-solid": "2.11.6"
   },
   "dependencies": {
@@ -30,7 +30,7 @@
     "linkify-element": "4.2.0",
     "linkifyjs": "4.2.0",
     "mvp.css": "1.17.2",
-    "solid-js": "1.9.5"
+    "solid-js": "1.9.6"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
