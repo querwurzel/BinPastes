@@ -19,16 +19,16 @@
   },
   "devDependencies": {
     "@types/crypto-js": "4.2.2",
-    "pnpm": "10.11.1",
-    "typescript": "5.8.3",
-    "vite": "6.3.5",
-    "vite-plugin-solid": "2.11.6"
+    "pnpm": "10.14.0",
+    "typescript": "5.9.2",
+    "vite": "7.0.6",
+    "vite-plugin-solid": "2.11.8"
   },
   "dependencies": {
     "@solidjs/router": "0.15.3",
     "crypto-js": "4.2.0",
-    "linkify-element": "4.3.1",
-    "linkifyjs": "4.3.1",
+    "linkify-element": "4.3.2",
+    "linkifyjs": "4.3.2",
     "mvp.css": "1.17.2",
     "solid-js": "1.9.7"
   },
