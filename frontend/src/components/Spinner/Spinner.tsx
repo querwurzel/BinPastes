@@ -3,7 +3,12 @@ import './spinner.css';
 
 const Spinner: () => JSX.Element = () => {
   return (
-    <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+    <div class="lds-ellipsis">
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
   )
 }
 
