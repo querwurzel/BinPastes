@@ -132,28 +132,34 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
       </h2>
 
       <div class={styles.meta}>
-        Created: <time title={toDateTimeString(paste().dateCreated)}>{toDateString(paste().dateCreated)}</time> |
-        Expires: <Show when={paste().dateOfExpiry} fallback={<span>Never</span>}><time>{toDateTimeString(paste().dateOfExpiry)}</time></Show>
-        <Show when={paste().sizeInBytes}> | Size: {paste().sizeInBytes}&nbsp;bytes</Show>
-        <Show when={paste().views}>
-        <br />
-        Views: {paste().views} | Last viewed: <time title={toDateTimeString(paste().lastViewed)}>{relativeDiffLabel(paste().lastViewed)}</time>
-        </Show>
-        <br />
-        <a onClick={onCopyLink} href="#" title="Copy link"><Link /></a>
-        <Show when={paste().content && !isEncrypted()}><a onClick={onCopyToClipboard} href="#" title="Copy content" class={styles.clipboard}><Copy /></a></Show>
-        <Show when={paste().isPublic && !paste().isEncrypted}><a onClick={onClone} href="#" title="Clone paste"><Clone /></a></Show>
-        <Show when={paste().isErasable}><a onClick={onDelete} href="#" title="Delete item"><Trash /></a></Show>
+        <div>
+          <span><strong>Created:</strong> <time title={toDateTimeString(paste().dateCreated)}>{toDateString(paste().dateCreated)}</time></span>
+          <span> | </span>
+          <span><strong>Expires:</strong> <Show when={paste().dateOfExpiry} fallback={<span>Never</span>}><time>{toDateTimeString(paste().dateOfExpiry)}</time></Show></span>
+          <Show when={paste().sizeInBytes}><span>| <strong>Size:</strong> {paste().sizeInBytes}&nbsp;bytes</span></Show>
+        </div>
+          <Show when={paste().views}>
+            <div><strong>Views:</strong> {paste().views} | <strong>Last viewed:</strong> <time title={toDateTimeString(paste().lastViewed)}>{relativeDiffLabel(paste().lastViewed)}</time></div>
+          </Show>
+        <div>
+          <a onClick={onCopyLink} href="#" title="Copy link"><Link/></a>
+          <Show when={paste().content && !isEncrypted()}><a onClick={onCopyToClipboard} href="#" title="Copy content" class={styles.clipboard}><Copy/></a></Show>
+          <Show when={paste().isPublic && !paste().isEncrypted}><a onClick={onClone} href="#" title="Clone paste"><Clone/></a></Show>
+          <Show when={paste().isErasable}><a onClick={onDelete} href="#" title="Delete item"><Trash/></a></Show>
+        </div>
       </div>
 
       <Show when={paste().isOneTime}>
         <div class={styles.onetime}>
         <Switch>
           <Match when={paste().content}>
-            <strong>For your eyes only! All information is lost after leaving this page!</strong>
+            <strong>For your eyes only! All information is lost after leaving the page!</strong>
           </Match>
           <Match when={!paste().content}>
-            <div><strong>This paste will burn after reading.</strong></div>
+            <p><strong>This paste will burn after reading.</strong></p>
+              <Show when={paste().isEncrypted}>
+                <p><strong>This paste is encrypted!</strong></p>
+              </Show>
             <button onClick={onBurn}>Reveal content</button>
           </Match>
         </Switch>
@@ -167,13 +173,13 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
             &#32;
             <input ref={keyInput} type="password" autocomplete="one-time-code" onKeyUp={onDecryptSubmit}/>
             &#32;
-            <button onClick={onDecryptClick}><Key /></button>
+            <button onClick={onDecryptClick}><Key/></button>
           </div>
         </Show>
 
         <pre ref={contentElement}>
         <For each={lines()} fallback={<span class={styles.line}>{paste().content}</span>}>{line =>
-          <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}<br /></span></span>
+          <span class={styles.row}><span class={styles.count}></span><span class={styles.line}>{line}<br/></span></span>
         }
         </For>
         </pre>

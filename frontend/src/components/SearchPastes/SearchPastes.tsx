@@ -45,11 +45,13 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchPaste
           <For each={pastes}>{item =>
           <li class={styles.item}>
             <p><A href={'/paste/' + item.id}>{item.title || 'Untitled' }</A></p>
-            <p>
-              Created: <time>{toDateTimeString(item.dateCreated)}</time> |
-              Expires: <time>{item.dateOfExpiry ? toDateTimeString(item.dateOfExpiry) : 'Never'}</time> |
-              Size: {item.sizeInBytes} bytes
-            </p>
+            <div>
+              <span><strong>Created:</strong> <time>{toDateTimeString(item.dateCreated)}</time></span>
+              <span> | </span>
+              <span><strong>Expires:</strong> <time>{item.dateOfExpiry ? toDateTimeString(item.dateOfExpiry) : 'Never'}</time></span>
+              <span> | </span>
+              <span><strong>Size:</strong> {item.sizeInBytes}&nbsp;bytes</span>
+            </div>
             <pre><i>“{item.highlight} [..]”</i></pre>
           </li>
           }

@@ -30,6 +30,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
             final List<FullTextSearchSupport> fullTextSearchSupport
     ) {
         Assert.notEmpty(fullTextSearchSupport, "Require at least one FullTextSearchSupport implementation");
+        log.info("Using {} FullTextSearch implementations", fullTextSearchSupport.size());
         this.entityTemplate = entityManager;
         this.fullTextSearchSupport = fullTextSearchSupport;
     }

@@ -30,10 +30,6 @@
     cursor: pointer;
 }
 
-.searchResults span {
-    margin: .5rem;
-}
-
 .searchResults ol {
     margin: 0;
     padding: 0;
