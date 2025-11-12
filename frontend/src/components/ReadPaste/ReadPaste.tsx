@@ -136,7 +136,7 @@ const ReadPaste: Component<ReadPasteProps> = ({initialPaste, onBurnPaste, onClon
           <span><strong>Created:</strong> <time title={toDateTimeString(paste().dateCreated)}>{toDateString(paste().dateCreated)}</time></span>
           <span> | </span>
           <span><strong>Expires:</strong> <Show when={paste().dateOfExpiry} fallback={<span>Never</span>}><time>{toDateTimeString(paste().dateOfExpiry)}</time></Show></span>
-          <Show when={paste().sizeInBytes}><span>| <strong>Size:</strong> {paste().sizeInBytes}&nbsp;bytes</span></Show>
+          <Show when={paste().sizeInBytes}><span> | <strong>Size:</strong> {paste().sizeInBytes}&nbsp;bytes</span></Show>
         </div>
           <Show when={paste().views}>
             <div><strong>Views:</strong> {paste().views} | <strong>Last viewed:</strong> <time title={toDateTimeString(paste().lastViewed)}>{relativeDiffLabel(paste().lastViewed)}</time></div>
