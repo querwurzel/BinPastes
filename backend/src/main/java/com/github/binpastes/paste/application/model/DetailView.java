@@ -44,7 +44,7 @@ public record DetailView(
     public static DetailView ofOneTime(final Paste reference, final String remoteAddress) {
         return new DetailView(
             reference.getId(),
-            null,
+            reference.getTitle(),
             null,
             0,
             reference.isPublic(),

@@ -1,8 +1,8 @@
 import {JSX, Component, ParentProps} from 'solid-js';
-import styles from './App.module.css';
 import Footer from './components/Footer/Footer';
 import Header from './components/Header/Header';
 import RecentPastes from './components/RecentPastes/RecentPastes';
+import styles from './App.module.css';
 
 const App: Component = (props: ParentProps): JSX.Element => {
   return (

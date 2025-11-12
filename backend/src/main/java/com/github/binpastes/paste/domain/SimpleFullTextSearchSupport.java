@@ -35,7 +35,7 @@ class SimpleFullTextSearchSupport implements FullTextSearchSupport {
                         .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
                 )
                 .and(Criteria
-                        .where(PasteSchema.TITLE).like('%' + text + '%')
+                        .where(PasteSchema.TITLE).like('%' + text + '%').ignoreCase(true)
                         .or(Criteria
                                 .where(PasteSchema.CONTENT).like('%' + text + '%')
                                 .and(PasteSchema.IS_ENCRYPTED).isFalse()

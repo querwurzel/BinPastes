@@ -45,8 +45,8 @@ class OneTimePasteIT {
     }
 
     @Test
-    @DisplayName("GET /{pasteId} - one-time paste hides title & content and discourages caching")
-    void getOneTimePasteHidesContent() {
+    @DisplayName("GET /{pasteId} - one-time paste hides content and size and discourages caching")
+    void getOneTimePaste() {
         var oneTimePaste = givenOneTimePaste();
 
         webClient.get()
@@ -56,10 +56,10 @@ class OneTimePasteIT {
             .expectHeader().cacheControl(CacheControl.noStore())
             .expectBody()
             .jsonPath("$.content").doesNotExist()
-            .jsonPath("$.title").doesNotExist()
             .jsonPath("$.sizeInBytes").doesNotExist()
             .json("""
                         {
+                            "title": "someTitle",
                             "isErasable": true,
                             "isOneTime": true,
                             "isPermanent" :true
@@ -160,10 +160,10 @@ class OneTimePasteIT {
                 assertThat(parse(dateOfExpiry)).isCloseTo(now.plusMonths(3), new TemporalUnitLessThanOffset(3, ChronoUnit.SECONDS))
             )
             .jsonPath("$.content").doesNotExist()
-            .jsonPath("$.title").doesNotExist()
             .jsonPath("$.sizeInBytes").doesNotExist()
             .json("""
                 {
+                    "title": "someTitle",
                     "isErasable": true,
                     "isEncrypted": true,
                     "isOneTime": true

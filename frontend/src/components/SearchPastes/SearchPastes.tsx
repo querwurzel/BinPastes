@@ -40,7 +40,7 @@ const SearchPastes: Component<SearchPastesProps> = ({term, pastes, onSearchPaste
 
       <Show when={term}>
       <div class={styles.searchResults}>
-        <Show when={pastes.length} fallback={<span>Nothing found</span>}>
+        <Show when={pastes.length} fallback={<strong class={styles.item}>Nothing found</strong>}>
         <ol>
           <For each={pastes}>{item =>
           <li class={styles.item}>
