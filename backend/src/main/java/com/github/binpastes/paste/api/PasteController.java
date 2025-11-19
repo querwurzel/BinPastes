@@ -76,7 +76,7 @@ class PasteController {
                 var now = LocalDateTime.now();
                 var maxAge = paste.dateOfExpiry()
                     .filter(exp -> exp.plusMinutes(1).isAfter(now))
-                    .map(exp-> Duration.between(now, exp))
+                    .map(exp -> Duration.between(now, exp))
                     .orElse(Duration.ofMinutes(1));
 
                 response.getHeaders().setCacheControl(CacheControl.maxAge(maxAge).mustRevalidate());
