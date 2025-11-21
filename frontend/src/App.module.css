@@ -38,4 +38,8 @@
     margin: 2rem 0;
   }
 
+  .rightMobile {
+    display: none;
+  }
+
 }
