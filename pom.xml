@@ -42,7 +42,6 @@
     <maven-frontend-plugin.version>1.15.4</maven-frontend-plugin.version>
     <maven-wrapper-plugin.version>3.3.4</maven-wrapper-plugin.version>
     <maven-jacoco-plugin.version>0.8.14</maven-jacoco-plugin.version>
-    <maven-annotation-plugin.version>3.15.2</maven-annotation-plugin.version>
 
     <!-- 3rd-party library versions -->
     <spring-boot-bom.version>3.5.8</spring-boot-bom.version>
@@ -86,7 +85,6 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
           <release>${maven.compiler.release}</release>
-          <!-- source and target are not necessary for maven but for IntelliJ :( -->
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
           <encoding>UTF-8</encoding>
@@ -118,11 +116,6 @@
         <version>${spring-modulith-bom.version}</version>
         <scope>import</scope>
         <type>pom</type>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven.plugin-tools</groupId>
-        <artifactId>maven-plugin-annotations</artifactId>
-        <version>${maven-annotation-plugin.version}</version>
       </dependency>
 
       <!-- Project dependencies -->
