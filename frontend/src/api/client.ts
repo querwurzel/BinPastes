@@ -52,7 +52,7 @@ function findAll(): Promise<Array<PasteListView>> {
 
 function searchAll(term: string): Promise<Array<PasteSearchView>> {
   const url = new URL('/api/v1/paste/search', apiBaseUrl());
-  url.search = new URLSearchParams({'term': term});
+  url.search = new URLSearchParams({ term });
 
   return fetch(url)
     .then(resp => toJson(resp))
