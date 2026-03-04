@@ -16,7 +16,7 @@ class IdGeneratorTest {
         var uuidv4 = UUID.fromString("9b1482c6-5310-4eef-b91d-75220eb2bef7");
         var id = hex(sha1(uuidv4.toString().getBytes()));
 
-        assertThat(id).hasSize(40).isEqualTo("7870235b55ee013737d015c756c02f5efa6ba903");
+        assertThat(id).isEqualTo("7870235b55ee013737d015c756c02f5efa6ba903");
     }
 
     @Test
