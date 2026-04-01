@@ -47,7 +47,7 @@
     <spring-boot-bom.version>3.5.13</spring-boot-bom.version>
     <spring-modulith-bom.version>1.4.10</spring-modulith-bom.version>
     <junixsocket.version>2.10.1</junixsocket.version>
-    <flyway.version>12.1.1</flyway.version>
+    <flyway.version>12.3.0</flyway.version>
     <r2dbc-mysql.version>1.4.1</r2dbc-mysql.version>
     <r2dbc-mariadb.version>1.4.0</r2dbc-mariadb.version>
   </properties>
