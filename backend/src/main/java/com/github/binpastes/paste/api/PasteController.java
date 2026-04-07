@@ -133,7 +133,7 @@ class PasteController {
     }
 
     private static String remoteAddress(final ServerHttpRequest request) {
-        if (request.getHeaders().containsKey("X-Forwarded-For")) {
+        if (request.getHeaders().containsHeader("X-Forwarded-For")) {
             return request.getHeaders().getFirst("X-Forwarded-For");
         }
 

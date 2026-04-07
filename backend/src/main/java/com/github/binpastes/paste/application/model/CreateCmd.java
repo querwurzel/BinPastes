@@ -1,5 +1,6 @@
 package com.github.binpastes.paste.application.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
 import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
@@ -21,6 +22,7 @@ public final class CreateCmd {
     private final ExpirationRange expiry;
     private final PasteExposure exposure;
 
+    @JsonCreator
     private CreateCmd(
         final String title,
         final String content,

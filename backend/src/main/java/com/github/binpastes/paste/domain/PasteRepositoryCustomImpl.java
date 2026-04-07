@@ -50,7 +50,7 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
     @Override
     public Flux<Paste> findAllLegit() {
         final var criteria = Criteria
-                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC.name())
+                .where(PasteSchema.EXPOSURE).is(PasteExposure.PUBLIC)
                 .and(Criteria
                         .where(PasteSchema.DATE_OF_EXPIRY).isNull()
                         .or(PasteSchema.DATE_OF_EXPIRY).greaterThan(LocalDateTime.now())
