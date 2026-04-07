@@ -75,6 +75,7 @@ class MessagingConfig {
         config.setThreadPoolMaxSize(Runtime.getRuntime().availableProcessors());
 
         config.setPersistenceEnabled(true);
+        config.setMaxDiskUsage(-1);
 
         config.setBindingsDirectory("./tracking/bindings");
         config.setJournalDirectory("./tracking/journal");
