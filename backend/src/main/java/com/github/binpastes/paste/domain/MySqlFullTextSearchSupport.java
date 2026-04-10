@@ -1,7 +1,6 @@
 package com.github.binpastes.paste.domain;
 
 import io.r2dbc.spi.Connection;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -30,7 +29,6 @@ class MySqlFullTextSearchSupport implements FullTextSearchSupport {
 
     private final R2dbcEntityTemplate entityTemplate;
 
-    @Autowired
     public MySqlFullTextSearchSupport(final R2dbcEntityTemplate entityTemplate) {
         this.entityTemplate = entityTemplate;
     }
