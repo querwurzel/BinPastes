@@ -1,12 +1,12 @@
 package com.github.binpastes.paste.domain;
 
+import io.r2dbc.spi.Connection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -38,17 +38,19 @@ class MySqlFullTextSearchSupport implements FullTextSearchSupport {
     @Override
     public Flux<Paste> searchByFullText(final String text) {
         var connectionFactory = entityTemplate.getDatabaseClient().getConnectionFactory();
-        return Mono.from(connectionFactory.create())
-            .flatMap(mySqlConnection -> Mono.from(mySqlConnection
+
+        return Flux.usingWhen(
+            connectionFactory.create(), (conn) -> Flux.from(conn
                 .createStatement(searchQuery)
                 .bind(0, PasteExposure.PUBLIC)
                 .bind(1, LocalDateTime.now())
                 .bind(2, text)
                 .bind(3, text)
                 .execute()
-            ))
-            .flatMapMany(mySqlResult -> Flux.from(mySqlResult.map((row, rowMetadata) ->
+            ).flatMap(result -> Flux.from(result.map((row, rowMetadata) ->
                 entityTemplate.getConverter().read(Paste.class, row, rowMetadata)
-            )));
+            ))),
+            Connection::close
+        );
     }
 }

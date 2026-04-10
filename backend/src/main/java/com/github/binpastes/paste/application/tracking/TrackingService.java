@@ -3,10 +3,11 @@ package com.github.binpastes.paste.application.tracking;
 import com.github.binpastes.paste.application.tracking.MessagingClient.Message;
 import com.github.binpastes.paste.domain.PasteService;
 import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.Disposable;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -19,7 +20,8 @@ public class TrackingService {
     private final PasteService pasteService;
     private final MessagingClient messagingClient;
 
-    @Autowired
+    private Disposable subscription;
+
     public TrackingService(
             final PasteService pasteService,
             final MessagingClient messagingClient
@@ -29,12 +31,17 @@ public class TrackingService {
     }
 
     @PostConstruct
-    private void run() {
-        this.messagingClient
+    private void postConstruct() {
+        subscription = this.messagingClient
                 .receiveMessage()
                 .doOnNext(this::receiveView)
                 .repeat()
                 .subscribe();
+    }
+
+    @PreDestroy
+    private void preDestroy() {
+        subscription.dispose();
     }
 
     public void trackView(String pasteId) {

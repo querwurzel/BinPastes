@@ -1,9 +1,8 @@
-import {Component, createSignal, JSX, onMount, onCleanup} from "solid-js";
+import {Component, JSX, onMount, onCleanup} from "solid-js";
 import {createStore} from "solid-js/store";
 import {PasteCreateCmd} from "../../api/model/PasteCreateCmd";
 import {encrypt} from "../../crypto/CryptoUtil";
-import {CopyToClipboard} from "../../assets/Vectors";
-import {PasteClone} from "../../src/AppContext";
+import {PasteClone} from "../../AppContext";
 import styles from "./createPaste.module.css";
 
 type CreatePasteProps = {
@@ -28,8 +27,6 @@ const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste})
     exposure: null,
     password: null,
   });
-
-  const [lastPasteUrl, setLastPasteUrl] = createSignal<string>();
 
   let creationForm: HTMLFormElement
   let submitInput: HTMLInputElement

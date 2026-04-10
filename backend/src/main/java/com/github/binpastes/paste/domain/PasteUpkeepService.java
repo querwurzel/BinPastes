@@ -2,10 +2,8 @@ package com.github.binpastes.paste.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import reactor.core.scheduler.Schedulers;
 
 import java.time.LocalDateTime;
 
@@ -16,16 +14,14 @@ class PasteUpkeepService {
 
     private final PasteRepository pasteRepository;
 
-    @Autowired
-    public PasteUpkeepService(final PasteRepository pasteRepository) {
+    PasteUpkeepService(final PasteRepository pasteRepository) {
         this.pasteRepository = pasteRepository;
     }
 
     @Scheduled(cron = "0 3 3 * * *" /* 3:03am each day */)
-    private void cleanUpExpiredPastes() {
+    void cleanUpExpiredPastes() {
         pasteRepository
                 .markExpiredPastesForDeletion()
-                .publishOn(Schedulers.parallel())
                 .doFirst(() -> log.info("Expiry: marking expired pastes for deletion"))
                 .doOnSuccess(count -> {
                     if (count > 0) {
@@ -38,10 +34,9 @@ class PasteUpkeepService {
     }
 
     @Scheduled(cron = "0 4 4 * * *" /* 4:04am each day */)
-    private void cleanUpDeletedPastes() {
+    void cleanUpDeletedPastes() {
         pasteRepository
                 .deleteByDateDeletedBefore(LocalDateTime.now().minusMonths(6))
-                .publishOn(Schedulers.parallel())
                 .doFirst(() -> log.info("Deletion: deleting pastes marked for deletion"))
                 .doOnSuccess(count -> {
                     if (count > 0) {

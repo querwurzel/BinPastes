@@ -82,10 +82,10 @@ class PasteRepositoryCustomImpl implements PasteRepositoryCustom {
         for (int idx = 1; idx < fullTextSearchSupport.size(); idx++) {
             final var alternative = fullTextSearchSupport.get(idx);
 
-            result = result.switchIfEmpty(subscriber -> {
+            result = result.switchIfEmpty(Flux.defer(() -> {
                 log.warn("Utilising alternative FullTextSearch implementation {} for: {}", alternative.getClass().getSimpleName(), text);
-                alternative.searchByFullText(text).subscribe(subscriber);
-            });
+                return alternative.searchByFullText(text);
+            }));
         }
 
         return result;

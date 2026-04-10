@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.github.binpastes.paste.domain.Paste.PasteExposure;
 import com.github.binpastes.util.NullOrNotBlank;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -14,7 +13,6 @@ public final class CreateCmd {
     @NullOrNotBlank
     @Size(max = 255)
     private final String title;
-    @NotNull
     @NotBlank
     @Size(min = 5, max = 4096)
     private final String content;

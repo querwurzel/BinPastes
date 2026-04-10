@@ -13,8 +13,8 @@ const NotFound = lazy(() => import('./pages/404'));
 render((): JSX.Element => (
   <Router root={App}>
     <Route path="/" component={Create}  />
-    <Route path="/paste/:id" component={Read} />
     <Route path="/paste/search" component={Search} />
+    <Route path="/paste/:id" component={Read} />
     <Route path="*" component={NotFound} />
   </Router>
 ), document.body);

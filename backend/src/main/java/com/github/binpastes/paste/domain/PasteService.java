@@ -2,7 +2,6 @@ package com.github.binpastes.paste.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -23,7 +22,6 @@ public class PasteService {
 
     private final PasteRepository pasteRepository;
 
-    @Autowired
     public PasteService(final PasteRepository pasteRepository) {
         this.pasteRepository = pasteRepository;
     }

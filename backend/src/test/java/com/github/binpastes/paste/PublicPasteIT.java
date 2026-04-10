@@ -14,7 +14,6 @@ import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
@@ -162,13 +161,13 @@ class PublicPasteIT {
     }
 
     @Test
-    @DisplayName("DELETE /{pasteId} - public paste might be deleted")
+    @DisplayName("DELETE /{pasteId} - public paste may be deleted")
     void deletePublicPaste() {
         var paste = givenPublicPaste();
 
         webClient.delete()
                 .uri("/api/v1/paste/{id}", paste.getId())
-                .header("X-Forwarded-For", ReflectionTestUtils.getField(paste, "remoteAddress").toString())
+                .header("X-Forwarded-For", "8.8.8.8")
                 .exchange()
                 .expectStatus().isNoContent()
                 .expectBody().isEmpty();
@@ -189,7 +188,7 @@ class PublicPasteIT {
                         false,
                         PasteExposure.PUBLIC,
                         null,
-                        "someRemoteAddress"
+                        "8.8.8.8"
                 )
         );
     }

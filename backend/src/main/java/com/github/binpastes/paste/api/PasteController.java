@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,7 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import java.net.URLDecoder;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -49,7 +48,6 @@ class PasteController {
 
     private final PasteViewService pasteViewService;
 
-    @Autowired
     public PasteController(final PasteViewService pasteViewService) {
         this.pasteViewService = pasteViewService;
     }
@@ -109,7 +107,7 @@ class PasteController {
         final String term,
         final ServerHttpResponse response
     ) {
-        var decodedTerm = URLDecoder.decode(term, Charset.defaultCharset());
+        var decodedTerm = URLDecoder.decode(term, StandardCharsets.UTF_8);
         response.getHeaders().setCacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
         return pasteViewService.searchByFullText(decodedTerm);
     }
@@ -133,14 +131,10 @@ class PasteController {
     }
 
     private static String remoteAddress(final ServerHttpRequest request) {
-        if (request.getHeaders().containsHeader("X-Forwarded-For")) {
-            return request.getHeaders().getFirst("X-Forwarded-For");
-        }
-
         if (request.getRemoteAddress() == null) {
             return null;
         }
 
-        return request.getRemoteAddress().getAddress().getHostAddress();
+        return request.getRemoteAddress().getHostString();
     }
 }
