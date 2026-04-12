@@ -30,7 +30,7 @@ public class WebServerConfig implements WebFluxConfigurer {
 
     @Override
     public void addCorsMappings(final CorsRegistry registry) {
-        if (this.environment.matchesProfiles("dev")) {
+        if (this.environment.matchesProfiles("default")) {
             registry.addMapping("/**")
                     .allowedOrigins("*")
                     .allowedMethods("*")

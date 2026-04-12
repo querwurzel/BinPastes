@@ -10,7 +10,7 @@ public final class IdGenerator {
     private static final byte[] HEX_ALPHABET = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
 
     public static String randomAlphaNumericalId() {
-        return hex(sha1(UUID.randomUUID().toString().getBytes()));
+        return hex(sha1(UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8)));
     }
 
     protected static String hex(byte[] bytes) {

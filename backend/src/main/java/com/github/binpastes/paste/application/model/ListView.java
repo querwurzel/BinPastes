@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public record ListView(
             return new ListItemView(
                 reference.getId(),
                 reference.getTitle(),
-                reference.getContent().getBytes().length,
+                reference.getContent().getBytes(StandardCharsets.UTF_8).length,
                 reference.isEncrypted(),
                 reference.isPermanent(),
                 reference.getDateCreated(),

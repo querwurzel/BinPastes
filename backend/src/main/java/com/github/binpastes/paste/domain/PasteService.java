@@ -73,8 +73,7 @@ public class PasteService {
                 .retryWhen(Retry
                         .backoff(5, Duration.ofMillis(500))
                         .filter(ex -> ex instanceof OptimisticLockingFailureException))
-                .subscribeOn(Schedulers.single())
-                .subscribe();
+                .subscribe(null, throwable -> log.warn("Failed to track view for paste {}", id, throwable));
     }
 
     public Mono<Void> requestDeletion(String id, String remoteAddress) {

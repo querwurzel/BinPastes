@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ public record SearchView(
                 reference.getId(),
                 reference.getTitle(),
                 highlight(reference.getContent(), term),
-                reference.getContent().getBytes().length,
+                reference.getContent().getBytes(StandardCharsets.UTF_8).length,
                 reference.getDateCreated(),
                 reference.getDateOfExpiry()
             );

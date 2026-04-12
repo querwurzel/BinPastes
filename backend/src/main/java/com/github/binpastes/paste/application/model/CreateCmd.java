@@ -61,7 +61,7 @@ public final class CreateCmd {
             : exposure;
     }
 
-    private enum ExpirationRange {
+    enum ExpirationRange {
         ONE_HOUR {
             @Override
             public LocalDateTime toTimestamp() {

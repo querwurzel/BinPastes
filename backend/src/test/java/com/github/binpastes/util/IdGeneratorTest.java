@@ -2,6 +2,7 @@ package com.github.binpastes.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -14,7 +15,7 @@ class IdGeneratorTest {
     @Test
     void sha1Hex() {
         var uuidv4 = UUID.fromString("9b1482c6-5310-4eef-b91d-75220eb2bef7");
-        var id = hex(sha1(uuidv4.toString().getBytes()));
+        var id = hex(sha1(uuidv4.toString().getBytes(StandardCharsets.UTF_8)));
 
         assertThat(id).isEqualTo("7870235b55ee013737d015c756c02f5efa6ba903");
     }

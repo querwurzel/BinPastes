@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.binpastes.paste.domain.Paste;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public record DetailView(
             reference.getId(),
             reference.getTitle(),
             reference.getContent(),
-            reference.getContent().getBytes().length,
+            reference.getContent().getBytes(StandardCharsets.UTF_8).length,
             reference.isPublic(),
             reference.isErasable(remoteAddress),
             reference.isEncrypted(),

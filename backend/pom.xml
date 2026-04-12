@@ -181,7 +181,7 @@
             </dependencies>
         </profile>
         <profile>
-            <id>dev</id>
+            <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
                 <property>
