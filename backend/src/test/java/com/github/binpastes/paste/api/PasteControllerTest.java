@@ -68,7 +68,7 @@ class PasteControllerTest {
         doReturn(Mono.empty()).when(pasteViewService).searchByFullText(anyString());
 
         webClient.get()
-                .uri("/api/v1/paste/search?term={term}", "%3A-)")
+                .uri("/api/v1/paste/search?term={term}", ":-)")
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().cacheControl(CacheControl.maxAge(1, TimeUnit.MINUTES))
