@@ -62,9 +62,4 @@ public class WebServerConfig implements WebFluxConfigurer {
                 welcomePageRouterFunctionMapping.getOrder() * 10); // after WelcomePageRouterFunctionMapping (order:1)
         return routerFunctionMapping;
     }
-
-    @Override
-    public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.setOrder(Ordered.LOWEST_PRECEDENCE - 147483647);
-    }
 }

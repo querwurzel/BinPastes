@@ -33,7 +33,7 @@ function findPaste(id: string): Promise<PasteView> {
     .then(resp => toJson(resp));
 }
 
-function findOneTimePaste(id: String): Promise<PasteView> {
+function findOneTimePaste(id: string): Promise<PasteView> {
   const url = new URL('/api/v1/paste/' + id, apiBaseUrl());
 
   return fetch(url, {
@@ -52,7 +52,7 @@ function findAll(): Promise<Array<PasteListView>> {
 
 function searchAll(term: string): Promise<Array<PasteSearchView>> {
   const url = new URL('/api/v1/paste/search', apiBaseUrl());
-  url.search = new URLSearchParams({ term });
+  url.searchParams.set('term', term);
 
   return fetch(url)
     .then(resp => toJson(resp))

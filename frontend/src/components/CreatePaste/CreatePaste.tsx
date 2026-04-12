@@ -21,7 +21,7 @@ type FormModel = {
 const CreatePaste: Component<CreatePasteProps> = ({onCreatePaste, initialPaste}): JSX.Element => {
 
   const [form, setForm] = createStore<FormModel>({
-    title: initialPaste?.title,
+    title: initialPaste?.title || "",
     content: initialPaste?.content || "",
   });
 

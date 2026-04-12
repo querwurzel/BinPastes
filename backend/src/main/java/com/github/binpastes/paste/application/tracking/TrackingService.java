@@ -31,7 +31,7 @@ public class TrackingService {
     }
 
     @PostConstruct
-    private void postConstruct() {
+    void postConstruct() {
         subscription = this.messagingClient
                 .receiveMessage()
                 .doOnNext(this::receiveView)
@@ -40,7 +40,7 @@ public class TrackingService {
     }
 
     @PreDestroy
-    private void preDestroy() {
+    void preDestroy() {
         subscription.dispose();
     }
 

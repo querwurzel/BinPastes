@@ -31,8 +31,6 @@ import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -107,9 +105,8 @@ class PasteController {
         final String term,
         final ServerHttpResponse response
     ) {
-        var decodedTerm = URLDecoder.decode(term, StandardCharsets.UTF_8);
         response.getHeaders().setCacheControl(CacheControl.maxAge(Duration.ofMinutes(1)));
-        return pasteViewService.searchByFullText(decodedTerm);
+        return pasteViewService.searchByFullText(term);
     }
 
     @PostMapping

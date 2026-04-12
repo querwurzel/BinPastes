@@ -48,6 +48,7 @@ public class MessagingClient implements AutoCloseable {
                     producer.send(clientMessage);
                     log.debug("Sent tracking message for paste {}", pasteId);
                 } catch (ActiveMQException e) {
+                    log.error(e.getMessage(), e);
                     throw new RuntimeException(e);
                 }
             })
@@ -58,11 +59,16 @@ public class MessagingClient implements AutoCloseable {
     public Mono<Message> receiveMessage() {
         return Mono.fromCallable(clientConsumer::receive)
             .map(clientMessage -> {
-                var pasteId = clientMessage.getStringProperty(Message.PASTE_ID_PROPERTY);
-                var timeViewed = Instant.ofEpochMilli(clientMessage.getLongProperty(Message.TIME_VIEWED_PROPERTY));
-                log.debug("Received tracking message for paste {}", pasteId);
+                try {
+                    var pasteId = clientMessage.getStringProperty(Message.PASTE_ID_PROPERTY);
+                    var timeViewed = Instant.ofEpochMilli(clientMessage.getLongProperty(Message.TIME_VIEWED_PROPERTY));
+                    log.debug("Received tracking message for paste {}", pasteId);
 
-                return new Message(pasteId, timeViewed);
+                    return new Message(pasteId, timeViewed);
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                    throw e;
+                }
             })
             .onErrorComplete(ActiveMQObjectClosedException.class)
             .subscribeOn(consumerThreadPool);
