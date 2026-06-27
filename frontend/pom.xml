@@ -34,7 +34,7 @@
                             <goal>npx</goal>
                         </goals>
                         <configuration>
-                            <arguments>pnpm install</arguments>
+                            <arguments>pnpm@10.34.4 install</arguments>
                         </configuration>
                     </execution>
                     <execution>
