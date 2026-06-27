@@ -4,6 +4,16 @@
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
+
+registries:
+    github:
+        type: npm-registry
+        url: https://npm.pkg.github.com
+        token: ${{ secrets.GITHUB_TOKEN }}
+    npmjs:
+        type: npm-registry
+        url: https://registry.npmjs.org
+
 updates:
   - package-ecosystem: "maven" # See documentation for possible values
     directory: "/" # Location of package manifests
