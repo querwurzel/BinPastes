@@ -43,7 +43,7 @@
                             <goal>npx</goal>
                         </goals>
                         <configuration>
-                            <arguments>pnpm run build</arguments>
+                            <arguments>pnpm@10.34.4 run build</arguments>
                         </configuration>
                     </execution>
                 </executions>
