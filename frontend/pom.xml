@@ -34,7 +34,7 @@
                             <goal>npx</goal>
                         </goals>
                         <configuration>
-                            <arguments>pnpm@10.34.4 install</arguments>
+                            <arguments>pnpm install</arguments>
                         </configuration>
                     </execution>
                     <execution>
@@ -43,7 +43,7 @@
                             <goal>npx</goal>
                         </goals>
                         <configuration>
-                            <arguments>pnpm@10.34.4 run build</arguments>
+                            <arguments>pnpm run build</arguments>
                         </configuration>
                     </execution>
                 </executions>
