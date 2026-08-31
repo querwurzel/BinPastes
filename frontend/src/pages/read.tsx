@@ -2,7 +2,7 @@ import {useNavigate, useParams} from '@solidjs/router';
 import {Component, createResource, JSX, lazy, Match, Switch} from 'solid-js';
 import ApiClient from '../api/client';
 import type {PasteView} from '../api/model/PasteView';
-import AppContext from '../AppContext';
+import {AppContext} from '../AppContext';
 import ReadPaste from '../components/ReadPaste/ReadPaste';
 
 const NotFound = lazy(() => import('./404'));

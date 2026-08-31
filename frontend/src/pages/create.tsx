@@ -1,13 +1,16 @@
 import {useNavigate} from '@solidjs/router';
 import {JSX} from 'solid-js';
+import {useSearchParams} from '@solidjs/router';
 import ApiClient from '../api/client';
 import {PasteCreateCmd} from '../api/model/PasteCreateCmd';
-import AppContext from '../AppContext';
+import {AppContext, PasteClone} from '../AppContext';
 import CreatePaste from '../components/CreatePaste/CreatePaste';
 
 const Create: () => JSX.Element = () => {
 
   const navigate = useNavigate();
+
+  const [params] = useSearchParams();
 
   function createPaste(cmd: PasteCreateCmd): Promise<void> {
     return ApiClient.createPaste(cmd)
@@ -27,8 +30,30 @@ const Create: () => JSX.Element = () => {
       });
   }
 
+  function effectiveInitialPaste(): PasteClone | undefined {
+    const popped = AppContext.popPasteCloned();
+
+    if (popped) {
+      return popped;
+    }
+
+    if (params.c) {
+      return {
+        content: params.c.toString()
+      };
+    }
+
+    if (params.u) {
+      return {
+        content: params.u.toString()
+      };
+    }
+
+    return undefined;
+  }
+
   return (
-    <CreatePaste initialPaste={AppContext.popPasteCloned()} onCreatePaste={createPaste} />
+    <CreatePaste initialPaste={effectiveInitialPaste()} onCreatePaste={createPaste} />
   )
 }
 

@@ -57,6 +57,4 @@ class AppContextImpl implements IAppContext {
   }
 }
 
-const AppContext: IAppContext = new AppContextImpl();
-
-export default AppContext;
+export const AppContext: IAppContext = new AppContextImpl();

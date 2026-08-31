@@ -1,9 +1,10 @@
 {
   "name": "BinPastes",
   "short_name": "BinPastes",
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#fff2d999",
+  "background_color": "#fff2d9",
   "description": "A simple pastebin",
   "icons": [
     {
@@ -11,5 +12,14 @@
       "sizes": "144x144",
       "type": "image/png"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "enctype": "application/x-www-form-urlencoded",
+    "params": {
+      "text": "c",
+      "url": "u"
+    }
+  }
 }

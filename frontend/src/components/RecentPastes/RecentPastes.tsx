@@ -2,7 +2,7 @@ import {A} from '@solidjs/router';
 import {createResource, For, JSX, Match, onCleanup, onMount, Show, Switch} from 'solid-js';
 import ApiClient from '../../api/client';
 import {PasteListView} from '../../api/model/PasteListView';
-import AppContext from '../../AppContext';
+import {AppContext} from '../../AppContext';
 import {relativeDiffLabel, toDateTimeString} from '../../datetime/DateTimeUtil';
 import {Lock, Infinity} from '../../assets/Vectors';
 import styles from './recentPastes.module.css';
