@@ -44,10 +44,10 @@
         <!-- 3rd-party library versions -->
         <spring-boot-bom.version>4.1.1</spring-boot-bom.version>
         <spring-modulith-bom.version>2.1.1</spring-modulith-bom.version>
-        <junixsocket.version>2.11.0</junixsocket.version>
-        <flyway.version>13.4.0</flyway.version>
+        <junixsocket.version>2.11.1</junixsocket.version>
+        <flyway.version>13.6.0</flyway.version>
         <r2dbc-mysql.version>1.4.3</r2dbc-mysql.version>
-        <r2dbc-mariadb.version>1.4.1</r2dbc-mariadb.version>
+        <r2dbc-mariadb.version>1.4.2</r2dbc-mariadb.version>
     </properties>
 
     <build>
