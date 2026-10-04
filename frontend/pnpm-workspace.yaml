@@ -1,5 +1,6 @@
 allowBuilds:
   esbuild: true
+  pnpm: false
 minimumReleaseAge: 300
 minimumReleaseAgeExclude:
   - update-browserslist-db
